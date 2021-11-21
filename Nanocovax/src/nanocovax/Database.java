@@ -13,7 +13,7 @@ import java.util.Date;
 import javax.swing.JOptionPane;
 
 public class Database {
-    private static String password = ""; // mysql password
+    private static String password = ""; // Mysql database
     public static Connection DBConnection()
     {
         Connection conn = null;
@@ -23,10 +23,12 @@ public class Database {
 
             conn = DriverManager.getConnection("jdbc:mysql://localhost/Nanocovax","root", password);
             System.out.println("Database is connected!");
+
         }
         catch(Exception e)
         {
             JOptionPane.showMessageDialog(null, "Cannot connect to DB - Error:" + e);
+
         }
         return conn;
     }

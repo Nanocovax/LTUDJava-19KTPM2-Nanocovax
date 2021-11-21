@@ -82,7 +82,7 @@ public class Login extends JFrame {
 		contentPane.setLayout(null);
 		
 		
-		JLabel lblUserName = new JLabel("Username");
+		JLabel lblUserName = new JLabel("Tên đăng nhập");
 		//lblUserName.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblUserName.setBounds(119, 100, 91, 14);
 		contentPane.add(lblUserName);
@@ -92,7 +92,7 @@ public class Login extends JFrame {
 		contentPane.add(usernameField);
 		usernameField.setColumns(10);
 		
-		JLabel lblPassword = new JLabel("Password\r\n");
+		JLabel lblPassword = new JLabel("Mật khẩu\r\n");
 		//lblPassword.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblPassword.setBounds(119, 135, 91, 14);
 		contentPane.add(lblPassword);
@@ -109,7 +109,7 @@ public class Login extends JFrame {
 				}
 		});
 		
-		btnLogin = new JButton("Login");
+		btnLogin = new JButton("Đăng nhập");
 	
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -146,7 +146,7 @@ public class Login extends JFrame {
 				}
 			}
 		});
-		btnLogin.setBounds(247, 185, 89, 23);
+		btnLogin.setBounds(247, 185, 115, 23);
 		contentPane.add(btnLogin);
 		
 		error = new JLabel("");
@@ -154,7 +154,7 @@ public class Login extends JFrame {
 		error.setBounds(200, 215, 220, 14);
 		contentPane.add(error);
 		
-		lblCaddeyLogin = new JLabel("Nanocovax Login");
+		lblCaddeyLogin = new JLabel("Nanocovax");
 		lblCaddeyLogin.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		lblCaddeyLogin.setBounds(204, 26, 167, 28);
 		contentPane.add(lblCaddeyLogin);
@@ -185,6 +185,8 @@ public class Login extends JFrame {
 			e.printStackTrace();
 		}
 		return mc;
+		
+	
 	}
 	
 }

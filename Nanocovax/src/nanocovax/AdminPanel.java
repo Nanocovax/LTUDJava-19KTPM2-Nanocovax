@@ -14,14 +14,10 @@ import java.awt.Toolkit;
 
 
 public class AdminPanel extends JFrame implements ActionListener {
+	JMenu mnTK, mnNQL, mnNDT;
 	JMenuItem itmDMKTK;
-	JMenu mnTK;
-	JMenu mnNQL;
-	JMenuItem itmLSHD;
-	JMenuItem itmKTKNQL;
-	JMenu mnNDT;
-	JMenuItem itmTNDT;
-	JMenuItem itmDCNDT;
+	JMenuItem itmTKNQL, itmXDSNQL, itmTNQL;
+	JMenuItem itmTNDT, itmDCNDT;
 	ArrayList<JPanel> panels=new ArrayList<JPanel>();
 	int cPanel=0;
 
@@ -29,7 +25,6 @@ public class AdminPanel extends JFrame implements ActionListener {
 	 * Create the frame.
 	 */
 	public AdminPanel() {
-		setIconImage(Toolkit.getDefaultToolkit().getImage("F:\\Working Directory\\fianl project with sql\\Bill\\logo.png"));
 		setTitle("Admin Panel");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 840, 619);
@@ -47,18 +42,22 @@ public class AdminPanel extends JFrame implements ActionListener {
 		mnNQL = new JMenu("Người quản lý");
 		menuBar.add(mnNQL);
 
-		itmLSHD = new JMenuItem("Lịch sử hoạt động");
-		mnNQL.add(itmLSHD);
-		itmLSHD.addActionListener(this);
+		itmTNQL = new JMenuItem("Tạo tài khoản");
+		mnNQL.add(itmTNQL);
+		itmTNQL.addActionListener(this);
 
-		itmKTKNQL = new JMenuItem("Khóa tài khoản");
-		mnNQL.add(itmKTKNQL);
-		itmKTKNQL.addActionListener(this);
+		itmXDSNQL = new JMenuItem("Xem danh sách");
+		mnNQL.add(itmXDSNQL);
+		itmXDSNQL.addActionListener(this);
+
+		itmTKNQL = new JMenuItem("Tìm kiếm");
+		mnNQL.add(itmTKNQL);
+		itmTKNQL.addActionListener(this);
 
 		mnNDT = new JMenu("Địa điểm điều trị");
 		menuBar.add(mnNDT);
 
-		itmTNDT = new JMenuItem("Thêm");
+		itmTNDT = new JMenuItem("Thêm mới");
 		mnNDT.add(itmTNDT);
 		itmTNDT.addActionListener(this);
 
@@ -71,6 +70,9 @@ public class AdminPanel extends JFrame implements ActionListener {
 		logout.addActionListener(this);
 		
 		getContentPane().setLayout(new BorderLayout(0, 0));
+
+		panels.add(new addModerator());
+		getContentPane().add(panels.get(0));
 	}
 
 	@Override
@@ -83,12 +85,22 @@ public class AdminPanel extends JFrame implements ActionListener {
 			this.remove(panels.get(cPanel));
 			this.revalidate();
 			this.repaint();
+			getContentPane().add(panels.get(5));
+			this.setVisible(true);
+			cPanel=5;
+			this.setTitle("Đổi mật khẩu");
+		}
+		else if(e.getActionCommand().equals("Tạo tài khoản"))
+		{
+			this.remove(panels.get(cPanel));
+			this.revalidate();
+			this.repaint();
 			getContentPane().add(panels.get(0));
 			this.setVisible(true);
 			cPanel=0;
-			this.setTitle("Đổi mật khẩu");
+			this.setTitle("Tạo tài khoản Người quản lý");
 		}
-		else if(e.getActionCommand().equals("Lịch sử hoạt động"))
+		else if(e.getActionCommand().equals("Xem danh sách"))
 		{
 			this.remove(panels.get(cPanel));
 			this.revalidate();
@@ -96,9 +108,9 @@ public class AdminPanel extends JFrame implements ActionListener {
 			getContentPane().add(panels.get(1));
 			this.setVisible(true);
 			cPanel=1;
-			this.setTitle("Lịch sử hoạt động");
+			this.setTitle("Xem danh sách Người quản lý");
 		}
-		else if(e.getActionCommand().equals("Khóa tài khoản"))
+		else if(e.getActionCommand().equals("Tìm kiếm"))
 		{
 			this.remove(panels.get(cPanel));
 			this.revalidate();
@@ -106,9 +118,9 @@ public class AdminPanel extends JFrame implements ActionListener {
 			getContentPane().add(panels.get(2));
 			this.setVisible(true);
 			cPanel=2;
-			this.setTitle("Khóa tài khoản");
+			this.setTitle("Tìm kiếm khoản Người quản lý");
 		}
-		else if(e.getActionCommand().equals("Thêm"))
+		else if(e.getActionCommand().equals("Thêm mới"))
 		{
 			this.remove(panels.get(cPanel));
 			this.revalidate();
@@ -116,16 +128,16 @@ public class AdminPanel extends JFrame implements ActionListener {
 			getContentPane().add(panels.get(3));
 			this.setVisible(true);
 			cPanel=3;
-			this.setTitle("Thêm nơi điều trị");
+			this.setTitle("Thêm mới nơi điều trị");
 		}
 		else if(e.getActionCommand().equals("Điều chỉnh"))
 		{
 			this.remove(panels.get(cPanel));
 			this.revalidate();
 			this.repaint();
-			getContentPane().add(panels.get(3));
+			getContentPane().add(panels.get(4));
 			this.setVisible(true);
-			cPanel=3;
+			cPanel=4;
 			this.setTitle("Điều chỉnh nơi điều trị");
 		}
 		else if(e.getActionCommand().equals("Đăng xuất"))
