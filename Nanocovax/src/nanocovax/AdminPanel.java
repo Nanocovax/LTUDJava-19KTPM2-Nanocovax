@@ -1,18 +1,46 @@
 package nanocovax;
 
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-import javax.swing.JFrame;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JMenu;
-import java.awt.Toolkit;
+import javax.swing.*;
 
 
+public  class AdminPanel extends JPanel{
+	private  JLabel Header;
+	private  JButton btn_nql, btn_ndt, btn_Logout;
+	public AdminPanel(){
+		Header = new JLabel("Menu");
+		btn_nql = new JButton("Quản lí NQL");
+		btn_ndt = new JButton("Quản lí NĐT");
+		btn_Logout = new JButton("Log out");
+		setPreferredSize(new Dimension(600,600));
+		setLayout(null);
+
+		add(Header);
+		add(btn_nql);
+		add(btn_ndt);
+		add(btn_Logout);
+
+		Header.setBounds(270,125,100,25);
+		btn_nql.setBounds(170,195,250,70);
+		btn_ndt.setBounds(170, 295,250,70);
+		btn_Logout.setBounds(170, 395,250,70);
+
+
+
+	}
+	public static void main(String[] args){
+		JFrame frame = new JFrame("Admin");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().add(new AdminPanel());
+		frame.pack();
+		frame.setVisible(true);
+	}
+}
+/*
 public class AdminPanel extends JFrame implements ActionListener {
 	JMenu mnTK, mnNQL, mnNDT;
 	JMenuItem itmDMKTK;
@@ -21,14 +49,12 @@ public class AdminPanel extends JFrame implements ActionListener {
 	ArrayList<JPanel> panels=new ArrayList<JPanel>();
 	int cPanel=0;
 
-	/**
-	 * Create the frame.
-	 */
+
 	public AdminPanel() {
 		setTitle("Admin Panel");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 840, 619);
-		
+
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 
@@ -68,7 +94,7 @@ public class AdminPanel extends JFrame implements ActionListener {
 		JMenuItem logout = new JMenuItem("Đăng xuất");
 		mnTK.add(logout);
 		logout.addActionListener(this);
-		
+
 		getContentPane().setLayout(new BorderLayout(0, 0));
 
 		panels.add(new addModerator());
@@ -78,7 +104,7 @@ public class AdminPanel extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		System.out.println("Selected: " + e.getActionCommand());   
+		System.out.println("Selected: " + e.getActionCommand());
 		if(e.getActionCommand().equals("Đối mật khẩu"))
 		{
 			System.out.println(panels.get(cPanel));
@@ -146,3 +172,4 @@ public class AdminPanel extends JFrame implements ActionListener {
 		}
 	}
 }
+*/
