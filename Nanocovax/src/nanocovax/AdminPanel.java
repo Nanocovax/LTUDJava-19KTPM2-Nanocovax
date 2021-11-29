@@ -10,8 +10,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JMenu;
-import java.awt.Toolkit;
-
 
 public class AdminPanel extends JFrame implements ActionListener {
 	JMenu mnTK, mnNQL, mnNDT;
@@ -21,9 +19,6 @@ public class AdminPanel extends JFrame implements ActionListener {
 	ArrayList<JPanel> panels=new ArrayList<JPanel>();
 	int cPanel=0;
 
-	/**
-	 * Create the frame.
-	 */
 	public AdminPanel() {
 		setTitle("Admin Panel");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -71,8 +66,8 @@ public class AdminPanel extends JFrame implements ActionListener {
 		
 		getContentPane().setLayout(new BorderLayout(0, 0));
 
-		panels.add(new addModerator());
-		getContentPane().add(panels.get(0));
+		//panels.add(new addModerator());
+		//getContentPane().add(panels.get(0));
 	}
 
 	@Override
