@@ -22,13 +22,14 @@ public class NDTManagement extends JFrame {
     private JButton removeButton;
     private JScrollPane scPanel;
     private JPanel rootPanel;
+    private JButton refreshButton;
+
     NDTManagement (){
         add(this.rootPanel);
         createTable();
         setSize(1200,600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
-        createTable();
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -38,7 +39,7 @@ public class NDTManagement extends JFrame {
         removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                //check xem user chọn 1 row trên table chưa rồi thực hiện xóa
             }
         });
         addButton.addActionListener(new ActionListener() {
@@ -58,12 +59,8 @@ public class NDTManagement extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-            }
-        });
-        lbNDT.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
+                //hỏi user are u sure?
+                //rồi quay về màn hình log in
             }
         });
         lbNQL.addMouseListener(new MouseAdapter() {
@@ -73,6 +70,12 @@ public class NDTManagement extends JFrame {
                 AdminMenu adminMenu = new AdminMenu();
                 setVisible(false);
                 dispose();
+            }
+        });
+        refreshButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //làm mới lại table
             }
         });
     }

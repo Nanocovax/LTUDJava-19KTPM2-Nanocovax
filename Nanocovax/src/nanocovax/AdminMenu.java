@@ -30,7 +30,7 @@ public class AdminMenu extends JFrame {
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                AddNQL addNQL= new AddNQL();
             }
         });
         searchButton.addActionListener(new ActionListener() {
@@ -49,7 +49,7 @@ public class AdminMenu extends JFrame {
         removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                //check xem user chọn 1 row trên table chưa rồi thực hiện xóa
             }
         });
         editButton.addActionListener(new ActionListener() {
@@ -99,6 +99,7 @@ public class AdminMenu extends JFrame {
         String[] tbColName = {"ID", "Phân quyền", "Tình trạng"};
         Object[] [] data = {{"01","Admin","bt"}};
         table.setModel(new DefaultTableModel(data,tbColName));
+
 
     }
     public static void main(String[] args){
