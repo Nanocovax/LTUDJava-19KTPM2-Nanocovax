@@ -23,6 +23,7 @@ public class editNQL extends JFrame {
         passwordInput.setEchoChar('*');
         add(this.rootPanel);
         setSize(500,300);
+        setResizable(false);
         setVisible(true);
         confirmButton.addActionListener(new ActionListener() {
             @Override
