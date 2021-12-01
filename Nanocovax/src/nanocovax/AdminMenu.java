@@ -7,7 +7,7 @@ import java.awt.event.*;
 public class AdminMenu extends JFrame {
     private JPanel rootPanel;
     private JButton addButton;
-    private JTextField textField1;
+    private JTextField searchBar;
     private JButton searchButton;
     private JLabel lbNQL;
     private JLabel lbNDT;
@@ -18,12 +18,13 @@ public class AdminMenu extends JFrame {
     private JTable table;
     private JButton editButton;
     private JButton refreshButton;
+    private JPanel menuPanel;
+    private JPanel NQLPanel;
 
     AdminMenu(){
-        add(rootPanel);
+        add(this.rootPanel);
         createTable();
         setSize(1200,600);
-        //setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         addButton.addActionListener(new ActionListener() {
@@ -76,6 +77,10 @@ public class AdminMenu extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 //chuyển sang màn hình quản lí nơi điều trị
+                NDTManagement ndtManagement= new NDTManagement();
+                setVisible(false);
+                dispose();
+
             }
         });
         lbLogout.addMouseListener(new MouseAdapter() {
@@ -94,7 +99,7 @@ public class AdminMenu extends JFrame {
         String[] tbColName = {"ID", "Phân quyền", "Tình trạng"};
         Object[] [] data = {{"01","Admin","bt"}};
         table.setModel(new DefaultTableModel(data,tbColName));
-        
+
     }
     public static void main(String[] args){
         AdminMenu adminMenu = new AdminMenu();
