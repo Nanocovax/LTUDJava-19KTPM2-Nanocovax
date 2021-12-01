@@ -17,7 +17,7 @@ public class AddNQL extends JFrame {
     AddNQL(){
         add(this.rootPanel);
         setSize(560,220);
-        //setResizable(false);
+        setResizable(false);
         setVisible(true);
         passwordInput.setEchoChar('*');
 

@@ -43,7 +43,7 @@ public class AdminMenu extends JFrame {
         historyButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                activeHistory activeHistory= new activeHistory();
             }
         });
         removeButton.addActionListener(new ActionListener() {
@@ -55,7 +55,7 @@ public class AdminMenu extends JFrame {
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                editNQL editNQL = new editNQL();
             }
         });
 
@@ -99,8 +99,6 @@ public class AdminMenu extends JFrame {
         String[] tbColName = {"ID", "Phân quyền", "Tình trạng"};
         Object[] [] data = {{"01","Admin","bt"}};
         table.setModel(new DefaultTableModel(data,tbColName));
-
-
     }
     public static void main(String[] args){
         AdminMenu adminMenu = new AdminMenu();
