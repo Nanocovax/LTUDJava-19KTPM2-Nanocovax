@@ -46,6 +46,7 @@ public class Login extends JFrame {
 		//	JOptionPane.showMessageDialog(null,"Unknown Computer, Can not run!");
 			//return;
 //		}
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {

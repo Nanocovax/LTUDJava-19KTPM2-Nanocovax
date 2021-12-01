@@ -11,18 +11,27 @@ import javax.swing.*;
 public  class AdminPanel extends JPanel{
 	private  JLabel Header;
 	private  JButton btn_nql, btn_ndt, btn_Logout;
-	public AdminPanel(){
-		Header = new JLabel("Menu");
+	private JPanel panel1, panel2;
+	public void init(){
+		panel1 = new JPanel();
+		panel2 = new JPanel();
+		add(panel1);
+		add(panel2);
+
+		Header = new JLabel("ADMIN MENU");
 		btn_nql = new JButton("Quản lí NQL");
 		btn_ndt = new JButton("Quản lí NĐT");
 		btn_Logout = new JButton("Log out");
+
+
+
 		setPreferredSize(new Dimension(600,600));
 		setLayout(null);
 
-		add(Header);
-		add(btn_nql);
-		add(btn_ndt);
-		add(btn_Logout);
+		panel1.add(Header);
+		panel2.add(btn_nql);
+		panel2.add(btn_ndt);
+		panel2.add(btn_Logout);
 
 		Header.setBounds(270,125,100,25);
 		btn_nql.setBounds(170,195,250,70);
@@ -30,15 +39,24 @@ public  class AdminPanel extends JPanel{
 		btn_Logout.setBounds(170, 395,250,70);
 
 
-
+	}
+	public AdminPanel(){
+		init();
 	}
 	public static void main(String[] args){
-		JFrame frame = new JFrame("Admin");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().add(new AdminPanel());
-		frame.pack();
-		frame.setVisible(true);
+		 AdminPanel adminPanel = new AdminPanel();
 	}
+}
+ class NQLManagePanel extends JFrame{
+	private JLabel header;
+	private JTable tbNQL;
+	private JButton btnAdd, btnSearch;
+	public void init(){
+
+	}
+	 public NQLManagePanel(){
+
+	 }
 }
 /*
 public class AdminPanel extends JFrame implements ActionListener {
