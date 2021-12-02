@@ -45,7 +45,7 @@ public class NDTManagement extends JFrame {
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                addNDT addND =new addNDT();
             }
         });
         searchButton.addActionListener(new ActionListener() {

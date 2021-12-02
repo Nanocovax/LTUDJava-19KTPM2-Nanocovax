@@ -13,6 +13,7 @@ public class AddNQL extends JFrame {
     private JLabel head;
     private JPasswordField passwordInput;
     private JButton displayPwButton;
+    private JButton cancelButton;
 
     AddNQL(){
         add(this.rootPanel);
@@ -43,5 +44,11 @@ public class AddNQL extends JFrame {
             }
         });
 
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
     }
 }
