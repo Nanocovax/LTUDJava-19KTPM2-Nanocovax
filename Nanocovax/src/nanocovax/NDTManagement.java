@@ -33,7 +33,7 @@ public class NDTManagement extends JFrame {
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                editNDT editNDT = new editNDT();
             }
         });
         removeButton.addActionListener(new ActionListener() {

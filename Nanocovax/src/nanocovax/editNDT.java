@@ -4,26 +4,28 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class addNDT extends JFrame{
+public class editNDT extends JFrame {
     private JTextField idInput;
-    private JTextField textField2;
-    private JTextField nameInput;
+    private JTextField capacityInput;
     private JTextField curInput;
-    private JButton addButton;
+    private JTextField nameInput;
+    private JButton cancelButton;
+    private JButton editButton;
     private JPanel rootPanel;
     private JLabel header;
     private JLabel idLabel;
     private JLabel capacityLabel;
     private JLabel nameLabel;
     private JLabel curLabel;
-    private JButton cancelButton;
-    addNDT(){
+    editNDT(){
         add(this.rootPanel);
         setSize(530,220);
         setResizable(false);
         setVisible(true);
-        //optional: tự generate id cho ndt và set vào idLabel
-        addButton.addActionListener(new ActionListener() {
+
+        // set text cho các text field
+
+        editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -36,5 +38,4 @@ public class addNDT extends JFrame{
             }
         });
     }
-
 }
