@@ -28,6 +28,12 @@ public class Login extends JFrame {
 	private JLabel label;
 
 	public static void main(String[] args) {
+//		if(!getMac().equals("90-48-9A-AC-21-17"))
+	//	{
+		//	JOptionPane.showMessageDialog(null,"Unknown Computer, Can not run!");
+			//return;
+//		}
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
