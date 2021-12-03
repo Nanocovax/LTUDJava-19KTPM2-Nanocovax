@@ -26,6 +26,17 @@ public class addNDT extends JFrame{
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String id = idInput.getText();
+                String ten = nameInput.getText();
+                int sucChua =  Integer.parseInt(textField2.getText());
+                int dangChua = Integer.parseInt(curInput.getText());
+                boolean addSuccess =  Database.createNDT(ten, sucChua, dangChua);
+                if (addSuccess){
+                    idInput.setText("");
+                    nameInput.setText("");
+                    textField2.setText("");
+                    curInput.setText("");
+                }
 
             }
         });
