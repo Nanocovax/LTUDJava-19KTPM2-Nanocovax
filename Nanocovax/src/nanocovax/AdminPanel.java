@@ -1,6 +1,6 @@
 package nanocovax;
 
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -10,7 +10,60 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JMenu;
+import javax.swing.*;
 
+
+public  class AdminPanel extends JPanel{
+	private  JLabel Header;
+	private  JButton btn_nql, btn_ndt, btn_Logout;
+	private JPanel panel1, panel2;
+	public void init(){
+		panel1 = new JPanel();
+		panel2 = new JPanel();
+		add(panel1);
+		add(panel2);
+
+		Header = new JLabel("ADMIN MENU");
+		btn_nql = new JButton("Quản lí NQL");
+		btn_ndt = new JButton("Quản lí NĐT");
+		btn_Logout = new JButton("Log out");
+
+
+
+		setPreferredSize(new Dimension(600,600));
+		setLayout(null);
+
+		panel1.add(Header);
+		panel2.add(btn_nql);
+		panel2.add(btn_ndt);
+		panel2.add(btn_Logout);
+
+		Header.setBounds(270,125,100,25);
+		btn_nql.setBounds(170,195,250,70);
+		btn_ndt.setBounds(170, 295,250,70);
+		btn_Logout.setBounds(170, 395,250,70);
+
+
+	}
+	public AdminPanel(){
+		init();
+	}
+	public static void main(String[] args){
+		 AdminPanel adminPanel = new AdminPanel();
+	}
+}
+ class NQLManagePanel extends JFrame{
+	private JLabel header;
+	private JTable tbNQL;
+	private JButton btnAdd, btnSearch;
+	public void init(){
+
+	}
+	 public NQLManagePanel(){
+
+	 }
+}
+/*
 public class AdminPanel extends JFrame implements ActionListener {
 	JMenu mnTK, mnNQL, mnNDT;
 	JMenuItem itmDMKTK;
@@ -19,11 +72,12 @@ public class AdminPanel extends JFrame implements ActionListener {
 	ArrayList<JPanel> panels=new ArrayList<JPanel>();
 	int cPanel=0;
 
+
 	public AdminPanel() {
 		setTitle("Admin Panel");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 840, 619);
-		
+
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 
@@ -63,7 +117,7 @@ public class AdminPanel extends JFrame implements ActionListener {
 		JMenuItem logout = new JMenuItem("Đăng xuất");
 		mnTK.add(logout);
 		logout.addActionListener(this);
-		
+
 		getContentPane().setLayout(new BorderLayout(0, 0));
 
 		//panels.add(new addModerator());
@@ -73,7 +127,7 @@ public class AdminPanel extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		System.out.println("Selected: " + e.getActionCommand());   
+		System.out.println("Selected: " + e.getActionCommand());
 		if(e.getActionCommand().equals("Đối mật khẩu"))
 		{
 			System.out.println(panels.get(cPanel));
@@ -141,3 +195,4 @@ public class AdminPanel extends JFrame implements ActionListener {
 		}
 	}
 }
+*/
