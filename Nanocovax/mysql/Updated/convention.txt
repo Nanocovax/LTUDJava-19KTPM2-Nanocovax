@@ -1,0 +1,9 @@
+tinhTrang
+0: non-activated;
+1: active;
+2: blocked;
+
+phanQuyen
+0: admin;
+1: moderator;
+2: user;
