@@ -125,7 +125,7 @@ public class Database {
                 JOptionPane.showMessageDialog(null, "Thêm thành công!");
                 return true;
             }
-            
+
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             JOptionPane.showMessageDialog(null, e.getMessage());
@@ -134,6 +134,31 @@ public class Database {
         }
     }
 
+    public static boolean updateNDT(String id, String ten, int sucChua, int dangChua) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "UPDATE noidieutri\n" +
+                    "SET ten = '" + ten + "', sucChua = " + sucChua + ", dangChua =" + dangChua + "\n" +
+                    "WHERE id_ndt = " + id + ";";
+
+            int x = statement.executeUpdate(sql);
+            conn.close();
+            if (x == 0) {
+                JOptionPane.showMessageDialog(null, "Chỉnh sửa thất bại!");
+                return false;
+            } else {
+                JOptionPane.showMessageDialog(null, "Chỉnh sửa thành công!");
+                return true;
+            }
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     public static void main(String args[]) {
     }

@@ -23,17 +23,26 @@ public class NDTManagement extends JFrame {
     private JScrollPane scPanel;
     private JPanel rootPanel;
     private JButton refreshButton;
+    int idxRow;
+    Object id = null, ten = null, sucChua = null, dangChua = null;
 
-    NDTManagement (){
+    NDTManagement() {
         add(this.rootPanel);
         createTable();
-        setSize(1200,600);
+        setSize(1200, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
+
+        ndtTable.setRowSelectionInterval(0, 0);
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                editNDT editNDT = new editNDT();
+                if (idxRow != -1) {
+                    retriveNDT();
+                    editNDT editNDT = new editNDT(id.toString(), ten.toString(), sucChua.toString(), dangChua.toString());
+                } else {
+                    editNDT editNDT = new editNDT();
+                }
             }
         });
         removeButton.addActionListener(new ActionListener() {
@@ -45,7 +54,7 @@ public class NDTManagement extends JFrame {
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                addNDT addND =new addNDT();
+                addNDT addND = new addNDT();
             }
         });
         searchButton.addActionListener(new ActionListener() {
@@ -79,19 +88,31 @@ public class NDTManagement extends JFrame {
             }
         });
     }
-    public JPanel getRootPanel(){
+
+    public void retriveNDT() {
+        idxRow = ndtTable.getSelectedRow();
+        if (idxRow != -1) {
+            id = ndtTable.getValueAt(idxRow, 0);
+            ten = ndtTable.getValueAt(idxRow, 1);
+            sucChua = ndtTable.getValueAt(idxRow, 2);
+            dangChua = ndtTable.getValueAt(idxRow, 3);
+        }
+    }
+
+    public JPanel getRootPanel() {
         return this.rootPanel;
     }
 
 
-    public void createTable(){
+    public void createTable() {
         String[] tbColName = {"ID", "Tên", "Sức chứa", "Đang chứa"};
-        Object[] [] data = {{"01","Bệnh viện dã chiến số 1","900","1000"}};
-        ndtTable.setModel(new DefaultTableModel(data,tbColName));
+        Object[][] data = {{"001", "Bệnh viện dã chiến số 1", "1000", "600"}, {"002", "Bệnh viện dã chiến số 2", "1000", "600"}};
+        ndtTable.setModel(new DefaultTableModel(data, tbColName));
 
     }
-    public static void main(String[] args){
+
+    public static void main(String[] args) {
         NDTManagement ndtManagement = new NDTManagement();
     }
-    
+
 }
