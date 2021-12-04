@@ -156,7 +156,7 @@ CREATE TABLE IF NOT EXISTS `nanocovax`.`nhuyeupham` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
-ALTER TABLE nhuyeupham 
+ALTER TABLE nhuyeupham
 ADD CONSTRAINT check_thoihan CHECK (thoihan >= 0),
 ADD CONSTRAINT check_dongia CHECK (dongia >= 0),
 ADD CONSTRAINT check_gioihan CHECK (gioihan >= 0);
@@ -202,7 +202,7 @@ CREATE TABLE IF NOT EXISTS `nanocovax`.`noidieutri` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
-ALTER TABLE noidieutri 
+ALTER TABLE noidieutri
 ADD CONSTRAINT check_dangchua CHECK (dangchua >= 0),
 ADD CONSTRAINT check_succhua CHECK (dangchua <= succhua);
 
@@ -252,7 +252,7 @@ CREATE TABLE IF NOT EXISTS `nanocovax`.`taikhoan` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
-ALTER TABLE taikhoan 
+ALTER TABLE taikhoan
 ADD CONSTRAINT check_phanquyen CHECK (phanquyen IN ('admin', 'nql', 'nguoidung')),
 ADD CONSTRAINT check_tinhtrang CHECK (tinhtrang IN ('khoa', 'bt'));
 
@@ -297,7 +297,7 @@ CREATE TABLE IF NOT EXISTS `nanocovax`.`lichsunql` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
-ALTER TABLE lichsunql 
+ALTER TABLE lichsunql
 ADD CONSTRAINT check_hoatdong CHECK (hoatdong IN ('them', 'sua', 'xoa'));
 
 
