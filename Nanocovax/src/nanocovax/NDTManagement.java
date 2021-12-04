@@ -31,7 +31,7 @@ public class NDTManagement extends JFrame {
 
     NDTManagement() {
         add(this.rootPanel);
-        createTable();
+        createTable(Database.getListNDT());
         setSize(1200, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
@@ -62,7 +62,7 @@ public class NDTManagement extends JFrame {
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                createTable(Database.searchNDT(searchBar.getText()));
             }
         });
 
@@ -87,7 +87,7 @@ public class NDTManagement extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //làm mới lại table
-                createTable();
+                createTable(Database.getListNDT());
             }
         });
     }
@@ -107,9 +107,9 @@ public class NDTManagement extends JFrame {
     }
 
 
-    public void createTable() {
+    public void createTable(ArrayList<NoiDieuTri> dataList) {
         String[] tbColName = {"ID", "Tên", "Sức chứa", "Đang chứa"};
-        ArrayList<NoiDieuTri> list = Database.getListNDT();
+        ArrayList<NoiDieuTri> list  = dataList;
         String data[][] = new String[list.size()][4];
         for(int i = 0; i < list.size(); i++){
             NumberFormat nf = new DecimalFormat("000");

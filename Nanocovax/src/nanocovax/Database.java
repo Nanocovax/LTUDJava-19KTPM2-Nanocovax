@@ -86,6 +86,7 @@ public class Database {
         return result;
     }
 
+    /*---------------NOI DIEU TRI---------------------*/
     public static int countNDT() {
         Connection conn = DBConnection();
         int id = -1;
@@ -160,6 +161,28 @@ public class Database {
     public static ArrayList<NoiDieuTri> getListNDT() {
         ArrayList<NoiDieuTri> list = new ArrayList<>();
         String sql = "select * from noidieutri";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                NoiDieuTri s = new NoiDieuTri();
+                s.setId(rs.getInt("id_ndt"));
+                s.setTen(rs.getString("ten"));
+                s.setSucChua(rs.getInt("sucChua"));
+                s.setDangChua(rs.getInt("dangChua"));
+
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static ArrayList<NoiDieuTri> searchNDT(String ten) {
+        ArrayList<NoiDieuTri> list = new ArrayList<>();
+        String sql = "select * from noidieutri where ten LIKE '%" + ten + "%'";
         Connection conn = DBConnection();
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
