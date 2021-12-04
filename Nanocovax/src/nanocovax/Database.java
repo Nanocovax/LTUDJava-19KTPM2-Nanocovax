@@ -89,20 +89,32 @@ public class Database {
         return result;
     }
 
-    public static boolean createNDT(String ten, int sucChua, int dangChua) {
+    public static int countNDT() {
         Connection conn = DBConnection();
+        int id = -1;
         try {
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery("select count(*) from noidieutri");
-            int id = -1;
+
             if (rs.next()) {
                 id = rs.getInt(1) + 1;
             }
 
-            NumberFormat nf = new DecimalFormat("000");
-            String formatID = nf.format(id);
+            conn.close();
 
-            String sql = "insert into noidieutri values(\"" + formatID + "\", \"" + ten + "\", " + sucChua + ", " + dangChua + ");";
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+        }
+        return id;
+    }
+
+    public static boolean createNDT(String id, String ten, int sucChua, int dangChua) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "insert into noidieutri values(\"" + id + "\", \"" + ten + "\", " + sucChua + ", " + dangChua + ");";
 
             int x = statement.executeUpdate(sql);
             conn.close();
@@ -113,8 +125,7 @@ public class Database {
                 JOptionPane.showMessageDialog(null, "Thêm thành công!");
                 return true;
             }
-
-
+            
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             JOptionPane.showMessageDialog(null, e.getMessage());
