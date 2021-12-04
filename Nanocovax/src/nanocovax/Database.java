@@ -1,12 +1,9 @@
 package nanocovax;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 public class Database {
@@ -158,6 +155,28 @@ public class Database {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static ArrayList<NoiDieuTri> getListNDT() {
+        ArrayList<NoiDieuTri> list = new ArrayList<>();
+        String sql = "select * from noidieutri";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                NoiDieuTri s = new NoiDieuTri();
+                s.setId(rs.getInt("id_ndt"));
+                s.setTen(rs.getString("ten"));
+                s.setSucChua(rs.getInt("sucChua"));
+                s.setDangChua(rs.getInt("dangChua"));
+
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
     public static void main(String args[]) {

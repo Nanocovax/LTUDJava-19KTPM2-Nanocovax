@@ -6,6 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.ArrayList;
 
 public class NDTManagement extends JFrame {
     private JPanel menuPanel;
@@ -85,6 +88,7 @@ public class NDTManagement extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //làm mới lại table
+                createTable();
             }
         });
     }
@@ -106,7 +110,16 @@ public class NDTManagement extends JFrame {
 
     public void createTable() {
         String[] tbColName = {"ID", "Tên", "Sức chứa", "Đang chứa"};
-        Object[][] data = {{"001", "Bệnh viện dã chiến số 1", "1000", "600"}, {"002", "Bệnh viện dã chiến số 2", "1000", "600"}};
+        ArrayList<NoiDieuTri> list = Database.getListNDT();
+        String data[][] = new String[list.size()][4];
+        for(int i = 0; i < list.size(); i++){
+            NumberFormat nf = new DecimalFormat("000");
+            data[i][0] = nf.format(list.get(i).getId());
+            data[i][1] = list.get(i).getTen();
+            data[i][2] = String.valueOf(list.get(i).getSucChua());
+            data[i][3] = String.valueOf(list.get(i).getDangChua());
+        }
+
         ndtTable.setModel(new DefaultTableModel(data, tbColName));
 
     }
