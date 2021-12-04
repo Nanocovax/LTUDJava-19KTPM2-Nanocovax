@@ -53,7 +53,7 @@ public class NDTManagement extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 //check xem user chọn 1 row trên table chưa rồi thực hiện xóa
                 retriveNDT();
-                int dialogResult = JOptionPane.showConfirmDialog(null, "Bạn muốn xóa " + ten.toString() + "?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+                int dialogResult = JOptionPane.showConfirmDialog(null, "Delete " + ten.toString() + "?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     Database.deleteNDT(id.toString());
                 }
