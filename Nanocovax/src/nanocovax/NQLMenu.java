@@ -2,6 +2,9 @@ package nanocovax;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
 
 public class NQLMenu extends JFrame{
     private JPanel menuPanel;
@@ -24,15 +27,53 @@ public class NQLMenu extends JFrame{
     private JPanel managPanel;
 
     NQLMenu(){
-        
+
         add(this.rootPanel);
         createTable();
+
         setSize(1200,600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
+        sortOption.setSelectedIndex(0);
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        refreshButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        detailButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        editButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        removeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
     }
     public void createTable(){
-        String[] tbColName = {"ID", "Name","Birthdate", "Address", "Status", "Hospital"};
+        String[] tbColName = {"ID", "Name","Date of Birth", "Address", "Status", "Hospital"};
         Object[] [] data = {{"01","Nguyễn Văn A","01/01/1990","Trái Đất","F0","001"}};
         userTable.setModel(new DefaultTableModel(data,tbColName));
 

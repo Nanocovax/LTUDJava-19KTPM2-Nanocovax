@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="rootPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="1018" height="669"/>
+      <xy x="20" y="20" width="1046" height="669"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -38,7 +38,13 @@
               <grid row="1" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <model/>
+              <model>
+                <item value=""/>
+                <item value="ID"/>
+                <item value="Name"/>
+                <item value="Date of Birth"/>
+                <item value="Status"/>
+              </model>
             </properties>
           </component>
           <component id="8abd1" class="javax.swing.JButton" binding="removeButton" default-binding="true">
@@ -67,10 +73,10 @@
           </component>
           <component id="cb499" class="javax.swing.JLabel" binding="lbSort">
             <constraints>
-              <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Sort by"/>
+              <text value="Sort by:"/>
             </properties>
           </component>
           <component id="31583" class="javax.swing.JTextField" binding="searchInput">
