@@ -108,19 +108,19 @@ public class Database {
         return id;
     }
 
-    public static boolean createNDT(String id, String ten, int sucChua, int dangChua) {
+    public static boolean createNDT( String ten, int sucChua, int dangChua) {
         Connection conn = DBConnection();
         try {
             Statement statement = conn.createStatement();
-            String sql = "insert into noidieutri values(\"" + id + "\", \"" + ten + "\", " + sucChua + ", " + dangChua + ");";
+            String sql = "insert into noidieutri(ten, sucChua, dangChua) values(\"" + ten + "\", " + sucChua + ", " + dangChua + ");";
 
             int x = statement.executeUpdate(sql);
             conn.close();
             if (x == 0) {
-                JOptionPane.showMessageDialog(null, "Đã tồn tại");
+                JOptionPane.showMessageDialog(null, "Already exists");
                 return false;
             } else {
-                JOptionPane.showMessageDialog(null, "Thêm thành công!");
+                JOptionPane.showMessageDialog(null, "Add successfully!");
                 return true;
             }
 
@@ -143,10 +143,10 @@ public class Database {
             int x = statement.executeUpdate(sql);
             conn.close();
             if (x == 0) {
-                JOptionPane.showMessageDialog(null, "Chỉnh sửa thất bại!");
+                JOptionPane.showMessageDialog(null, "Update fail!");
                 return false;
             } else {
-                JOptionPane.showMessageDialog(null, "Chỉnh sửa thành công!");
+                JOptionPane.showMessageDialog(null, "Update successfully!");
                 return true;
             }
 
@@ -211,10 +211,10 @@ public class Database {
             int x = statement.executeUpdate(sql);
             conn.close();
             if (x == 0) {
-                JOptionPane.showMessageDialog(null, "Xóa thất bại!");
+                JOptionPane.showMessageDialog(null, "Delete fail!");
                 return false;
             } else {
-                JOptionPane.showMessageDialog(null, "Xóa thành công!");
+                JOptionPane.showMessageDialog(null, "Delete successfully!");
                 return true;
             }
 

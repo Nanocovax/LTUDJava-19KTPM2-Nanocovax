@@ -114,7 +114,7 @@ public class NDTManagement extends JFrame {
 
 
     public void createTable(ArrayList<NoiDieuTri> dataList) {
-        String[] tbColName = {"ID", "Tên", "Sức chứa", "Đang chứa"};
+        String[] tbColName = {"ID", "Name", "Capacity", "Occupied"};
         ArrayList<NoiDieuTri> list = dataList;
         String data[][] = new String[list.size()][4];
         for (int i = 0; i < list.size(); i++) {
@@ -126,7 +126,8 @@ public class NDTManagement extends JFrame {
         }
 
         ndtTable.setModel(new DefaultTableModel(data, tbColName));
-        ndtTable.setRowSelectionInterval(0, 0);
+        if (ndtTable.getRowCount() > 0)
+            ndtTable.setRowSelectionInterval(0, 0);
     }
 
     public static void main(String[] args) {
