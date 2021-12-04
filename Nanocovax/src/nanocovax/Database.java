@@ -202,6 +202,30 @@ public class Database {
         return list;
     }
 
+    public static boolean deleteNDT(String id) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "delete from noidieutri where id_ndt = " + id + ";";
+
+            int x = statement.executeUpdate(sql);
+            conn.close();
+            if (x == 0) {
+                JOptionPane.showMessageDialog(null, "Xóa thất bại!");
+                return false;
+            } else {
+                JOptionPane.showMessageDialog(null, "Xóa thành công!");
+                return true;
+            }
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public static void main(String args[]) {
     }
 }

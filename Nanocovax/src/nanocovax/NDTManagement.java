@@ -2,6 +2,7 @@ package nanocovax;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.xml.crypto.Data;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -51,6 +52,11 @@ public class NDTManagement extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //check xem user chọn 1 row trên table chưa rồi thực hiện xóa
+                retriveNDT();
+                int dialogResult = JOptionPane.showConfirmDialog(null, "Bạn muốn xóa " + ten.toString() + "?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+                if (dialogResult == JOptionPane.YES_OPTION) {
+                    Database.deleteNDT(id.toString());
+                }
             }
         });
         addButton.addActionListener(new ActionListener() {
@@ -109,9 +115,9 @@ public class NDTManagement extends JFrame {
 
     public void createTable(ArrayList<NoiDieuTri> dataList) {
         String[] tbColName = {"ID", "Tên", "Sức chứa", "Đang chứa"};
-        ArrayList<NoiDieuTri> list  = dataList;
+        ArrayList<NoiDieuTri> list = dataList;
         String data[][] = new String[list.size()][4];
-        for(int i = 0; i < list.size(); i++){
+        for (int i = 0; i < list.size(); i++) {
             NumberFormat nf = new DecimalFormat("000");
             data[i][0] = nf.format(list.get(i).getId());
             data[i][1] = list.get(i).getTen();
