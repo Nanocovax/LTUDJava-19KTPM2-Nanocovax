@@ -57,7 +57,7 @@ public class editNDT extends JFrame {
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Database.updateNDT(id, ten, Integer.parseInt(sucChua), Integer.parseInt(dangChua));
+                Database.updateNDT(idInput.getText(), nameInput.getText(), Integer.parseInt(capacityInput.getText()), Integer.parseInt(curInput.getText()));
             }
         });
         cancelButton.addActionListener(new ActionListener() {

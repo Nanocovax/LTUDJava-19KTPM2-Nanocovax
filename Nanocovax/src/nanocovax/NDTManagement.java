@@ -36,7 +36,6 @@ public class NDTManagement extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 
-        ndtTable.setRowSelectionInterval(0, 0);
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -121,7 +120,7 @@ public class NDTManagement extends JFrame {
         }
 
         ndtTable.setModel(new DefaultTableModel(data, tbColName));
-
+        ndtTable.setRowSelectionInterval(0, 0);
     }
 
     public static void main(String[] args) {
