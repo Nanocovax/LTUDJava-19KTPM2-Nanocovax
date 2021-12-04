@@ -17,9 +17,10 @@ public class editNDT extends JFrame {
     private JLabel capacityLabel;
     private JLabel nameLabel;
     private JLabel curLabel;
-    editNDT(){
+
+    editNDT() {
         add(this.rootPanel);
-        setSize(530,220);
+        setSize(530, 220);
         setResizable(false);
         setVisible(true);
 
@@ -29,6 +30,34 @@ public class editNDT extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
+            }
+        });
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
+    }
+
+    editNDT(String id, String ten, String sucChua, String dangChua) {
+        idInput.setText(id);
+        idInput.setEditable(false);
+        nameInput.setText(ten);
+        capacityInput.setText(sucChua);
+        curInput.setText(dangChua);
+
+        add(this.rootPanel);
+        setSize(530, 220);
+        setResizable(false);
+        setVisible(true);
+
+        // set text cho các text field
+
+        editButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Database.updateNDT(idInput.getText(), nameInput.getText(), Integer.parseInt(capacityInput.getText()), Integer.parseInt(curInput.getText()));
             }
         });
         cancelButton.addActionListener(new ActionListener() {
