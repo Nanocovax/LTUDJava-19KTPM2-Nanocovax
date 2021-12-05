@@ -20,7 +20,7 @@ public class activeHistory extends JFrame {
         setVisible(true);
     }
     void createTable(){
-        String[] tbColName = {"ID", "Hoạt động", "Thời gian"};
+        String[] tbColName = {"ID", "Activity", "Time"};
         Object[] [] data = {{"01","Thêm người dùng","12/02/2021"}};
         hisTable.setModel(new DefaultTableModel(data,tbColName));
     }

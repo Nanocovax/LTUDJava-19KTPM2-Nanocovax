@@ -53,7 +53,7 @@ public class Signup extends JFrame {
         setContentPane(contentPane);
         contentPane.setLayout(null);
 
-        JLabel lblUserName = new JLabel("Tên đăng nhập");
+        JLabel lblUserName = new JLabel("Username");
         lblUserName.setBounds(119, 100, 91, 14);
         contentPane.add(lblUserName);
 
@@ -62,7 +62,7 @@ public class Signup extends JFrame {
         contentPane.add(usernameField);
         usernameField.setColumns(10);
 
-        JLabel lblPassword = new JLabel("Mật khẩu\r\n");
+        JLabel lblPassword = new JLabel("Password\r\n");
         lblPassword.setBounds(119, 135, 91, 14);
         contentPane.add(lblPassword);
 
@@ -78,7 +78,7 @@ public class Signup extends JFrame {
             }
         });
 
-        btnLogin = new JButton("Đăng ký");
+        btnLogin = new JButton("Sign Up");
 
         btnLogin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {

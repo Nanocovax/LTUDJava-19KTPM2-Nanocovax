@@ -13,8 +13,8 @@
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="5" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <font name="Tahoma" size="18" style="0"/>
-          <text value="CMND/CCCD:"/>
+          <font name="Tahoma" size="12" style="0"/>
+          <text value="No. ID Card"/>
         </properties>
       </component>
       <component id="5db57" class="javax.swing.JTextField" binding="idInput">
@@ -40,8 +40,8 @@
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="5" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <font name="Tahoma" size="18" style="0"/>
-          <text value="Password:"/>
+          <font name="Tahoma" size="12" style="0"/>
+          <text value="Password"/>
         </properties>
       </component>
       <component id="66d4e" class="javax.swing.JPasswordField" binding="passwordInput">
@@ -62,7 +62,7 @@
         </constraints>
         <properties>
           <font name="Tahoma" size="22" style="1"/>
-          <text value="Thêm Người Quản Lí"/>
+          <text value="Add New Moderator"/>
         </properties>
       </component>
       <component id="e3bf9" class="javax.swing.JButton" binding="displayPwButton">
@@ -70,7 +70,7 @@
           <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Xem Password"/>
+          <text value="Show"/>
         </properties>
       </component>
       <component id="51c7" class="javax.swing.JButton" binding="addButton">
@@ -80,7 +80,7 @@
           </grid>
         </constraints>
         <properties>
-          <text value="Thêm"/>
+          <text value="Add"/>
         </properties>
       </component>
       <component id="3aace" class="javax.swing.JButton" binding="cancelButton" default-binding="true">

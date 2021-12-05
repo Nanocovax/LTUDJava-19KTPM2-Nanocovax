@@ -67,7 +67,7 @@
             <properties>
               <font name="Verdana" size="20" style="1"/>
               <foreground color="-1"/>
-              <text value="Quản lí NQL"/>
+              <text value="Moderators"/>
               <verticalAlignment value="0"/>
             </properties>
           </component>
@@ -80,7 +80,7 @@
             <properties>
               <font name="Verdana" size="20" style="1"/>
               <foreground color="-1"/>
-              <text value="Hospital Management"/>
+              <text value="Hospitals"/>
             </properties>
           </component>
         </children>

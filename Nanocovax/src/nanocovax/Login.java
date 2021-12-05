@@ -28,12 +28,6 @@ public class Login extends JFrame {
 	private JLabel label;
 
 	public static void main(String[] args) {
-//		if(!getMac().equals("90-48-9A-AC-21-17"))
-	//	{
-		//	JOptionPane.showMessageDialog(null,"Unknown Computer, Can not run!");
-			//return;
-//		}
-		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -60,7 +54,7 @@ public class Login extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		JLabel lblUserName = new JLabel("Tên đăng nhập");
+		JLabel lblUserName = new JLabel("Username");
 		lblUserName.setBounds(119, 100, 91, 14);
 		contentPane.add(lblUserName);
 		
@@ -69,7 +63,7 @@ public class Login extends JFrame {
 		contentPane.add(usernameField);
 		usernameField.setColumns(10);
 		
-		JLabel lblPassword = new JLabel("Mật khẩu\r\n");
+		JLabel lblPassword = new JLabel("Password\r\n");
 		lblPassword.setBounds(119, 135, 91, 14);
 		contentPane.add(lblPassword);
 		
@@ -85,7 +79,7 @@ public class Login extends JFrame {
 				}
 		});
 		
-		btnLogin = new JButton("Đăng nhập");
+		btnLogin = new JButton("Sign In");
 	
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -100,7 +94,7 @@ public class Login extends JFrame {
 					error.setText("");
 					if(Database.varifyLogin(username,password) == 0) {
 						error.setText("");
-						AdminPanel p = new AdminPanel();
+						AdminMenu p = new AdminMenu();
 						p.setVisible(true);
 					}
 					else {

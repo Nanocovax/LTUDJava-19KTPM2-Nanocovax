@@ -14,7 +14,7 @@
         </constraints>
         <properties>
           <font name="Tahoma" size="22" style="1"/>
-          <text value="Lịch sử hoạt động"/>
+          <text value="History"/>
         </properties>
       </component>
       <scrollpane id="10d38" binding="scPanel">
@@ -36,9 +36,9 @@
         </constraints>
         <properties>
           <model>
-            <item value="Người dùng"/>
-            <item value="Nhu yếu phẩm"/>
-            <item value="Nơi điều trị"/>
+            <item value="User"/>
+            <item value="Food Package"/>
+            <item value="Hospital"/>
           </model>
           <toolTipText value=""/>
         </properties>
@@ -48,7 +48,7 @@
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Danh mục:"/>
+          <text value="Option"/>
         </properties>
       </component>
     </children>
