@@ -25,7 +25,12 @@ public class AddNQL extends JFrame {
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String id = idInput.getText().toString();
+                String password = passwordInput.getText().toString();
+                Database.createNQL(id, password);
 
+                idInput.setText("");
+                passwordInput.setText("");
             }
         });
 
