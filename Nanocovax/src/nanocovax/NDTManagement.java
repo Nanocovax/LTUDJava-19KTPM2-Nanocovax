@@ -78,6 +78,15 @@ public class NDTManagement extends JFrame {
                 super.mouseClicked(e);
                 //hỏi user are u sure?
                 //rồi quay về màn hình log in
+
+                int dialogResult = JOptionPane.showConfirmDialog(null, "Would you like to log out?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (dialogResult == JOptionPane.YES_OPTION) {
+                    setVisible(false);
+                    dispose();
+
+                    Login frame = new Login();
+                    frame.setVisible(true);
+                }
             }
         });
         lbNQL.addMouseListener(new MouseAdapter() {

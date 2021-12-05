@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 public class Database {
     private static String url = "jdbc:mysql://localhost/Nanocovax";
     private static String username = "root";
-    private static String password = "Dra2gon3storm5&";
+    private static String password = "";
 
     public static Connection DBConnection() {
         Connection conn = null;
@@ -389,6 +389,77 @@ public class Database {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static ArrayList<UserBranchActivity> getUserBranchActivity(String idNQL) {
+        ArrayList<UserBranchActivity> list = new ArrayList<>();
+        String sql = "select nd.id, nd.hoten, ls.hoatdong, ls.thoigian from lichsunql as ls join ttnguoidung nd on ls.id=nd.id\n" +
+                    "where ls.id_nql='" + idNQL + "' and ls.id!=''\n" +
+                    "order by ls.thoigian desc;";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                UserBranchActivity s = new UserBranchActivity();
+                s.setUserId(rs.getString("id"));
+                s.setUserName(rs.getString("hoten"));
+                s.setActivity(rs.getString("hoatdong"));
+                s.setDate(rs.getDate("thoigian"));
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static ArrayList<FoodPackageBranchActivity> getFPBranchActivity(String idNQL) {
+        ArrayList<FoodPackageBranchActivity> list = new ArrayList<>();
+        String sql = "select nyp.id_nyp, nyp.tengoi, ls.hoatdong, ls.thoigian from lichsunql as ls\n" +
+                "join nhuyeupham nyp on ls.id_nyp=nyp.id_nyp\n" +
+                "where ls.id_nql='" + idNQL + "' and ls.id!=''\n" +
+                "order by ls.thoigian desc;";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                FoodPackageBranchActivity s = new FoodPackageBranchActivity();
+                s.setFPId(rs.getString("id_nyp"));
+                s.setFPName(rs.getString("tengoi"));
+                s.setActivity(rs.getString("hoatdong"));
+                s.setDate(rs.getDate("thoigian"));
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static ArrayList<HospitalBranchActivity> getHospitalBranchActivity(String idNQL) {
+        ArrayList<HospitalBranchActivity> list = new ArrayList<>();
+        String sql = "select ndt.id_ndt, ndt.ten, ls.hoatdong, ls.thoigian from lichsunql as ls\n" +
+                "join noidieutri ndt on ls.id_ndt=ndt.id_ndt\n" +
+                "where ls.id_nql='" + idNQL + "' and ls.id!=''\n" +
+                "order by ls.thoigian desc;";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                HospitalBranchActivity s = new HospitalBranchActivity();
+                s.setHospitalId(rs.getString("id_ndt"));
+                s.setHospitalName(rs.getString("ten"));
+                s.setActivity(rs.getString("hoatdong"));
+                s.setDate(rs.getDate("thoigian"));
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
     public static void main(String args[]) {

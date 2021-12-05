@@ -96,6 +96,9 @@ public class Signup extends JFrame {
 
                 setVisible(false);
                 dispose();
+
+                Login frame = new Login();
+                frame.setVisible(true);
             }
         });
         btnLogin.setBounds(247, 185, 115, 23);

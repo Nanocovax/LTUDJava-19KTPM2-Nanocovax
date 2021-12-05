@@ -102,6 +102,8 @@ public class Login extends JFrame {
 					}
 					// other cases
 				}
+				setVisible(false);
+				dispose();
 			}
 		});
 		btnLogin.setBounds(247, 185, 115, 23);

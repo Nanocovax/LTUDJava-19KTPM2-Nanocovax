@@ -48,7 +48,8 @@ public class AdminMenu extends JFrame {
         historyButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                activeHistory activeHistory= new activeHistory();
+                retriveNQL();
+                activeHistory activeHistory= new activeHistory(id.toString());
             }
         });
         removeButton.addActionListener(new ActionListener() {
@@ -104,6 +105,19 @@ public class AdminMenu extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
+                /*setVisible(false);
+                dispose();
+                Login frame = new Login();
+                frame.setVisible(true);*/
+
+                int dialogResult = JOptionPane.showConfirmDialog(null, "Would you like to log out?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (dialogResult == JOptionPane.YES_OPTION) {
+                    setVisible(false);
+                    dispose();
+
+                    Login frame = new Login();
+                    frame.setVisible(true);
+                }
             }
         });
     }
