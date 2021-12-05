@@ -35,7 +35,7 @@ public class NQLMenu extends JFrame{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         sortOption.setSelectedIndex(0);
-        //table duoc lay vao mac dinh sap xep theo ID
+        //table được lấy ban đầu mặc định được sắp xếp theo ID chiều tăng dần
 
         addButton.addActionListener(new ActionListener() {
             @Override
