@@ -35,6 +35,8 @@ public class NQLMenu extends JFrame{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         sortOption.setSelectedIndex(0);
+        //table duoc lay vao mac dinh sap xep theo ID
+
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -56,7 +58,7 @@ public class NQLMenu extends JFrame{
         detailButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                userDetail u = new userDetail();
             }
         });
         editButton.addActionListener(new ActionListener() {
@@ -66,6 +68,12 @@ public class NQLMenu extends JFrame{
             }
         });
         removeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        sortOption.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
