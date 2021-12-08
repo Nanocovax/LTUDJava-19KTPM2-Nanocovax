@@ -87,6 +87,24 @@ public class NQLMenu extends JFrame{
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 NecManagement n = new NecManagement();
+                setVisible(false);
+                dispose();
+            }
+        });
+
+        lbStatistic.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                Statistic statistic = new Statistic();
+                setVisible(false);
+                dispose();
+            }
+        });
+        lbLogout.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
             }
         });
     }

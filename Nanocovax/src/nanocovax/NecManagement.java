@@ -82,6 +82,23 @@ public class NecManagement extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 NQLMenu d = new NQLMenu();
+                setVisible(false);
+                dispose();
+            }
+        });
+        lbStatistic.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                Statistic statistic = new Statistic();
+                setVisible(false);
+                dispose();
+            }
+        });
+        lbLogout.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
             }
         });
     }
