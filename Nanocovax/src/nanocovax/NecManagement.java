@@ -4,6 +4,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class NecManagement extends JFrame {
     private JPanel menuPanel;
@@ -48,7 +50,7 @@ public class NecManagement extends JFrame {
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                addNec a = new addNec();
             }
         });
         searchButton.addActionListener(new ActionListener() {
@@ -66,13 +68,20 @@ public class NecManagement extends JFrame {
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                editNec editNec = new editNec();
             }
         });
         removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
+            }
+        });
+        lbUser.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                NQLMenu d = new NQLMenu();
             }
         });
     }

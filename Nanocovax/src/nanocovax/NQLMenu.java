@@ -2,9 +2,7 @@ package nanocovax;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.text.ParseException;
 
 public class NQLMenu extends JFrame{
@@ -82,6 +80,13 @@ public class NQLMenu extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 //sắp xếp bảng theo option được select
+            }
+        });
+        lbNYP.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                NecManagement n = new NecManagement();
             }
         });
     }
