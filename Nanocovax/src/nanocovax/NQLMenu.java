@@ -81,7 +81,7 @@ public class NQLMenu extends JFrame{
         sortOption.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                //sắp xếp bảng theo option được select
             }
         });
     }
