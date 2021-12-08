@@ -40,7 +40,7 @@ public class NQLMenu extends JFrame{
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                addUser a = new addUser();
             }
         });
         searchButton.addActionListener(new ActionListener() {
