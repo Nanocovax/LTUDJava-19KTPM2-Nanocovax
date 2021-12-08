@@ -5,6 +5,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
+import java.text.ParseException;
 
 public class NQLMenu extends JFrame{
     private JPanel menuPanel;
@@ -64,7 +65,11 @@ public class NQLMenu extends JFrame{
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                try {
+                    editUser editUser = new editUser();
+                } catch (ParseException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
         removeButton.addActionListener(new ActionListener() {

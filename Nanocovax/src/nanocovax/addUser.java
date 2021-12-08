@@ -25,7 +25,6 @@ public class addUser extends JFrame {
     private JLabel hosLabel;
     private JLabel relateLabel;
     private JButton addButton;
-    private JTextField houseNo;
     private JComboBox cbbWard;
     private JComboBox cbbDistrict;
     private JComboBox cbbCityPro;
@@ -42,8 +41,9 @@ public class addUser extends JFrame {
         calPanel.add(jDateChooser);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(700,300);
+        setResizable(false);
         setVisible(true);
-        cbbWard.addActionListener(new ActionListener() {
+        cbbCityPro.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // lấy item cho cbbDistrict dựa vào cbbCityPro
@@ -57,6 +57,7 @@ public class addUser extends JFrame {
                 // lấy item cho cbbWard dựa vào cbbDistrict
             }
         });
+
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -77,6 +78,7 @@ public class addUser extends JFrame {
         cbbDistrict.addItem("Quận/huyện");
         cbbWard.addItem("Phường/xã");
         //lấy danh sách tỉnh thành phố add vào cbb tỉnh thành phố
+        // có thể set mặc định là item đầu tiên
     }
     public static void main(String[] args){
         addUser a = new addUser();
