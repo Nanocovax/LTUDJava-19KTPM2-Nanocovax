@@ -5,6 +5,8 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Database {
     private static String url = "jdbc:mysql://localhost/Nanocovax";
@@ -256,10 +258,17 @@ public class Database {
         Connection conn = DBConnection();
         try {
             Statement statement = conn.createStatement();
-            password = Encryption.encryptMD5(password);
-            String sql = "UPDATE taikhoan\n" +
-                    "SET password = '" + password + "', tinhtrang ='" + status + "'\n" +
-                    "WHERE id = '" + id + "' and phanquyen = 'nql';";
+            String sql;
+            if (password.isEmpty()) {
+                sql = "UPDATE taikhoan\n" +
+                        "SET tinhtrang ='" + status + "'\n" +
+                        "WHERE id = '" + id + "' and phanquyen = 'nql';";
+            } else {
+                password = Encryption.encryptMD5(password);
+                sql = "UPDATE taikhoan\n" +
+                        "SET password = '" + password + "', tinhtrang ='" + status + "'\n" +
+                        "WHERE id = '" + id + "' and phanquyen = 'nql';";
+            }
 
             int x = statement.executeUpdate(sql);
             conn.close();
@@ -460,6 +469,323 @@ public class Database {
             e.printStackTrace();
         }
         return list;
+    }
+
+    /*---------------NGUOI QUAN Ly---------------------*/
+
+    public static ArrayList<CityProvince> getCityProvinceList() {
+        ArrayList<CityProvince> list = new ArrayList<>();
+        String sql = "select matp, ten\n" +
+                "from tinhthanhpho;\n";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                CityProvince s = new CityProvince();
+                s.setId(rs.getString("matp"));
+                s.setName(rs.getString("ten"));
+
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static ArrayList<District> getDistrictList(String matp) {
+        ArrayList<District> list = new ArrayList<>();
+        String sql = "select maqh, ten\n" +
+                "from quanhuyen\n" +
+                "where matp = '" + matp + "';\n";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                District s = new District();
+                s.setId(rs.getString("maqh"));
+                s.setName(rs.getString("ten"));
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static ArrayList<Ward> getWardList(String maqh) {
+        ArrayList<Ward> list = new ArrayList<>();
+        String sql = "select maxp, ten\n" +
+                "from xaphuong\n" +
+                "where maqh = '" + maqh + "';\n";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Ward s = new Ward();
+                s.setId(rs.getString("maxp"));
+                s.setName(rs.getString("ten"));
+
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static boolean createUser(String id, String name, String doB, String matp, String maqh, String maxp, String status, String hospital, String idNLQ) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            String password = Encryption.encryptMD5(id);
+            String sql = "insert into taikhoan values('" + id + "', '" + password + "', 'nguoidung', 'bt');";
+
+            int result = statement.executeUpdate(sql);
+            if (result == 0) {
+                JOptionPane.showMessageDialog(null, "Already existed");
+                conn.close();
+                return false;
+            } else {
+                sql = "insert into ttnguoidung(id, hoten, ngaysinh, tinhtp, quanhuyen, xaphuong, trangthai, ndt) values('" + id + "', '" + name + "', '" + doB + "', '" + matp + "', '" + maqh + "', '" + maxp + "', '" + status + "', '" + hospital + "');";
+                result = statement.executeUpdate(sql);
+                JOptionPane.showMessageDialog(null, "Added new user successfully!");
+
+                if (!idNLQ.isEmpty()) {
+                    sql = "insert into lienquan values('" + id + "', '" + idNLQ + "');";
+                    result = statement.executeUpdate(sql);
+                }
+
+                conn.close();
+                return true;
+            }
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static ArrayList<User> getListUser() {
+        ArrayList<User> list = new ArrayList<>();
+        // String sql = "select id, hoten, ngaysinh, trangthai, ten from ttnguoidung join noidieutri on ndt = id_ndt;";
+        String sql = "select * from ttnguoidung\n"+
+                "join noidieutri ndt on ndt = ndt.id_ndt\n"+
+                "join tinhthanhpho ttp on tinhtp = ttp.matp\n"+
+                "join quanhuyen qh on quanhuyen = qh.maqh\n"+
+                "join xaphuong xp on xaphuong = xp.maxp;";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User s = new User();
+                s.setId(rs.getString("id"));
+                s.setName(rs.getString("hoten"));
+
+                String d = rs.getString("ngaysinh");
+                SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                Date date = oldFormat.parse(d);
+                SimpleDateFormat newFormat = new SimpleDateFormat("dd/MM/yyyy");
+                String output = newFormat.format(date);
+                s.setDoB(output);
+
+                CityProvince cp = new CityProvince();
+                cp.setId(rs.getString("ttp.matp"));
+                cp.setName(rs.getString("ttp.ten"));
+
+                District district = new District();
+                district.setId(rs.getString("qh.maqh"));
+                district.setName(rs.getString("qh.ten"));
+
+                Ward w = new Ward();
+                w.setId(rs.getString("xp.maxp"));
+                w.setName(rs.getString("xp.ten"));
+
+                Address address = new Address();
+                address.setCityProvince(cp);
+                address.setDistrict(district);
+                address.setWard(w);
+                s.setAddress(address);
+
+                s.setStatus(rs.getString("trangthai"));
+
+                Hospital hospital = new Hospital();
+                hospital.setId(rs.getString("ndt.id_ndt"));
+                hospital.setName(rs.getString("ndt.ten"));
+                hospital.setCapacity(rs.getInt("ndt.succhua"));
+                hospital.setOccupancy(rs.getInt("ndt.dangchua"));
+                s.setHospital(hospital);
+                //s.setHospital(rs.getString("ten"));
+
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static ArrayList<User> searchUser(String id) {
+        ArrayList<User> list = new ArrayList<>();
+        String sql = "select * from ttnguoidung\n"+
+                "join noidieutri ndt on ndt = ndt.id_ndt\n"+
+                "join tinhthanhpho ttp on tinhtp = ttp.matp\n"+
+                "join quanhuyen qh on quanhuyen = qh.maqh\n"+
+                "join xaphuong xp on xaphuong = xp.maxp\n" +
+                "where id = '" + id + "';";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User s = new User();
+                s.setId(rs.getString("id"));
+                s.setName(rs.getString("hoten"));
+
+                String d = rs.getString("ngaysinh");
+                SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                Date date = oldFormat.parse(d);
+                SimpleDateFormat newFormat = new SimpleDateFormat("dd/MM/yyyy");
+                String output = newFormat.format(date);
+                s.setDoB(output);
+
+                CityProvince cp = new CityProvince();
+                cp.setId(rs.getString("ttp.matp"));
+                cp.setName(rs.getString("ttp.ten"));
+
+                District district = new District();
+                district.setId(rs.getString("qh.maqh"));
+                district.setName(rs.getString("qh.ten"));
+
+                Ward w = new Ward();
+                w.setId(rs.getString("xp.maxp"));
+                w.setName(rs.getString("xp.ten"));
+
+                Address address = new Address();
+                address.setCityProvince(cp);
+                address.setDistrict(district);
+                address.setWard(w);
+                s.setAddress(address);
+
+                s.setStatus(rs.getString("trangthai"));
+
+                //s.setHospital(rs.getString("ten"));
+                Hospital hospital = new Hospital();
+                hospital.setId(rs.getString("ndt.id_ndt"));
+                hospital.setName(rs.getString("ndt.ten"));
+                hospital.setCapacity(rs.getInt("ndt.succhua"));
+                hospital.setOccupancy(rs.getInt("ndt.dangchua"));
+                s.setHospital(hospital);
+
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static boolean deleteUser(String id) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "delete from lienquan\n" +
+                    "where id = '" + id + "' or id_lienquan = '" + id + "';";
+            int x = statement.executeUpdate(sql);
+
+            sql = "delete from ttnguoidung\n" +
+                    "where id = '" + id + "';";
+            x = statement.executeUpdate(sql);
+
+            if (x == 0) {
+                JOptionPane.showMessageDialog(null, "Deleting fails!");
+                conn.close();
+                return false;
+            } else {
+                JOptionPane.showMessageDialog(null, "Deleted successfully!");
+                conn.close();
+                return true;
+            }
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean updateUser(String id, String name, String doB, String matp, String maqh, String maxp, String status, String hospital, String idNLQ) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "UPDATE ttnguoidung\n" +
+                        "SET hoten = '" + name + "', ngaysinh = '" + doB + "', tinhtp = '" + matp + "', quanhuyen = '" + maqh + "', xaphuong = '" + maxp + "', trangthai = '" + status + "', ndt = '" + hospital + "'\n" +
+                        "WHERE id = '" + id + "';";
+
+            int x = statement.executeUpdate(sql);
+            if (x == 0) {
+                JOptionPane.showMessageDialog(null, "Updating fails!");
+                conn.close();
+                return false;
+            } else {
+                JOptionPane.showMessageDialog(null, "Updated successfully!");
+
+                if (!idNLQ.isEmpty()) {
+                    sql = "insert into lienquan values('" + id + "', '" + idNLQ + "');";
+                    x = statement.executeUpdate(sql);
+                }
+                conn.close();
+                return true;
+            }
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean updateLSNQL(int option, String idNQL, String date, String activity, String id) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "";
+
+            switch (option) {
+                case 0:
+                    sql = "insert into lichsunql(id_nql, thoigian, hoatdong, id) values('" + idNQL + "', '" + date + "', '" + activity + "', '" + id + "');";
+                    break;
+                case 1:
+                    sql = "insert into lichsunql(id_nql, thoigian, hoatdong, id_nyp) values('" + idNQL + "', '" + date + "', '" + activity + "', '" + id + "');";
+                    break;
+                case 2:
+                    sql = "insert into lichsunql(id_nql, thoigian, hoatdong, id_ndt) values('" + idNQL + "', '" + date + "', '" + activity + "', '" + id + "');";
+                    break;
+            }
+
+            int x = statement.executeUpdate(sql);
+            conn.close();
+            if (x == 0) {
+                JOptionPane.showMessageDialog(null, "Already exists");
+                return false;
+            } else {
+                JOptionPane.showMessageDialog(null, "Updated Moderator History successfully!");
+                return true;
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public static void main(String args[]) {
