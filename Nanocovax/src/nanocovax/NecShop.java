@@ -13,7 +13,7 @@ public class NecShop extends JFrame{
     private JLabel lbInfo;
     private JLabel lbPayment;
     private JLabel lbShop;
-    private JTextField textField1;
+    private JTextField input;
     private JButton searchButton;
     private JTable itemList;
     private JButton addButton;

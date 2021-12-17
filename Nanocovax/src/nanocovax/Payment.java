@@ -16,11 +16,12 @@ public class Payment extends JFrame {
     private JPanel rootPanel;
     private JTable table;
     private JButton purchaseButton;
-    private JTextField textField1;
+    private JTextField input;
     private JButton searchButton;
     private JButton refreshButton;
     private JComboBox sortOpt;
     private JButton detailButton;
+    private JLabel totalDebt;
 
     Payment(){
         add(this.rootPanel);
@@ -86,7 +87,7 @@ public class Payment extends JFrame {
         detailButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                PaymentDetail invoice= new PaymentDetail();
             }
         });
         purchaseButton.addActionListener(new ActionListener() {
@@ -107,8 +108,7 @@ public class Payment extends JFrame {
                     char[] password = pass.getPassword();
                     System.out.println("Your password is: " + new String(password));
                 }
-                //kiểm tra sau khi pre-purchase trước 1 số tiền thì có lớn hơn hạn mức  tối thiểu không
-                //purchase thành công thì remove cart đưa grand total về 0
+                //Kiểm tra hóa đơn đã được thanh toán hoàn toàn chưa nếu rồi thì đưa ra thông báo
             }
         });
     }
