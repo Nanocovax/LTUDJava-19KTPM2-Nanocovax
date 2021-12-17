@@ -81,6 +81,9 @@ public class UserMenu extends JFrame{
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
+                setVisible(false);
+                dispose();
+                Payment payment = new Payment();
             }
         });
         tabbedPane1.addMouseListener(new MouseAdapter() {

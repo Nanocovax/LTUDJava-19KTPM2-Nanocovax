@@ -7,36 +7,37 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class NecShop extends JFrame{
+public class Payment extends JFrame {
     private JPanel menuPanel;
     private JLabel lbLogout;
     private JLabel lbInfo;
     private JLabel lbPayment;
     private JLabel lbShop;
+    private JPanel rootPanel;
+    private JTable table;
+    private JButton purchaseButton;
     private JTextField textField1;
     private JButton searchButton;
-    private JTable itemList;
-    private JButton addButton;
+    private JButton refreshButton;
     private JComboBox sortOpt;
-    private JTable cart;
-    private JButton purchaseButton;
-    private JButton removeButton;
-    private JLabel Cart;
-    private JButton removeAllButton;
-    private JPanel rootPanel;
-    private JLabel grandTotal;
-    private JTextField prePur;
+    private JButton detailButton;
 
-    NecShop(){
+    Payment(){
         add(this.rootPanel);
-        sortOpt.setSelectedIndex(0);
         createTable();
-        createCart();
-        setSize(1320,800);
+        sortOpt.setSelectedIndex(0);
+        setSize(1200,600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
-
-
+        lbInfo.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                setVisible(false);
+                dispose();
+                UserMenu u = new UserMenu();
+            }
+        });
         lbLogout.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -55,28 +56,13 @@ public class NecShop extends JFrame{
                 }
             }
         });
-        lbInfo.addMouseListener(new MouseAdapter() {
+        lbShop.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 setVisible(false);
                 dispose();
-                UserMenu u = new UserMenu();
-            }
-        });
-        lbPayment.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                setVisible(false);
-                dispose();
-                Payment payment = new Payment();
-            }
-        });
-        sortOpt.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //chọn thứ tự đê sắp xếp
+                NecShop n = new NecShop();
             }
         });
         searchButton.addActionListener(new ActionListener() {
@@ -85,11 +71,22 @@ public class NecShop extends JFrame{
 
             }
         });
-        addButton.addActionListener(new ActionListener() {
+        refreshButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //item được add sẽ hiện lên table của phần cart
-                //mỗi lần add 1 item thì set grand total đúng với tổng tiền
+
+            }
+        });
+        sortOpt.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        detailButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
             }
         });
         purchaseButton.addActionListener(new ActionListener() {
@@ -100,6 +97,7 @@ public class NecShop extends JFrame{
                 JPasswordField pass = new JPasswordField(15);
                 panel.add(label);
                 panel.add(pass);
+
                 String[] options = new String[]{"OK", "Cancel"};
                 int option = JOptionPane.showOptionDialog(null, panel, "Password verify",
                         JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
@@ -113,30 +111,13 @@ public class NecShop extends JFrame{
                 //purchase thành công thì remove cart đưa grand total về 0
             }
         });
-        removeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //xóa 1 item được chọn ở cart
-            }
-        });
-        removeAllButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //xóa tất cả item khỏi cart
-            }
-        });
     }
     public void createTable(){
-        String[] tbColName = {"ID","Name","Limit","Duration","Price"};
-        Object[] [] data = {{"01","Gói 1","5","3","10000"},{"02","Gói 2","2","7","50000"}};
-        itemList.setModel(new DefaultTableModel(data,tbColName));
-    }
-    public void createCart(){
-        String[] tbColName = {"ID","Name","Quanity","Price","Total"};
-        Object[] [] data = {{"01","Gói 1","2","10000","20000"}};
-        cart.setModel(new DefaultTableModel(data,tbColName));
+        String[] tbColName = {"ID","Date","Cost","Debt"};
+        Object[] [] data = {{"01","23/04/2021","100000","90000"}};
+        table.setModel(new DefaultTableModel(data,tbColName));
     }
     public static void main(String[]args){
-        NecShop n = new NecShop();
+        Payment p = new Payment();
     }
 }
