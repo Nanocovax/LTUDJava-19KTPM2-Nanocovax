@@ -25,6 +25,7 @@ public class NecShop extends JFrame{
     private JButton removeAllButton;
     private JPanel rootPanel;
     private JLabel grandTotal;
+    private JTextField prePur;
 
     NecShop(){
         add(this.rootPanel);
@@ -97,7 +98,7 @@ public class NecShop extends JFrame{
                 panel.add(label);
                 panel.add(pass);
                 String[] options = new String[]{"OK", "Cancel"};
-                int option = JOptionPane.showOptionDialog(null, panel, "The title",
+                int option = JOptionPane.showOptionDialog(null, panel, "Password verify",
                         JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
                         null, options, options[1]);
                 if(option == 0)
@@ -105,6 +106,7 @@ public class NecShop extends JFrame{
                     char[] password = pass.getPassword();
                     System.out.println("Your password is: " + new String(password));
                 }
+                //kiểm tra sau khi pre-purchase trước 1 số tiền thì có lớn hơn hạn mức  tối thiểu không
                 //purchase thành công thì remove cart đưa grand total về 0
             }
         });
