@@ -88,6 +88,34 @@ public class Database {
         return result;
     }
 
+    public static boolean updateNQLPassword(String username, String password) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            password = Encryption.encryptMD5(password);
+            String sql = "UPDATE taikhoan\n" +
+                    "SET password = '" + password + "', tinhtrang = 'bt'\n" +
+                    "WHERE id = '" + username + "';";
+
+            int x = statement.executeUpdate(sql);
+            conn.close();
+            if (x == 0) {
+                JOptionPane.showMessageDialog(null, "Updating fails!");
+                return false;
+            } else {
+                JOptionPane.showMessageDialog(null, "Updated successfully!");
+                return true;
+            }
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
     /*---------------NOI DIEU TRI---------------------*/
     public static int countNDT() {
         Connection conn = DBConnection();
@@ -414,7 +442,7 @@ public class Database {
                 s.setUserId(rs.getString("id"));
                 s.setUserName(rs.getString("hoten"));
                 s.setActivity(rs.getString("hoatdong"));
-                s.setDate(rs.getDate("thoigian"));
+                s.setDate(rs.getTimestamp("thoigian"));
                 list.add(s);
             }
         } catch (Exception e) {
@@ -427,7 +455,7 @@ public class Database {
         ArrayList<FoodPackageBranchActivity> list = new ArrayList<>();
         String sql = "select nyp.id_nyp, nyp.tengoi, ls.hoatdong, ls.thoigian from lichsunql as ls\n" +
                 "join nhuyeupham nyp on ls.id_nyp=nyp.id_nyp\n" +
-                "where ls.id_nql='" + idNQL + "' and ls.id!=''\n" +
+                "where ls.id_nql='" + idNQL + "'\n" +
                 "order by ls.thoigian desc;";
         Connection conn = DBConnection();
         try {
@@ -438,7 +466,7 @@ public class Database {
                 s.setFPId(rs.getString("id_nyp"));
                 s.setFPName(rs.getString("tengoi"));
                 s.setActivity(rs.getString("hoatdong"));
-                s.setDate(rs.getDate("thoigian"));
+                s.setDate(rs.getTimestamp("thoigian"));
                 list.add(s);
             }
         } catch (Exception e) {
@@ -451,7 +479,7 @@ public class Database {
         ArrayList<HospitalBranchActivity> list = new ArrayList<>();
         String sql = "select ndt.id_ndt, ndt.ten, ls.hoatdong, ls.thoigian from lichsunql as ls\n" +
                 "join noidieutri ndt on ls.id_ndt=ndt.id_ndt\n" +
-                "where ls.id_nql='" + idNQL + "' and ls.id!=''\n" +
+                "where ls.id_nql='" + idNQL + "'\n" +
                 "order by ls.thoigian desc;";
         Connection conn = DBConnection();
         try {
@@ -462,7 +490,7 @@ public class Database {
                 s.setHospitalId(rs.getString("id_ndt"));
                 s.setHospitalName(rs.getString("ten"));
                 s.setActivity(rs.getString("hoatdong"));
-                s.setDate(rs.getDate("thoigian"));
+                s.setDate(rs.getTimestamp("thoigian"));
                 list.add(s);
             }
         } catch (Exception e) {
@@ -537,11 +565,49 @@ public class Database {
         return list;
     }
 
+    private static boolean isAvailable(String id) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "select * from noidieutri\n" +
+                            "where id_ndt = '" + id + "';";
+
+            ResultSet rs = statement.executeQuery(sql);
+
+            if (!rs.next()) {
+                conn.close();
+                return false;
+            } else {
+                if (rs.getInt("dangchua") < rs.getInt("succhua")) {
+                    conn.close();
+                    return true;
+                }
+                else {
+                    conn.close();
+                    return false;
+                }
+            }
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public static boolean createUser(String id, String name, String doB, String matp, String maqh, String maxp, String status, String hospital, String idNLQ) {
         Connection conn = DBConnection();
         try {
             Statement statement = conn.createStatement();
             String password = Encryption.encryptMD5(id);
+
+            if (!isAvailable(hospital)) {
+                JOptionPane.showMessageDialog(null, "Hospital is not available!");
+                conn.close();
+                return false;
+            }
+
             String sql = "insert into taikhoan values('" + id + "', '" + password + "', 'nguoidung', 'bt');";
 
             int result = statement.executeUpdate(sql);
@@ -691,13 +757,17 @@ public class Database {
         return list;
     }
 
-    public static boolean deleteUser(String id) {
+    public static boolean deleteUser(String id, String idNQL) {
         Connection conn = DBConnection();
         try {
             Statement statement = conn.createStatement();
             String sql = "delete from lienquan\n" +
                     "where id = '" + id + "' or id_lienquan = '" + id + "';";
             int x = statement.executeUpdate(sql);
+
+            sql = "delete from lichsunql\n" +
+                    "where id = '" + id + "' and id_nql = '" + idNQL + "';";
+            x = statement.executeUpdate(sql);
 
             sql = "delete from ttnguoidung\n" +
                     "where id = '" + id + "';";
@@ -778,6 +848,29 @@ public class Database {
                 return false;
             } else {
                 JOptionPane.showMessageDialog(null, "Updated Moderator History successfully!");
+                return true;
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean updateLSNDT(String id, String date, String idNDT) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "insert into lichsundt values('" + id + "', '" + date + "', '" + idNDT + "');";
+
+            int x = statement.executeUpdate(sql);
+            conn.close();
+            if (x == 0) {
+                JOptionPane.showMessageDialog(null, "Already exists");
+                return false;
+            } else {
+                JOptionPane.showMessageDialog(null, "Updated Hospital History successfully!");
                 return true;
             }
         } catch (SQLException e) {

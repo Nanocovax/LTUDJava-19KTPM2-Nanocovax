@@ -21,7 +21,7 @@ public class HospitalBranchActivity {
         hospitalId = srcHospitalId;
     }
     public void setHospitalName(String srcHospitalName) {
-        hospitalId = srcHospitalName;
+        hospitalName = srcHospitalName;
     }
     public void setActivity(String srcActivity) {
         activity = srcActivity;

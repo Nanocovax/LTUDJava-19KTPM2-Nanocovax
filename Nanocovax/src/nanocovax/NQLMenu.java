@@ -93,11 +93,7 @@ public class NQLMenu extends JFrame{
                 retriveUser();
                 int dialogResult = JOptionPane.showConfirmDialog(null, "Delete " + id.toString() + "?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
                 if (dialogResult == JOptionPane.YES_OPTION) {
-                    Database.deleteUser(id.toString());
-
-                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
-                    LocalDateTime now = LocalDateTime.now();
-                    Database.updateLSNQL(0, rootId.toString(), dtf.format(now), "del", id.toString());
+                    Database.deleteUser(id.toString(), rootId.toString());
                 }
             }
         });

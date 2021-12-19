@@ -29,6 +29,7 @@ public class editUser extends JFrame {
     private JButton saveButton;
     private JDateChooser dateChooser;
     static Object rootId = null;
+    static String backupHospital;
 
     ArrayList<CityProvince> cPList = Database.getCityProvinceList();
     ArrayList<District> dList;
@@ -78,7 +79,13 @@ public class editUser extends JFrame {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                 String date = format.format(dateChooser.getDate());
 
-                Database.updateUser(tfID.getText().toString(), tfName.getText().toString(), date, cPList.get(cbbCityPro.getSelectedIndex()).getId(), dList.get(cbbDistrict.getSelectedIndex()).getId(), wList.get(cbbWard.getSelectedIndex()).getId(), tfStatus.getText().toString(), tfHos.getText().toString(), tfRelate.getText().toString());
+                boolean res = Database.updateUser(tfID.getText().toString(), tfName.getText().toString(), date, cPList.get(cbbCityPro.getSelectedIndex()).getId(), dList.get(cbbDistrict.getSelectedIndex()).getId(), wList.get(cbbWard.getSelectedIndex()).getId(), tfStatus.getText().toString(), tfHos.getText().toString(), tfRelate.getText().toString());
+
+                if (res) {
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
+                    LocalDateTime now = LocalDateTime.now();
+                    Database.updateLSNQL(0, rootId.toString(), dtf.format(now), "upd", tfID.getText().toString());
+                }
             }
         });
         cancelButton.addActionListener(new ActionListener() {
@@ -105,6 +112,7 @@ public class editUser extends JFrame {
         //setDateChooser();
 
         tfID.setText(root.getId());
+        tfID.setEditable(false);
         tfName.setText(root.getName());
 
         Date date = new SimpleDateFormat("dd/MM/yyyy").parse(root.getDoB());
@@ -120,6 +128,7 @@ public class editUser extends JFrame {
         cbbWard.setSelectedIndex(indexW);
 
         tfStatus.setText(root.getStatus());
+        backupHospital = root.getHospital().getId();
         tfHos.setText(root.getHospital().getId());
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -165,7 +174,15 @@ public class editUser extends JFrame {
 
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
                 LocalDateTime now = LocalDateTime.now();
-                Database.updateLSNQL(0, rootId.toString(), dtf.format(now), "upd", root.getId());
+                Database.updateLSNQL(0, rootId.toString(), dtf.format(now), "updated", root.getId());
+
+                if (!backupHospital.equals(tfHos.getText().toString())) {
+                    Database.updateLSNQL(2, rootId.toString(), dtf.format(now), "added " + root.getId(), tfHos.getText().toString());
+                    Database.updateLSNQL(2, rootId.toString(), dtf.format(now), "removed " + root.getId(), backupHospital);
+
+                    Database.updateLSNDT(root.getId(), dtf.format(now), tfHos.getText().toString());
+                    Database.updateLSNDT(root.getId(), dtf.format(now), backupHospital);
+                }
             }
         });
         cancelButton.addActionListener(new ActionListener() {
