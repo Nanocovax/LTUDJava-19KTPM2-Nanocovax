@@ -905,10 +905,10 @@ public class Database {
             int x = statement.executeUpdate(sql);
             conn.close();
             if (x == 0) {
-                JOptionPane.showMessageDialog(null, "Already exists");
+                //JOptionPane.showMessageDialog(null, "Already exists");
                 return false;
             } else {
-                JOptionPane.showMessageDialog(null, "Updated Moderator History successfully!");
+                //JOptionPane.showMessageDialog(null, "Updated Moderator History successfully!");
                 return true;
             }
         } catch (SQLException e) {
@@ -928,10 +928,43 @@ public class Database {
             int x = statement.executeUpdate(sql);
             conn.close();
             if (x == 0) {
-                JOptionPane.showMessageDialog(null, "Already exists");
+                //JOptionPane.showMessageDialog(null, "Already exists");
                 return false;
             } else {
-                JOptionPane.showMessageDialog(null, "Updated Hospital History successfully!");
+                //JOptionPane.showMessageDialog(null, "Updated Hospital History successfully!");
+                return true;
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean updateOccupancyNDT(String id_ndt, int option) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            String sql;
+            if (option == 0) {
+                sql = "UPDATE noidieutri\n" +
+                        "SET dangchua = dangchua + 1\n" +
+                        "WHERE id_ndt = '" + id_ndt + "';";
+            }
+            else {
+                sql = "UPDATE noidieutri\n" +
+                        "SET dangchua = dangchua - 1\n" +
+                        "WHERE id_ndt = '" + id_ndt + "';";
+            }
+
+            int x = statement.executeUpdate(sql);
+            conn.close();
+            if (x == 0) {
+                //JOptionPane.showMessageDialog(null, "Already exists");
+                return false;
+            } else {
+                //JOptionPane.showMessageDialog(null, "Updated Hospital Occupancy successfully!");
                 return true;
             }
         } catch (SQLException e) {

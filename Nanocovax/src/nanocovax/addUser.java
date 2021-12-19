@@ -107,6 +107,7 @@ public class addUser extends JFrame {
                 jDateChooser.setCalendar(null);
 
                 if (res) {
+                    Database.updateOccupancyNDT(hospital, 0);
                     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
                     LocalDateTime now = LocalDateTime.now();
                     Database.updateLSNQL(0, rootId.toString(), dtf.format(now), "added", id);

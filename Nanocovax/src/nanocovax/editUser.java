@@ -182,6 +182,9 @@ public class editUser extends JFrame {
 
                     Database.updateLSNDT(root.getId(), dtf.format(now), tfHos.getText().toString());
 
+                    Database.updateOccupancyNDT(backupHospital, 1);
+                    Database.updateOccupancyNDT(tfHos.getText().toString(), 0);
+
                     backupHospital = tfHos.getText().toString();
                 }
             }
