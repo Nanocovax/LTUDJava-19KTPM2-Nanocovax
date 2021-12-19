@@ -68,7 +68,13 @@ public class NQLMenu extends JFrame{
         detailButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                userDetail u = new userDetail();
+                //userDetail u = new userDetail();
+                if (indexRow != -1) {
+                    retriveUser();
+                    userDetail u = new userDetail(Database.getListUser().get(indexRow), rootId.toString());
+                } else {
+                    userDetail u = new userDetail();
+                }
             }
         });
         editButton.addActionListener(new ActionListener() {

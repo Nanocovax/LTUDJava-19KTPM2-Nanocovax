@@ -181,7 +181,8 @@ public class editUser extends JFrame {
                     Database.updateLSNQL(2, rootId.toString(), dtf.format(now), "removed " + root.getId(), backupHospital);
 
                     Database.updateLSNDT(root.getId(), dtf.format(now), tfHos.getText().toString());
-                    Database.updateLSNDT(root.getId(), dtf.format(now), backupHospital);
+
+                    backupHospital = tfHos.getText().toString();
                 }
             }
         });

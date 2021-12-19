@@ -881,6 +881,91 @@ public class Database {
         }
     }
 
+    public static ArrayList<HospitalHistory> getLSNDT(String id) {
+        ArrayList<HospitalHistory> list = new ArrayList<>();
+        String sql = "select * from lichsundt lsndt join noidieutri ndt on lsndt.id_ndt = ndt.id_ndt where id = '" + id +  "';";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                HospitalHistory s = new HospitalHistory();
+                s.setId(rs.getString("id"));
+
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String date = format.format(rs.getTimestamp("thoigian"));
+                s.setTime(date);
+
+                Hospital t = new Hospital();
+                t.setId(rs.getString("id_ndt"));
+                t.setName(rs.getString("ten"));
+                t.setCapacity(rs.getInt("succhua"));
+                t.setOccupancy(rs.getInt("dangchua"));
+                s.setNDT(t);
+
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static ArrayList<User> getListNLQ(String id) {
+        ArrayList<User> list = new ArrayList<>();
+        String sql = "select * from ttnguoidung ttnd join noidieutri ndt on ttnd.ndt = ndt.id_ndt join tinhthanhpho ttp on tinhtp = ttp.matp join quanhuyen qh on quanhuyen = qh.maqh join xaphuong xp on xaphuong = xp.maxp join lienquan lq on ttnd.id = lq.id_lienquan where lq.id = '" + id +  "';";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User s = new User();
+                s.setId(rs.getString("ttnd.id"));
+                s.setName(rs.getString("ttnd.hoten"));
+
+                String d = rs.getString("ttnd.ngaysinh");
+                SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                Date date = oldFormat.parse(d);
+                SimpleDateFormat newFormat = new SimpleDateFormat("dd/MM/yyyy");
+                String output = newFormat.format(date);
+                s.setDoB(output);
+
+                CityProvince cp = new CityProvince();
+                cp.setId(rs.getString("ttp.matp"));
+                cp.setName(rs.getString("ttp.ten"));
+
+                District district = new District();
+                district.setId(rs.getString("qh.maqh"));
+                district.setName(rs.getString("qh.ten"));
+
+                Ward w = new Ward();
+                w.setId(rs.getString("xp.maxp"));
+                w.setName(rs.getString("xp.ten"));
+
+                Address address = new Address();
+                address.setCityProvince(cp);
+                address.setDistrict(district);
+                address.setWard(w);
+                s.setAddress(address);
+
+                s.setStatus(rs.getString("ttnd.trangthai"));
+
+                Hospital hospital = new Hospital();
+                hospital.setId(rs.getString("ndt.id_ndt"));
+                hospital.setName(rs.getString("ndt.ten"));
+                hospital.setCapacity(rs.getInt("ndt.succhua"));
+                hospital.setOccupancy(rs.getInt("ndt.dangchua"));
+                s.setHospital(hospital);
+                //s.setHospital(rs.getString("ten"));
+
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public static void main(String args[]) {
     }
 }
