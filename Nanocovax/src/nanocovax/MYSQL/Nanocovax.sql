@@ -76,7 +76,7 @@ COLLATE = utf8mb4_0900_ai_ci;
 DROP TABLE IF EXISTS `nanocovax`.`xaphuong` ;
 
 CREATE TABLE IF NOT EXISTS `nanocovax`.`xaphuong` (
-  `maxp` CHAR(3) NOT NULL,
+  `maxp` CHAR(5) NOT NULL,
   `ten` VARCHAR(45) NOT NULL,
   `maqh` CHAR(3) NOT NULL,
   PRIMARY KEY (`maxp`),
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS `nanocovax`.`ttnguoidung` (
   `ngaysinh` DATETIME NOT NULL,
   `tinhtp` CHAR(3) NOT NULL,
   `quanhuyen` CHAR(3) NOT NULL,
-  `xaphuong` CHAR(3) NOT NULL,
+  `xaphuong` CHAR(5) NOT NULL,
   `sodu` INT NULL DEFAULT NULL,
   `sono` INT NULL DEFAULT NULL,
   `trangthai` CHAR(2) NOT NULL,
