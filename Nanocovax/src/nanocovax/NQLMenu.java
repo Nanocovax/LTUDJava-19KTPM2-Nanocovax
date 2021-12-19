@@ -46,6 +46,43 @@ public class NQLMenu extends JFrame{
         setVisible(true);
         sortOption.setSelectedIndex(0);
         //table được lấy ban đầu mặc định được sắp xếp theo ID chiều tăng dần
+        sortOption.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int indexCityPro = sortOption.getSelectedIndex();
+                String order;
+                switch (indexCityPro) {
+                    case 0:
+                        order = "id asc";
+                        break;
+                    case 1:
+                        order = "id desc";
+                        break;
+                    case 2:
+                        order = "hoten asc";
+                        break;
+                    case 3:
+                        order = "hoten desc";
+                        break;
+                    case 4:
+                        order = "ngaysinh asc";
+                        break;
+                    case 5:
+                        order = "ngaysinh desc";
+                        break;
+                    case 6:
+                        order = "trangthai asc";
+                        break;
+                    case 7:
+                        order = "trangthai desc";
+                        break;
+                    default:
+                        order = "id asc";
+                        break;
+                }
+                createTable(Database.getListUser(order));
+            }
+        });
 
         addButton.addActionListener(new ActionListener() {
             @Override

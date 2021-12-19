@@ -697,6 +697,67 @@ public class Database {
         return list;
     }
 
+    public static ArrayList<User> getListUser(String order) {
+        ArrayList<User> list = new ArrayList<>();
+        // String sql = "select id, hoten, ngaysinh, trangthai, ten from ttnguoidung join noidieutri on ndt = id_ndt;";
+        String sql = "select * from ttnguoidung\n"+
+                "join noidieutri ndt on ndt = ndt.id_ndt\n" +
+                "join tinhthanhpho ttp on tinhtp = ttp.matp\n" +
+                "join quanhuyen qh on quanhuyen = qh.maqh\n" +
+                "join xaphuong xp on xaphuong = xp.maxp\n" +
+                "order by " + order +   ";";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User s = new User();
+                s.setId(rs.getString("id"));
+                s.setName(rs.getString("hoten"));
+
+                String d = rs.getString("ngaysinh");
+                SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                Date date = oldFormat.parse(d);
+                SimpleDateFormat newFormat = new SimpleDateFormat("dd/MM/yyyy");
+                String output = newFormat.format(date);
+                s.setDoB(output);
+
+                CityProvince cp = new CityProvince();
+                cp.setId(rs.getString("ttp.matp"));
+                cp.setName(rs.getString("ttp.ten"));
+
+                District district = new District();
+                district.setId(rs.getString("qh.maqh"));
+                district.setName(rs.getString("qh.ten"));
+
+                Ward w = new Ward();
+                w.setId(rs.getString("xp.maxp"));
+                w.setName(rs.getString("xp.ten"));
+
+                Address address = new Address();
+                address.setCityProvince(cp);
+                address.setDistrict(district);
+                address.setWard(w);
+                s.setAddress(address);
+
+                s.setStatus(rs.getString("trangthai"));
+
+                Hospital hospital = new Hospital();
+                hospital.setId(rs.getString("ndt.id_ndt"));
+                hospital.setName(rs.getString("ndt.ten"));
+                hospital.setCapacity(rs.getInt("ndt.succhua"));
+                hospital.setOccupancy(rs.getInt("ndt.dangchua"));
+                s.setHospital(hospital);
+                //s.setHospital(rs.getString("ten"));
+
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public static ArrayList<User> searchUser(String id) {
         ArrayList<User> list = new ArrayList<>();
         String sql = "select * from ttnguoidung\n"+
