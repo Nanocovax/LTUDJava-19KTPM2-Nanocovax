@@ -282,9 +282,10 @@ DROP TABLE IF EXISTS `nanocovax`.`lichsutrangthai` ;
 
 CREATE TABLE IF NOT EXISTS `nanocovax`.`lichsutrangthai` (
   `id` VARCHAR(12) NOT NULL,
-  `thoigian` DATETIME NOT NULL,
+  `ngay` DATE NOT NULL,
+  `thoigian` TIME NOT NULL,
   `trangthai` CHAR(2) NOT NULL,
-  PRIMARY KEY (`id`, `thoigian`),
+  PRIMARY KEY (`id`, `ngay`, `thoigian`, `trangthai`),
   CONSTRAINT `lstthai_nd`
     FOREIGN KEY (`id`)
     REFERENCES `nanocovax`.`ttnguoidung` (`id`))
