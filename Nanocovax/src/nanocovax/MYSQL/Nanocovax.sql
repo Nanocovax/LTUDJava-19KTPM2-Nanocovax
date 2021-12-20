@@ -284,7 +284,7 @@ CREATE TABLE IF NOT EXISTS `nanocovax`.`lichsutrangthai` (
   `id` VARCHAR(12) NOT NULL,
   `thoigian` DATETIME NOT NULL,
   `trangthai` CHAR(2) NOT NULL,
-  PRIMARY KEY (`id`),
+  PRIMARY KEY (`id`, `thoigian`),
   CONSTRAINT `lstthai_nd`
     FOREIGN KEY (`id`)
     REFERENCES `nanocovax`.`ttnguoidung` (`id`))

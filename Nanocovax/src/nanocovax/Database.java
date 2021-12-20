@@ -637,7 +637,7 @@ public class Database {
         }
     }
 
-    public static ArrayList<User> getListUser() {
+    /*public static ArrayList<User> getListUser() {
         ArrayList<User> list = new ArrayList<>();
         // String sql = "select id, hoten, ngaysinh, trangthai, ten from ttnguoidung join noidieutri on ndt = id_ndt;";
         String sql = "select * from ttnguoidung\n"+
@@ -695,7 +695,7 @@ public class Database {
             e.printStackTrace();
         }
         return list;
-    }
+    }*/
 
     public static ArrayList<User> getListUser(String order) {
         ArrayList<User> list = new ArrayList<>();
@@ -826,6 +826,10 @@ public class Database {
                     "where id = '" + id + "' or id_lienquan = '" + id + "';";
             int x = statement.executeUpdate(sql);
 
+            sql = "delete from lichsundt\n" +
+                    "where id = '" + id + "';";
+            x = statement.executeUpdate(sql);
+
             sql = "delete from lichsunql\n" +
                     "where id = '" + id + "' and id_nql = '" + idNQL + "';";
             x = statement.executeUpdate(sql);
@@ -869,6 +873,10 @@ public class Database {
                 JOptionPane.showMessageDialog(null, "Updated successfully!");
 
                 if (!idNLQ.isEmpty()) {
+                    sql = "delete from lienquan\n" +
+                            "where id = '" + id + "';";
+                    x = statement.executeUpdate(sql);
+
                     sql = "insert into lienquan values('" + id + "', '" + idNLQ + "');";
                     x = statement.executeUpdate(sql);
                 }
@@ -924,6 +932,29 @@ public class Database {
         try {
             Statement statement = conn.createStatement();
             String sql = "insert into lichsundt values('" + id + "', '" + date + "', '" + idNDT + "');";
+
+            int x = statement.executeUpdate(sql);
+            conn.close();
+            if (x == 0) {
+                //JOptionPane.showMessageDialog(null, "Already exists");
+                return false;
+            } else {
+                //JOptionPane.showMessageDialog(null, "Updated Hospital History successfully!");
+                return true;
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean updateLSTT(String id, String date, String status) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "insert into lichsutrangthai values('" + id + "', '" + date + "', '" + status + "');";
 
             int x = statement.executeUpdate(sql);
             conn.close();
@@ -1007,7 +1038,7 @@ public class Database {
 
     public static ArrayList<User> getListNLQ(String id) {
         ArrayList<User> list = new ArrayList<>();
-        String sql = "select * from ttnguoidung ttnd join noidieutri ndt on ttnd.ndt = ndt.id_ndt join tinhthanhpho ttp on tinhtp = ttp.matp join quanhuyen qh on quanhuyen = qh.maqh join xaphuong xp on xaphuong = xp.maxp join lienquan lq on ttnd.id = lq.id_lienquan where lq.id = '" + id +  "';";
+        String sql = "select * from ttnguoidung ttnd join noidieutri ndt on ttnd.ndt = ndt.id_ndt join tinhthanhpho ttp on tinhtp = ttp.matp join quanhuyen qh on quanhuyen = qh.maqh join xaphuong xp on xaphuong = xp.maxp join lienquan lq on ttnd.id = lq.id where lq.id_lienquan = '" + id +  "';";
         Connection conn = DBConnection();
         try {
             PreparedStatement ps = conn.prepareStatement(sql);

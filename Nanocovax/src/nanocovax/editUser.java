@@ -30,6 +30,7 @@ public class editUser extends JFrame {
     private JDateChooser dateChooser;
     static Object rootId = null;
     static String backupHospital;
+    static String backupStatus;
 
     ArrayList<CityProvince> cPList = Database.getCityProvinceList();
     ArrayList<District> dList;
@@ -127,7 +128,9 @@ public class editUser extends JFrame {
         int indexW = indexOfWard(wList, root.getAddress().getWard().getId());
         cbbWard.setSelectedIndex(indexW);
 
+        backupStatus = root.getStatus();
         tfStatus.setText(root.getStatus());
+
         backupHospital = root.getHospital().getId();
         tfHos.setText(root.getHospital().getId());
 
@@ -186,6 +189,12 @@ public class editUser extends JFrame {
                     Database.updateOccupancyNDT(tfHos.getText().toString(), 0);
 
                     backupHospital = tfHos.getText().toString();
+                }
+
+                if (!backupStatus.equals(tfStatus.getText().toString())) {
+                    Database.updateLSTT(root.getId(), dtf.format(now), tfStatus.getText().toString());
+
+                    backupStatus = tfStatus.getText().toString();
                 }
             }
         });

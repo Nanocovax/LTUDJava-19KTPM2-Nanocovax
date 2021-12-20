@@ -36,10 +36,12 @@ public class NQLMenu extends JFrame{
     int indexRow;
     Object id = null;
     static Object rootId;
+    String order;
 
     NQLMenu(String srcId){
         add(this.rootPanel);
-        createTable(Database.getListUser());
+        order = "id asc";
+        createTable(Database.getListUser(order));
         rootId = srcId;
         setSize(1200,600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -50,7 +52,6 @@ public class NQLMenu extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 int indexCityPro = sortOption.getSelectedIndex();
-                String order;
                 switch (indexCityPro) {
                     case 0:
                         order = "id asc";
@@ -99,7 +100,7 @@ public class NQLMenu extends JFrame{
         refreshButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                createTable(Database.getListUser());
+                createTable(Database.getListUser(order));
             }
         });
         detailButton.addActionListener(new ActionListener() {
@@ -108,7 +109,7 @@ public class NQLMenu extends JFrame{
                 //userDetail u = new userDetail();
                 if (indexRow != -1) {
                     retriveUser();
-                    userDetail u = new userDetail(Database.getListUser().get(indexRow), rootId.toString());
+                    userDetail u = new userDetail(Database.getListUser(order).get(indexRow), rootId.toString());
                 } else {
                     userDetail u = new userDetail();
                 }
@@ -121,7 +122,7 @@ public class NQLMenu extends JFrame{
                     //editUser editUser = new editUser();
                     if (indexRow != -1) {
                         retriveUser();
-                        editUser editUser = new editUser(Database.getListUser().get(indexRow), rootId.toString());
+                        editUser editUser = new editUser(Database.getListUser(order).get(indexRow), rootId.toString());
                     } else {
                         editUser editNQL = new editUser(rootId.toString());
                     }
@@ -136,6 +137,9 @@ public class NQLMenu extends JFrame{
                 retriveUser();
                 int dialogResult = JOptionPane.showConfirmDialog(null, "Delete " + id.toString() + "?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
                 if (dialogResult == JOptionPane.YES_OPTION) {
+                    ArrayList<User> t = Database.searchUser(id.toString());
+                    Database.updateOccupancyNDT(t.get(0).getHospital().getId(), 1);
+
                     Database.deleteUser(id.toString(), rootId.toString());
                 }
             }
@@ -187,7 +191,7 @@ public class NQLMenu extends JFrame{
         Object[] [] data = new String[list.size()][6];
         //Object[] [] data = {{"01","Nguyễn Văn A","01/01/1990","Trái Đất","F0","001"}};
 
-        userTable.setModel(new DefaultTableModel(data,tbColName));
+        // userTable.setModel(new DefaultTableModel(data,tbColName));
 
         for (int i = 0; i < list.size(); i++) {
             NumberFormat nf = new DecimalFormat("000");
