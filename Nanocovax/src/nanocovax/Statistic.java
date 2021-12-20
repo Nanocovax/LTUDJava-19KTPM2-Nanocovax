@@ -3,6 +3,7 @@ package nanocovax;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.PlotOrientation;
@@ -136,11 +137,15 @@ public class Statistic extends JFrame {
     }
     void initLineChart(JPanel tab , DefaultCategoryDataset dataset,String name,String x,String y){
         JFreeChart chart = ChartFactory.createLineChart(name,x,y,dataset, PlotOrientation.VERTICAL,true,true,false);
+        CategoryPlot p = chart.getCategoryPlot();
+        p.getRangeAxis().setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         ChartPanel chartPanel = new ChartPanel(chart);
         tab.add(chartPanel);
     }
     void initBarChart(JPanel tab, DefaultCategoryDataset dataset, String name,String x,String y){
         JFreeChart chart = ChartFactory.createBarChart(name,x,y,dataset, PlotOrientation.VERTICAL,true,true,false);
+        CategoryPlot p = chart.getCategoryPlot();
+        p.getRangeAxis().setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         ChartPanel chartPanel = new ChartPanel(chart);
         tab.add(chartPanel);
     }
