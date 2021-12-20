@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -113,7 +114,13 @@ public class addUser extends JFrame {
                     Database.updateLSNQL(0, rootId.toString(), dtf.format(now), "added", id);
                     Database.updateLSNQL(2, rootId.toString(), dtf.format(now), "added " + id, hospital);
                     Database.updateLSNDT(id, dtf.format(now), hospital);
-                    Database.updateLSTT(id, dtf.format(now), status);
+                    // Database.updateLSTT(id, dtf.format(now), status);
+
+                    dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd");
+                    String localDate = dtf.format(LocalDate.now());
+                    dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+                    String localTime = dtf.format(LocalTime.now());
+                    Database.updateLSTT(id, localDate, localTime, status);
                 }
             }
         });

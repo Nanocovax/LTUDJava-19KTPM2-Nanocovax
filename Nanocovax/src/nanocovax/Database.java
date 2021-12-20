@@ -1,5 +1,7 @@
 package nanocovax;
 
+import org.jfree.data.category.DefaultCategoryDataset;
+
 import java.sql.*;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -834,6 +836,10 @@ public class Database {
                     "where id = '" + id + "' and id_nql = '" + idNQL + "';";
             x = statement.executeUpdate(sql);
 
+            sql = "delete from lichsutrangthai\n" +
+                    "where id = '" + id + "';";
+            x = statement.executeUpdate(sql);
+
             sql = "delete from ttnguoidung\n" +
                     "where id = '" + id + "';";
             x = statement.executeUpdate(sql);
@@ -950,11 +956,34 @@ public class Database {
         }
     }
 
-    public static boolean updateLSTT(String id, String date, String status) {
+    /*public static boolean updateLSTT(String id, String date, String status) {
         Connection conn = DBConnection();
         try {
             Statement statement = conn.createStatement();
             String sql = "insert into lichsutrangthai values('" + id + "', '" + date + "', '" + status + "');";
+
+            int x = statement.executeUpdate(sql);
+            conn.close();
+            if (x == 0) {
+                //JOptionPane.showMessageDialog(null, "Already exists");
+                return false;
+            } else {
+                //JOptionPane.showMessageDialog(null, "Updated Hospital History successfully!");
+                return true;
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }*/
+
+    public static boolean updateLSTT(String id, String date, String time, String status) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "insert into lichsutrangthai values('" + id + "', '" + date + "', '" + time + "', '" + status + "');";
 
             int x = statement.executeUpdate(sql);
             conn.close();
@@ -1089,6 +1118,72 @@ public class Database {
             e.printStackTrace();
         }
         return list;
+    }
+
+    // ----- STATISTICS ----- //
+    public static DefaultCategoryDataset getSumStatus() {
+        Connection conn = DBConnection();
+        String sql = "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT count(id) as soca, trangthai, ngay\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1 and trangthai LIKE '%F%'\n" +
+                "GROUP BY trangthai, ngay\n" +
+                "ORDER BY ngay asc, trangthai asc;\n";
+        DefaultCategoryDataset dataset2 = new DefaultCategoryDataset();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                dataset2.setValue(rs.getInt("soca"), rs.getString("trangthai"),rs.getString("ngay"));
+            }
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dataset2;
+    }
+
+    public static DefaultCategoryDataset getStatusChange() {
+        Connection conn = DBConnection();
+        String sql = "WITH group_data_3 AS (\n" +
+                "WITH group_data_2 AS (\n" +
+                "WITH group_data_1 AS (\n" +
+                "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT id, ngay, thoigian, trangthai\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM group_data_1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_2\n" +
+                "group by id\n" +
+                "having count(ngay) > 1\n" +
+                "order by ngay asc\n" +
+                ")\n" +
+                "SELECT count(id) as soluongchuyen, ngay\n" +
+                "FROM group_data_3\n" +
+                "group by ngay\n" +
+                "order by ngay asc;";
+        DefaultCategoryDataset dataset3 = new DefaultCategoryDataset();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                dataset3.setValue(rs.getInt("soluongchuyen"), "",rs.getString("ngay"));
+            }
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dataset3;
     }
 
     public static void main(String args[]) {

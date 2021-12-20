@@ -7,7 +7,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -192,7 +194,12 @@ public class editUser extends JFrame {
                 }
 
                 if (!backupStatus.equals(tfStatus.getText().toString())) {
-                    Database.updateLSTT(root.getId(), dtf.format(now), tfStatus.getText().toString());
+                    dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd");
+                    String localDate = dtf.format(LocalDate.now());
+                    dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+                    String localTime = dtf.format(LocalTime.now());
+                    Database.updateLSTT(root.getId(), localDate, localTime, tfStatus.getText().toString());
+                    //Database.updateLSTT(root.getId(), dtf.format(now), tfStatus.getText().toString());
 
                     backupStatus = tfStatus.getText().toString();
                 }
