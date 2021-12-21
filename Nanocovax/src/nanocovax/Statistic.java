@@ -64,7 +64,8 @@ public class Statistic extends JFrame {
         dataset4.setValue(33000,"Debt","Ngày 3");
 
         initBarChart(chartPanel1,dataset2,"Thống kê Số người từng trạng thái theo ngày","Ngày","Người");
-        initLineChart(chartPanel2,dataset3,"Thống kê Số chuyển trạng thái","Ngày","Thông tin");
+        //initLineChart(chartPanel2,dataset3,"Thống kê Số chuyển trạng thái","Ngày","Thông tin");
+        initBarChart(chartPanel2,dataset3,"Thống kê Số chuyển trạng thái","Ngày","Thông tin");
         initPieChart(chartPanel3,dataset,"Thống kê tiêu thụ nhu yếu phẩm");
         initBarChart(chartPanel4,dataset4,"Thống kê dư nợ","Ngày","VNĐ");
 
@@ -83,7 +84,7 @@ public class Statistic extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 DefaultCategoryDataset dataset3 = Database.getStatusChange();
-                initLineChart(chartPanel2,dataset3,"Thống kê Số chuyển trạng thái","Ngày","Thông tin");
+                initBarChart(chartPanel2,dataset3,"Thống kê Số chuyển trạng thái","Ngày","Thông tin");
             }
         });
         refreshButton3.addActionListener(new ActionListener() {

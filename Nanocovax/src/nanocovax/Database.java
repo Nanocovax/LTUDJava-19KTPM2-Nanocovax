@@ -1147,8 +1147,12 @@ public class Database {
     }
 
     public static DefaultCategoryDataset getStatusChange() {
+        DefaultCategoryDataset dataset3 = new DefaultCategoryDataset();
+
         Connection conn = DBConnection();
-        String sql = "WITH group_data_3 AS (\n" +
+        String sql = "WITH group_final AS (\n" +
+                "WITH group_4 AS (\n" +
+                "WITH group_3 AS (\n" +
                 "WITH group_data_2 AS (\n" +
                 "WITH group_data_1 AS (\n" +
                 "WITH added_row_number AS (\n" +
@@ -1159,30 +1163,346 @@ public class Database {
                 "FROM added_row_number\n" +
                 "WHERE stt = 1\n" +
                 ")\n" +
-                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay ASC, thoigian ASC) as stt\n" +
                 "FROM group_data_1\n" +
                 ")\n" +
                 "SELECT *\n" +
                 "FROM group_data_2\n" +
+                "WHERE NOT EXISTS (\n" +
+                "WITH group_data_5 AS (\n" +
+                "WITH group_data_4 AS (\n" +
+                "WITH group_data_3 AS (\n" +
+                "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT id, ngay, thoigian, trangthai\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM group_data_3\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_4\n" +
                 "group by id\n" +
-                "having count(ngay) > 1\n" +
-                "order by ngay asc\n" +
+                "having count(ngay) = 1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_5\n" +
+                "WHERE group_data_2.id = group_data_5.id\n" +
+                ")\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_3\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_4\n" +
+                "WHERE NOT EXISTS (\n" +
+
+                "WITH group_2 AS (\n" +
+                "WITH group_1 AS (\n" +
+                "WITH group_data_2 AS (\n" +
+                "WITH group_data_1 AS (\n" +
+                "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT id, ngay, thoigian, trangthai\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay ASC, thoigian ASC) as stt\n" +
+                "FROM group_data_1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_2\n" +
+                "WHERE NOT EXISTS (\n" +
+                "WITH group_data_5 AS (\n" +
+                "WITH group_data_4 AS (\n" +
+                "WITH group_data_3 AS (\n" +
+                "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT id, ngay, thoigian, trangthai\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM group_data_3\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_4\n" +
+                "group by id\n" +
+                "having count(ngay) = 1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_5\n" +
+                "WHERE group_data_2.id = group_data_5.id\n" +
+                ")\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_1\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_2\n" +
+                "WHERE group_4.ngay = group_2.ngay\n" +
+                ")\n" +
                 ")\n" +
                 "SELECT count(id) as soluongchuyen, ngay\n" +
-                "FROM group_data_3\n" +
+                "FROM group_final\n" +
+                "where trangthai like '%F%'\n" +
                 "group by ngay\n" +
                 "order by ngay asc;";
-        DefaultCategoryDataset dataset3 = new DefaultCategoryDataset();
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                dataset3.setValue(rs.getInt("soluongchuyen"), "",rs.getString("ngay"));
+                dataset3.setValue(rs.getInt("soluongchuyen"), "Being treated",rs.getString("ngay"));
             }
             conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        conn = DBConnection();
+        sql = "WITH group_final AS (\n" +
+                "WITH group_4 AS (\n" +
+                "WITH group_3 AS (\n" +
+                "WITH group_data_2 AS (\n" +
+                "WITH group_data_1 AS (\n" +
+                "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT id, ngay, thoigian, trangthai\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay ASC, thoigian ASC) as stt\n" +
+                "FROM group_data_1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_2\n" +
+                "WHERE NOT EXISTS (\n" +
+                "WITH group_data_5 AS (\n" +
+                "WITH group_data_4 AS (\n" +
+                "WITH group_data_3 AS (\n" +
+                "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT id, ngay, thoigian, trangthai\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM group_data_3\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_4\n" +
+                "group by id\n" +
+                "having count(ngay) = 1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_5\n" +
+                "WHERE group_data_2.id = group_data_5.id\n" +
+                ")\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_3\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_4\n" +
+                "WHERE NOT EXISTS (\n" +
+
+                "WITH group_2 AS (\n" +
+                "WITH group_1 AS (\n" +
+                "WITH group_data_2 AS (\n" +
+                "WITH group_data_1 AS (\n" +
+                "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT id, ngay, thoigian, trangthai\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay ASC, thoigian ASC) as stt\n" +
+                "FROM group_data_1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_2\n" +
+                "WHERE NOT EXISTS (\n" +
+                "WITH group_data_5 AS (\n" +
+                "WITH group_data_4 AS (\n" +
+                "WITH group_data_3 AS (\n" +
+                "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT id, ngay, thoigian, trangthai\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM group_data_3\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_4\n" +
+                "group by id\n" +
+                "having count(ngay) = 1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_5\n" +
+                "WHERE group_data_2.id = group_data_5.id\n" +
+                ")\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_1\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_2\n" +
+                "WHERE group_4.ngay = group_2.ngay\n" +
+                ")\n" +
+                ")\n" +
+                "SELECT count(id) as soluongchuyen, ngay\n" +
+                "FROM group_final\n" +
+                "where trangthai like '%R%'\n" +
+                "group by ngay\n" +
+                "order by ngay asc;";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                dataset3.setValue(rs.getInt("soluongchuyen"), "Recovered",rs.getString("ngay"));
+            }
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        conn = DBConnection();
+        sql = "WITH group_final AS (\n" +
+                "WITH group_4 AS (\n" +
+                "WITH group_3 AS (\n" +
+                "WITH group_data_2 AS (\n" +
+                "WITH group_data_1 AS (\n" +
+                "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT id, ngay, thoigian, trangthai\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay ASC, thoigian ASC) as stt\n" +
+                "FROM group_data_1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_2\n" +
+                "WHERE NOT EXISTS (\n" +
+                "WITH group_data_5 AS (\n" +
+                "WITH group_data_4 AS (\n" +
+                "WITH group_data_3 AS (\n" +
+                "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT id, ngay, thoigian, trangthai\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM group_data_3\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_4\n" +
+                "group by id\n" +
+                "having count(ngay) = 1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_5\n" +
+                "WHERE group_data_2.id = group_data_5.id\n" +
+                ")\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_3\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_4\n" +
+                "WHERE NOT EXISTS (\n" +
+
+                "WITH group_2 AS (\n" +
+                "WITH group_1 AS (\n" +
+                "WITH group_data_2 AS (\n" +
+                "WITH group_data_1 AS (\n" +
+                "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT id, ngay, thoigian, trangthai\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay ASC, thoigian ASC) as stt\n" +
+                "FROM group_data_1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_2\n" +
+                "WHERE NOT EXISTS (\n" +
+                "WITH group_data_5 AS (\n" +
+                "WITH group_data_4 AS (\n" +
+                "WITH group_data_3 AS (\n" +
+                "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT id, ngay, thoigian, trangthai\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM group_data_3\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_4\n" +
+                "group by id\n" +
+                "having count(ngay) = 1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_5\n" +
+                "WHERE group_data_2.id = group_data_5.id\n" +
+                ")\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_1\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_2\n" +
+                "WHERE group_4.ngay = group_2.ngay\n" +
+                ")\n" +
+                ")\n" +
+                "SELECT count(id) as soluongchuyen, ngay\n" +
+                "FROM group_final\n" +
+                "where trangthai like '%D%'\n" +
+                "group by ngay\n" +
+                "order by ngay asc;";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                dataset3.setValue(rs.getInt("soluongchuyen"), "Dead",rs.getString("ngay"));
+            }
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return dataset3;
     }
 
