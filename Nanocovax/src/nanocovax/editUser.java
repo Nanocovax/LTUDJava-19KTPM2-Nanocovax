@@ -43,7 +43,7 @@ public class editUser extends JFrame {
         comboboxInit();
         setDateChooser();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(700,300);
+        setSize(910,372);
         setResizable(false);
         setVisible(true);
         rootId = srcId;
