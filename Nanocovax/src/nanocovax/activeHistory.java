@@ -2,9 +2,12 @@ package nanocovax;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 
 public class activeHistory extends JFrame {
     private JTable hisTable;
@@ -33,18 +36,24 @@ public class activeHistory extends JFrame {
         setVisible(true);
 
         idNQL = id;
-        int index = comboBox.getSelectedIndex();
-        switch (index) {
-            case 0:
-                createTableUserBranchActivity();
-                break;
-            case 1:
-                createTableFPBranchActivity();
-                break;
-            case 2:
-                createTableHospitalBranchActivity();
-                break;
-        }
+
+        comboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int index = comboBox.getSelectedIndex();
+                switch (index) {
+                    case 0:
+                        createTableUserBranchActivity();
+                        break;
+                    case 1:
+                        createTableFPBranchActivity();
+                        break;
+                    case 2:
+                        createTableHospitalBranchActivity();
+                        break;
+                }
+            }
+        });
     }
 
     /*void createTable(){
@@ -53,6 +62,12 @@ public class activeHistory extends JFrame {
         hisTable.setModel(new DefaultTableModel(data,tbColName));
     }*/
 
+    public void resetTable() {
+        String[] tbColName = {"ID", "Activity", "Time"};
+        Object[] [] data = new String[1][3];
+        hisTable.setModel(new DefaultTableModel(data,tbColName));
+    }
+
     public void createTableUserBranchActivity(){
         ArrayList<UserBranchActivity> list = Database.getUserBranchActivity(idNQL);
         String[] tbColName = {"ID", "Activity", "Time"};
@@ -60,10 +75,11 @@ public class activeHistory extends JFrame {
         hisTable.setModel(new DefaultTableModel(data,tbColName));
 
         for (int i = 0; i < list.size(); i++) {
-            NumberFormat nf = new DecimalFormat("000");
-            data[i][0] = nf.format(list.get(i).getUserID());
-            data[i][1] = list.get(i).getActivity() + " " + list.get(i).getUserName();
-            data[i][2] = list.get(i).getDate();
+            data[i][0] = list.get(i).getUserID();
+            data[i][1] = list.get(i).getUserName() + " is " + list.get(i).getActivity();
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String date = format.format(list.get(i).getDate());
+            data[i][2] = date;
         }
 
         hisTable.setModel(new DefaultTableModel(data, tbColName));
@@ -80,8 +96,10 @@ public class activeHistory extends JFrame {
         for (int i = 0; i < list.size(); i++) {
             NumberFormat nf = new DecimalFormat("000");
             data[i][0] = nf.format(list.get(i).getFPID());
-            data[i][1] = list.get(i).getActivity() + " " + list.get(i).getFPName();
-            data[i][2] = list.get(i).getDate();
+            data[i][1] = list.get(i).getFPName() + " is " + list.get(i).getActivity();
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String date = format.format(list.get(i).getDate());
+            data[i][2] = date;
         }
 
         hisTable.setModel(new DefaultTableModel(data, tbColName));
@@ -96,10 +114,11 @@ public class activeHistory extends JFrame {
         hisTable.setModel(new DefaultTableModel(data,tbColName));
 
         for (int i = 0; i < list.size(); i++) {
-            NumberFormat nf = new DecimalFormat("000");
-            data[i][0] = nf.format(list.get(i).getHospitalId());
-            data[i][1] = list.get(i).getActivity() + " " + list.get(i).getHospitalName();
-            data[i][2] = list.get(i).getDate();
+            data[i][0] = list.get(i).getHospitalId();
+            data[i][1] = list.get(i).getHospitalName() + " is " + list.get(i).getActivity();
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String date = format.format(list.get(i).getDate());
+            data[i][2] = date;
         }
 
         hisTable.setModel(new DefaultTableModel(data, tbColName));

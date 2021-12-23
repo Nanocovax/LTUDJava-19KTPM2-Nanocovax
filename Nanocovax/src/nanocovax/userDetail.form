@@ -98,7 +98,7 @@
             </constraints>
             <properties>
               <font size="14" style="0"/>
-              <text value="01"/>
+              <text value=""/>
             </properties>
           </component>
           <component id="59f38" class="javax.swing.JLabel" binding="nameLabel">
@@ -116,7 +116,7 @@
             </constraints>
             <properties>
               <font size="14" style="0"/>
-              <text value="Nguyễn Văn A"/>
+              <text value=""/>
             </properties>
           </component>
           <component id="68cb5" class="javax.swing.JLabel" binding="dobLabel">
@@ -134,7 +134,7 @@
             </constraints>
             <properties>
               <font size="14" style="0"/>
-              <text value="01/01/1990"/>
+              <text value=""/>
             </properties>
           </component>
           <component id="19574" class="javax.swing.JLabel" binding="addressLabel">
@@ -152,7 +152,7 @@
             </constraints>
             <properties>
               <font size="14" style="0"/>
-              <text value="Trái Đất"/>
+              <text value=""/>
             </properties>
           </component>
           <component id="6aae7" class="javax.swing.JLabel" binding="sttLabel">
@@ -170,7 +170,7 @@
             </constraints>
             <properties>
               <font size="14" style="0"/>
-              <text value="F0"/>
+              <text value=""/>
             </properties>
           </component>
           <component id="ca2f6" class="javax.swing.JLabel" binding="hospitalLabel">
@@ -188,7 +188,7 @@
             </constraints>
             <properties>
               <font size="14" style="0"/>
-              <text value="Bệnh viện giả chiến số 1"/>
+              <text value=""/>
             </properties>
           </component>
           <vspacer id="d1c68">

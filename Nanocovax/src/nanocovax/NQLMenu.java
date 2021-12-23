@@ -36,16 +36,54 @@ public class NQLMenu extends JFrame{
     int indexRow;
     Object id = null;
     static Object rootId;
+    String order;
 
     NQLMenu(String srcId){
         add(this.rootPanel);
-        createTable(Database.getListUser());
+        order = "id asc";
+        createTable(Database.getListUser(order));
         rootId = srcId;
         setSize(1200,600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         sortOption.setSelectedIndex(0);
         //table được lấy ban đầu mặc định được sắp xếp theo ID chiều tăng dần
+        sortOption.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int indexCityPro = sortOption.getSelectedIndex();
+                switch (indexCityPro) {
+                    case 0:
+                        order = "id asc";
+                        break;
+                    case 1:
+                        order = "id desc";
+                        break;
+                    case 2:
+                        order = "hoten asc";
+                        break;
+                    case 3:
+                        order = "hoten desc";
+                        break;
+                    case 4:
+                        order = "ngaysinh asc";
+                        break;
+                    case 5:
+                        order = "ngaysinh desc";
+                        break;
+                    case 6:
+                        order = "trangthai asc";
+                        break;
+                    case 7:
+                        order = "trangthai desc";
+                        break;
+                    default:
+                        order = "id asc";
+                        break;
+                }
+                createTable(Database.getListUser(order));
+            }
+        });
 
         addButton.addActionListener(new ActionListener() {
             @Override
@@ -62,13 +100,19 @@ public class NQLMenu extends JFrame{
         refreshButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                createTable(Database.getListUser());
+                createTable(Database.getListUser(order));
             }
         });
         detailButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                userDetail u = new userDetail();
+                //userDetail u = new userDetail();
+                if (indexRow != -1) {
+                    retriveUser();
+                    userDetail u = new userDetail(Database.getListUser(order).get(indexRow), rootId.toString());
+                } else {
+                    userDetail u = new userDetail();
+                }
             }
         });
         editButton.addActionListener(new ActionListener() {
@@ -78,7 +122,7 @@ public class NQLMenu extends JFrame{
                     //editUser editUser = new editUser();
                     if (indexRow != -1) {
                         retriveUser();
-                        editUser editUser = new editUser(Database.getListUser().get(indexRow), rootId.toString());
+                        editUser editUser = new editUser(Database.getListUser(order).get(indexRow), rootId.toString());
                     } else {
                         editUser editNQL = new editUser(rootId.toString());
                     }
@@ -93,11 +137,10 @@ public class NQLMenu extends JFrame{
                 retriveUser();
                 int dialogResult = JOptionPane.showConfirmDialog(null, "Delete " + id.toString() + "?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
                 if (dialogResult == JOptionPane.YES_OPTION) {
-                    Database.deleteUser(id.toString());
+                    ArrayList<User> t = Database.searchUser(id.toString());
+                    Database.updateOccupancyNDT(t.get(0).getHospital().getId(), 1);
 
-                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
-                    LocalDateTime now = LocalDateTime.now();
-                    Database.updateLSNQL(0, rootId.toString(), dtf.format(now), "del", id.toString());
+                    Database.deleteUser(id.toString(), rootId.toString());
                 }
             }
         });
@@ -148,7 +191,7 @@ public class NQLMenu extends JFrame{
         Object[] [] data = new String[list.size()][6];
         //Object[] [] data = {{"01","Nguyễn Văn A","01/01/1990","Trái Đất","F0","001"}};
 
-        userTable.setModel(new DefaultTableModel(data,tbColName));
+        // userTable.setModel(new DefaultTableModel(data,tbColName));
 
         for (int i = 0; i < list.size(); i++) {
             NumberFormat nf = new DecimalFormat("000");

@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -94,11 +95,7 @@ public class addUser extends JFrame {
                 String hospital = tfHospital.getText().toString();
                 String idNLQ = tfRelate.getText().toString();
 
-                Database.createUser(id, name, date, cPList.get(cbbCityPro.getSelectedIndex()).getId(), dList.get(cbbDistrict.getSelectedIndex()).getId(), wList.get(cbbWard.getSelectedIndex()).getId(), status, hospital, idNLQ);
-
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
-                LocalDateTime now = LocalDateTime.now();
-                Database.updateLSNQL(0, rootId.toString(), dtf.format(now), "add", id);
+                boolean res = Database.createUser(id, name, date, cPList.get(cbbCityPro.getSelectedIndex()).getId(), dList.get(cbbDistrict.getSelectedIndex()).getId(), wList.get(cbbWard.getSelectedIndex()).getId(), status, hospital, idNLQ);
 
                 tfID.setText("");
                 tfName.setText("");
@@ -109,6 +106,22 @@ public class addUser extends JFrame {
                 cbbDistrict.removeAllItems();
                 cbbWard.removeAllItems();
                 jDateChooser.setCalendar(null);
+
+                if (res) {
+                    Database.updateOccupancyNDT(hospital, 0);
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
+                    LocalDateTime now = LocalDateTime.now();
+                    Database.updateLSNQL(0, rootId.toString(), dtf.format(now), "added", id);
+                    Database.updateLSNQL(2, rootId.toString(), dtf.format(now), "added " + id, hospital);
+                    Database.updateLSNDT(id, dtf.format(now), hospital);
+                    // Database.updateLSTT(id, dtf.format(now), status);
+
+                    dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd");
+                    String localDate = dtf.format(LocalDate.now());
+                    dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+                    String localTime = dtf.format(LocalTime.now());
+                    Database.updateLSTT(id, localDate, localTime, status);
+                }
             }
         });
 

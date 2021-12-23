@@ -1,5 +1,7 @@
 package nanocovax;
 
+import org.jfree.data.category.DefaultCategoryDataset;
+
 import java.sql.*;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -87,6 +89,34 @@ public class Database {
         }
         return result;
     }
+
+    public static boolean updateNQLPassword(String username, String password) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            password = Encryption.encryptMD5(password);
+            String sql = "UPDATE taikhoan\n" +
+                    "SET password = '" + password + "', tinhtrang = 'bt'\n" +
+                    "WHERE id = '" + username + "';";
+
+            int x = statement.executeUpdate(sql);
+            conn.close();
+            if (x == 0) {
+                JOptionPane.showMessageDialog(null, "Updating fails!");
+                return false;
+            } else {
+                JOptionPane.showMessageDialog(null, "Updated successfully!");
+                return true;
+            }
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     /*---------------NOI DIEU TRI---------------------*/
     public static int countNDT() {
@@ -414,7 +444,7 @@ public class Database {
                 s.setUserId(rs.getString("id"));
                 s.setUserName(rs.getString("hoten"));
                 s.setActivity(rs.getString("hoatdong"));
-                s.setDate(rs.getDate("thoigian"));
+                s.setDate(rs.getTimestamp("thoigian"));
                 list.add(s);
             }
         } catch (Exception e) {
@@ -427,7 +457,7 @@ public class Database {
         ArrayList<FoodPackageBranchActivity> list = new ArrayList<>();
         String sql = "select nyp.id_nyp, nyp.tengoi, ls.hoatdong, ls.thoigian from lichsunql as ls\n" +
                 "join nhuyeupham nyp on ls.id_nyp=nyp.id_nyp\n" +
-                "where ls.id_nql='" + idNQL + "' and ls.id!=''\n" +
+                "where ls.id_nql='" + idNQL + "'\n" +
                 "order by ls.thoigian desc;";
         Connection conn = DBConnection();
         try {
@@ -438,7 +468,7 @@ public class Database {
                 s.setFPId(rs.getString("id_nyp"));
                 s.setFPName(rs.getString("tengoi"));
                 s.setActivity(rs.getString("hoatdong"));
-                s.setDate(rs.getDate("thoigian"));
+                s.setDate(rs.getTimestamp("thoigian"));
                 list.add(s);
             }
         } catch (Exception e) {
@@ -451,7 +481,7 @@ public class Database {
         ArrayList<HospitalBranchActivity> list = new ArrayList<>();
         String sql = "select ndt.id_ndt, ndt.ten, ls.hoatdong, ls.thoigian from lichsunql as ls\n" +
                 "join noidieutri ndt on ls.id_ndt=ndt.id_ndt\n" +
-                "where ls.id_nql='" + idNQL + "' and ls.id!=''\n" +
+                "where ls.id_nql='" + idNQL + "'\n" +
                 "order by ls.thoigian desc;";
         Connection conn = DBConnection();
         try {
@@ -462,7 +492,7 @@ public class Database {
                 s.setHospitalId(rs.getString("id_ndt"));
                 s.setHospitalName(rs.getString("ten"));
                 s.setActivity(rs.getString("hoatdong"));
-                s.setDate(rs.getDate("thoigian"));
+                s.setDate(rs.getTimestamp("thoigian"));
                 list.add(s);
             }
         } catch (Exception e) {
@@ -537,11 +567,49 @@ public class Database {
         return list;
     }
 
+    private static boolean isAvailable(String id) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "select * from noidieutri\n" +
+                            "where id_ndt = '" + id + "';";
+
+            ResultSet rs = statement.executeQuery(sql);
+
+            if (!rs.next()) {
+                conn.close();
+                return false;
+            } else {
+                if (rs.getInt("dangchua") < rs.getInt("succhua")) {
+                    conn.close();
+                    return true;
+                }
+                else {
+                    conn.close();
+                    return false;
+                }
+            }
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public static boolean createUser(String id, String name, String doB, String matp, String maqh, String maxp, String status, String hospital, String idNLQ) {
         Connection conn = DBConnection();
         try {
             Statement statement = conn.createStatement();
             String password = Encryption.encryptMD5(id);
+
+            if (!isAvailable(hospital)) {
+                JOptionPane.showMessageDialog(null, "Hospital is not available!");
+                conn.close();
+                return false;
+            }
+
             String sql = "insert into taikhoan values('" + id + "', '" + password + "', 'nguoidung', 'bt');";
 
             int result = statement.executeUpdate(sql);
@@ -571,7 +639,7 @@ public class Database {
         }
     }
 
-    public static ArrayList<User> getListUser() {
+    /*public static ArrayList<User> getListUser() {
         ArrayList<User> list = new ArrayList<>();
         // String sql = "select id, hoten, ngaysinh, trangthai, ten from ttnguoidung join noidieutri on ndt = id_ndt;";
         String sql = "select * from ttnguoidung\n"+
@@ -579,6 +647,67 @@ public class Database {
                 "join tinhthanhpho ttp on tinhtp = ttp.matp\n"+
                 "join quanhuyen qh on quanhuyen = qh.maqh\n"+
                 "join xaphuong xp on xaphuong = xp.maxp;";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User s = new User();
+                s.setId(rs.getString("id"));
+                s.setName(rs.getString("hoten"));
+
+                String d = rs.getString("ngaysinh");
+                SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                Date date = oldFormat.parse(d);
+                SimpleDateFormat newFormat = new SimpleDateFormat("dd/MM/yyyy");
+                String output = newFormat.format(date);
+                s.setDoB(output);
+
+                CityProvince cp = new CityProvince();
+                cp.setId(rs.getString("ttp.matp"));
+                cp.setName(rs.getString("ttp.ten"));
+
+                District district = new District();
+                district.setId(rs.getString("qh.maqh"));
+                district.setName(rs.getString("qh.ten"));
+
+                Ward w = new Ward();
+                w.setId(rs.getString("xp.maxp"));
+                w.setName(rs.getString("xp.ten"));
+
+                Address address = new Address();
+                address.setCityProvince(cp);
+                address.setDistrict(district);
+                address.setWard(w);
+                s.setAddress(address);
+
+                s.setStatus(rs.getString("trangthai"));
+
+                Hospital hospital = new Hospital();
+                hospital.setId(rs.getString("ndt.id_ndt"));
+                hospital.setName(rs.getString("ndt.ten"));
+                hospital.setCapacity(rs.getInt("ndt.succhua"));
+                hospital.setOccupancy(rs.getInt("ndt.dangchua"));
+                s.setHospital(hospital);
+                //s.setHospital(rs.getString("ten"));
+
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }*/
+
+    public static ArrayList<User> getListUser(String order) {
+        ArrayList<User> list = new ArrayList<>();
+        // String sql = "select id, hoten, ngaysinh, trangthai, ten from ttnguoidung join noidieutri on ndt = id_ndt;";
+        String sql = "select * from ttnguoidung\n"+
+                "join noidieutri ndt on ndt = ndt.id_ndt\n" +
+                "join tinhthanhpho ttp on tinhtp = ttp.matp\n" +
+                "join quanhuyen qh on quanhuyen = qh.maqh\n" +
+                "join xaphuong xp on xaphuong = xp.maxp\n" +
+                "order by " + order +   ";";
         Connection conn = DBConnection();
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -691,13 +820,25 @@ public class Database {
         return list;
     }
 
-    public static boolean deleteUser(String id) {
+    public static boolean deleteUser(String id, String idNQL) {
         Connection conn = DBConnection();
         try {
             Statement statement = conn.createStatement();
             String sql = "delete from lienquan\n" +
                     "where id = '" + id + "' or id_lienquan = '" + id + "';";
             int x = statement.executeUpdate(sql);
+
+            sql = "delete from lichsundt\n" +
+                    "where id = '" + id + "';";
+            x = statement.executeUpdate(sql);
+
+            sql = "delete from lichsunql\n" +
+                    "where id = '" + id + "' and id_nql = '" + idNQL + "';";
+            x = statement.executeUpdate(sql);
+
+            sql = "delete from lichsutrangthai\n" +
+                    "where id = '" + id + "';";
+            x = statement.executeUpdate(sql);
 
             sql = "delete from ttnguoidung\n" +
                     "where id = '" + id + "';";
@@ -738,6 +879,10 @@ public class Database {
                 JOptionPane.showMessageDialog(null, "Updated successfully!");
 
                 if (!idNLQ.isEmpty()) {
+                    sql = "delete from lienquan\n" +
+                            "where id = '" + id + "';";
+                    x = statement.executeUpdate(sql);
+
                     sql = "insert into lienquan values('" + id + "', '" + idNLQ + "');";
                     x = statement.executeUpdate(sql);
                 }
@@ -774,10 +919,10 @@ public class Database {
             int x = statement.executeUpdate(sql);
             conn.close();
             if (x == 0) {
-                JOptionPane.showMessageDialog(null, "Already exists");
+                //JOptionPane.showMessageDialog(null, "Already exists");
                 return false;
             } else {
-                JOptionPane.showMessageDialog(null, "Updated Moderator History successfully!");
+                //JOptionPane.showMessageDialog(null, "Updated Moderator History successfully!");
                 return true;
             }
         } catch (SQLException e) {
@@ -786,6 +931,579 @@ public class Database {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static boolean updateLSNDT(String id, String date, String idNDT) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "insert into lichsundt values('" + id + "', '" + date + "', '" + idNDT + "');";
+
+            int x = statement.executeUpdate(sql);
+            conn.close();
+            if (x == 0) {
+                //JOptionPane.showMessageDialog(null, "Already exists");
+                return false;
+            } else {
+                //JOptionPane.showMessageDialog(null, "Updated Hospital History successfully!");
+                return true;
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /*public static boolean updateLSTT(String id, String date, String status) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "insert into lichsutrangthai values('" + id + "', '" + date + "', '" + status + "');";
+
+            int x = statement.executeUpdate(sql);
+            conn.close();
+            if (x == 0) {
+                //JOptionPane.showMessageDialog(null, "Already exists");
+                return false;
+            } else {
+                //JOptionPane.showMessageDialog(null, "Updated Hospital History successfully!");
+                return true;
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }*/
+
+    public static boolean updateLSTT(String id, String date, String time, String status) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "insert into lichsutrangthai values('" + id + "', '" + date + "', '" + time + "', '" + status + "');";
+
+            int x = statement.executeUpdate(sql);
+            conn.close();
+            if (x == 0) {
+                //JOptionPane.showMessageDialog(null, "Already exists");
+                return false;
+            } else {
+                //JOptionPane.showMessageDialog(null, "Updated Hospital History successfully!");
+                return true;
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean updateOccupancyNDT(String id_ndt, int option) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            String sql;
+            if (option == 0) {
+                sql = "UPDATE noidieutri\n" +
+                        "SET dangchua = dangchua + 1\n" +
+                        "WHERE id_ndt = '" + id_ndt + "';";
+            }
+            else {
+                sql = "UPDATE noidieutri\n" +
+                        "SET dangchua = dangchua - 1\n" +
+                        "WHERE id_ndt = '" + id_ndt + "';";
+            }
+
+            int x = statement.executeUpdate(sql);
+            conn.close();
+            if (x == 0) {
+                //JOptionPane.showMessageDialog(null, "Already exists");
+                return false;
+            } else {
+                //JOptionPane.showMessageDialog(null, "Updated Hospital Occupancy successfully!");
+                return true;
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static ArrayList<HospitalHistory> getLSNDT(String id) {
+        ArrayList<HospitalHistory> list = new ArrayList<>();
+        String sql = "select * from lichsundt lsndt join noidieutri ndt on lsndt.id_ndt = ndt.id_ndt where id = '" + id +  "';";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                HospitalHistory s = new HospitalHistory();
+                s.setId(rs.getString("id"));
+
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String date = format.format(rs.getTimestamp("thoigian"));
+                s.setTime(date);
+
+                Hospital t = new Hospital();
+                t.setId(rs.getString("id_ndt"));
+                t.setName(rs.getString("ten"));
+                t.setCapacity(rs.getInt("succhua"));
+                t.setOccupancy(rs.getInt("dangchua"));
+                s.setNDT(t);
+
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static ArrayList<User> getListNLQ(String id) {
+        ArrayList<User> list = new ArrayList<>();
+        String sql = "select * from ttnguoidung ttnd join noidieutri ndt on ttnd.ndt = ndt.id_ndt join tinhthanhpho ttp on tinhtp = ttp.matp join quanhuyen qh on quanhuyen = qh.maqh join xaphuong xp on xaphuong = xp.maxp join lienquan lq on ttnd.id = lq.id where lq.id_lienquan = '" + id +  "';";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User s = new User();
+                s.setId(rs.getString("ttnd.id"));
+                s.setName(rs.getString("ttnd.hoten"));
+
+                String d = rs.getString("ttnd.ngaysinh");
+                SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                Date date = oldFormat.parse(d);
+                SimpleDateFormat newFormat = new SimpleDateFormat("dd/MM/yyyy");
+                String output = newFormat.format(date);
+                s.setDoB(output);
+
+                CityProvince cp = new CityProvince();
+                cp.setId(rs.getString("ttp.matp"));
+                cp.setName(rs.getString("ttp.ten"));
+
+                District district = new District();
+                district.setId(rs.getString("qh.maqh"));
+                district.setName(rs.getString("qh.ten"));
+
+                Ward w = new Ward();
+                w.setId(rs.getString("xp.maxp"));
+                w.setName(rs.getString("xp.ten"));
+
+                Address address = new Address();
+                address.setCityProvince(cp);
+                address.setDistrict(district);
+                address.setWard(w);
+                s.setAddress(address);
+
+                s.setStatus(rs.getString("ttnd.trangthai"));
+
+                Hospital hospital = new Hospital();
+                hospital.setId(rs.getString("ndt.id_ndt"));
+                hospital.setName(rs.getString("ndt.ten"));
+                hospital.setCapacity(rs.getInt("ndt.succhua"));
+                hospital.setOccupancy(rs.getInt("ndt.dangchua"));
+                s.setHospital(hospital);
+                //s.setHospital(rs.getString("ten"));
+
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    // ----- STATISTICS ----- //
+    public static DefaultCategoryDataset getSumStatus() {
+        Connection conn = DBConnection();
+        String sql = "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT count(id) as soca, trangthai, ngay\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1 and trangthai LIKE '%F%'\n" +
+                "GROUP BY trangthai, ngay\n" +
+                "ORDER BY ngay asc, trangthai asc;\n";
+        DefaultCategoryDataset dataset2 = new DefaultCategoryDataset();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                dataset2.setValue(rs.getInt("soca"), rs.getString("trangthai"),rs.getString("ngay"));
+            }
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dataset2;
+    }
+
+    public static DefaultCategoryDataset getStatusChange() {
+        DefaultCategoryDataset dataset3 = new DefaultCategoryDataset();
+
+        Connection conn = DBConnection();
+        String sql = "WITH group_final AS (\n" +
+                "WITH group_4 AS (\n" +
+                "WITH group_3 AS (\n" +
+                "WITH group_data_2 AS (\n" +
+                "WITH group_data_1 AS (\n" +
+                "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT id, ngay, thoigian, trangthai\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay ASC, thoigian ASC) as stt\n" +
+                "FROM group_data_1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_2\n" +
+                "WHERE NOT EXISTS (\n" +
+                "WITH group_data_5 AS (\n" +
+                "WITH group_data_4 AS (\n" +
+                "WITH group_data_3 AS (\n" +
+                "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT id, ngay, thoigian, trangthai\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM group_data_3\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_4\n" +
+                "group by id\n" +
+                "having count(ngay) = 1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_5\n" +
+                "WHERE group_data_2.id = group_data_5.id\n" +
+                ")\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_3\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_4\n" +
+                "WHERE NOT EXISTS (\n" +
+
+                "WITH group_2 AS (\n" +
+                "WITH group_1 AS (\n" +
+                "WITH group_data_2 AS (\n" +
+                "WITH group_data_1 AS (\n" +
+                "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT id, ngay, thoigian, trangthai\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay ASC, thoigian ASC) as stt\n" +
+                "FROM group_data_1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_2\n" +
+                "WHERE NOT EXISTS (\n" +
+                "WITH group_data_5 AS (\n" +
+                "WITH group_data_4 AS (\n" +
+                "WITH group_data_3 AS (\n" +
+                "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT id, ngay, thoigian, trangthai\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM group_data_3\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_4\n" +
+                "group by id\n" +
+                "having count(ngay) = 1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_5\n" +
+                "WHERE group_data_2.id = group_data_5.id\n" +
+                ")\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_1\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_2\n" +
+                "WHERE group_4.ngay = group_2.ngay\n" +
+                ")\n" +
+                ")\n" +
+                "SELECT count(id) as soluongchuyen, ngay\n" +
+                "FROM group_final\n" +
+                "where trangthai like '%F%'\n" +
+                "group by ngay\n" +
+                "order by ngay asc;";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                dataset3.setValue(rs.getInt("soluongchuyen"), "Being treated",rs.getString("ngay"));
+            }
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        conn = DBConnection();
+        sql = "WITH group_final AS (\n" +
+                "WITH group_4 AS (\n" +
+                "WITH group_3 AS (\n" +
+                "WITH group_data_2 AS (\n" +
+                "WITH group_data_1 AS (\n" +
+                "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT id, ngay, thoigian, trangthai\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay ASC, thoigian ASC) as stt\n" +
+                "FROM group_data_1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_2\n" +
+                "WHERE NOT EXISTS (\n" +
+                "WITH group_data_5 AS (\n" +
+                "WITH group_data_4 AS (\n" +
+                "WITH group_data_3 AS (\n" +
+                "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT id, ngay, thoigian, trangthai\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM group_data_3\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_4\n" +
+                "group by id\n" +
+                "having count(ngay) = 1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_5\n" +
+                "WHERE group_data_2.id = group_data_5.id\n" +
+                ")\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_3\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_4\n" +
+                "WHERE NOT EXISTS (\n" +
+
+                "WITH group_2 AS (\n" +
+                "WITH group_1 AS (\n" +
+                "WITH group_data_2 AS (\n" +
+                "WITH group_data_1 AS (\n" +
+                "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT id, ngay, thoigian, trangthai\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay ASC, thoigian ASC) as stt\n" +
+                "FROM group_data_1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_2\n" +
+                "WHERE NOT EXISTS (\n" +
+                "WITH group_data_5 AS (\n" +
+                "WITH group_data_4 AS (\n" +
+                "WITH group_data_3 AS (\n" +
+                "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT id, ngay, thoigian, trangthai\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM group_data_3\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_4\n" +
+                "group by id\n" +
+                "having count(ngay) = 1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_5\n" +
+                "WHERE group_data_2.id = group_data_5.id\n" +
+                ")\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_1\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_2\n" +
+                "WHERE group_4.ngay = group_2.ngay\n" +
+                ")\n" +
+                ")\n" +
+                "SELECT count(id) as soluongchuyen, ngay\n" +
+                "FROM group_final\n" +
+                "where trangthai like '%R%'\n" +
+                "group by ngay\n" +
+                "order by ngay asc;";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                dataset3.setValue(rs.getInt("soluongchuyen"), "Recovered",rs.getString("ngay"));
+            }
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        conn = DBConnection();
+        sql = "WITH group_final AS (\n" +
+                "WITH group_4 AS (\n" +
+                "WITH group_3 AS (\n" +
+                "WITH group_data_2 AS (\n" +
+                "WITH group_data_1 AS (\n" +
+                "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT id, ngay, thoigian, trangthai\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay ASC, thoigian ASC) as stt\n" +
+                "FROM group_data_1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_2\n" +
+                "WHERE NOT EXISTS (\n" +
+                "WITH group_data_5 AS (\n" +
+                "WITH group_data_4 AS (\n" +
+                "WITH group_data_3 AS (\n" +
+                "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT id, ngay, thoigian, trangthai\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM group_data_3\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_4\n" +
+                "group by id\n" +
+                "having count(ngay) = 1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_5\n" +
+                "WHERE group_data_2.id = group_data_5.id\n" +
+                ")\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_3\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_4\n" +
+                "WHERE NOT EXISTS (\n" +
+
+                "WITH group_2 AS (\n" +
+                "WITH group_1 AS (\n" +
+                "WITH group_data_2 AS (\n" +
+                "WITH group_data_1 AS (\n" +
+                "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT id, ngay, thoigian, trangthai\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay ASC, thoigian ASC) as stt\n" +
+                "FROM group_data_1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_2\n" +
+                "WHERE NOT EXISTS (\n" +
+                "WITH group_data_5 AS (\n" +
+                "WITH group_data_4 AS (\n" +
+                "WITH group_data_3 AS (\n" +
+                "WITH added_row_number AS (\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id, ngay ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM lichsutrangthai\n" +
+                ")\n" +
+                "SELECT id, ngay, thoigian, trangthai\n" +
+                "FROM added_row_number\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
+                "FROM group_data_3\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_4\n" +
+                "group by id\n" +
+                "having count(ngay) = 1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_data_5\n" +
+                "WHERE group_data_2.id = group_data_5.id\n" +
+                ")\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_1\n" +
+                "WHERE stt = 1\n" +
+                ")\n" +
+                "SELECT *\n" +
+                "FROM group_2\n" +
+                "WHERE group_4.ngay = group_2.ngay\n" +
+                ")\n" +
+                ")\n" +
+                "SELECT count(id) as soluongchuyen, ngay\n" +
+                "FROM group_final\n" +
+                "where trangthai like '%D%'\n" +
+                "group by ngay\n" +
+                "order by ngay asc;";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                dataset3.setValue(rs.getInt("soluongchuyen"), "Dead",rs.getString("ngay"));
+            }
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return dataset3;
     }
 
     public static void main(String args[]) {
