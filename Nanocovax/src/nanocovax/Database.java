@@ -13,12 +13,12 @@ import java.util.Date;
 public class Database {
     private static String url = "jdbc:mysql://localhost/Nanocovax";
     private static String username = "root";
-    private static String password = "";
+    private static String password = "Baokhuyen2001@";
 
     public static Connection DBConnection() {
         Connection conn = null;
         try {
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
             conn = DriverManager.getConnection(url, username, password);
             //System.out.println("Database is connected!");
         } catch (Exception e) {
