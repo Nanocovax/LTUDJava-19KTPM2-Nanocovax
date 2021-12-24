@@ -32,10 +32,10 @@ public class NecManagement extends JFrame {
     int idxRow;
     Object id = null, tengoi = null, thoihan = null, dongia = null, gioihan = null;
 
-    NecManagement(){
+    NecManagement() {
         add(rootPanel);
         createtable(Database.getListNYP());
-        setSize(1200,600);
+        setSize(1200, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         filterButton.addActionListener(new ActionListener() {
@@ -75,7 +75,12 @@ public class NecManagement extends JFrame {
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                editNec editNec = new editNec();
+                if (idxRow != -1) {
+                    retriveNYP();
+                    editNec editNYP = new editNec(id.toString(), tengoi.toString(), thoihan.toString(), dongia.toString(), gioihan.toString());
+                } else {
+                    editNec editNYP = new editNec();
+                }
             }
         });
         removeButton.addActionListener(new ActionListener() {
@@ -114,11 +119,12 @@ public class NecManagement extends JFrame {
             }
         });
     }
-    public void createtable(ArrayList<NhuYeuPham> dataList){
+
+    public void createtable(ArrayList<NhuYeuPham> dataList) {
 //        String[] tbColName = {"ID", "Name", "Limit/person", "Duration (day(s))","Price"};
 //        Object[] [] data = {{"01","Gói 1","5","2","20000"},{"02","Gói 2","3","3","5000"}};
 //        necTable.setModel(new DefaultTableModel(data,tbColName));
-        String[] tbColName = {"ID", "Name", "Limit/person", "Duration (day(s))","Price"};
+        String[] tbColName = {"ID", "Name", "Limit/person", "Duration (day(s))", "Price"};
         ArrayList<NhuYeuPham> list = dataList;
         String data[][] = new String[list.size()][5];
         for (int i = 0; i < list.size(); i++) {
@@ -145,7 +151,8 @@ public class NecManagement extends JFrame {
             dongia = necTable.getValueAt(idxRow, 4);
         }
     }
-    public static void main(String[] args){
+
+    public static void main(String[] args) {
         NecManagement n = new NecManagement();
     }
 }
