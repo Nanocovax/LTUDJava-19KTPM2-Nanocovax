@@ -1506,6 +1506,150 @@ public class Database {
         return dataset3;
     }
 
+
+    //--------QUẢN LÝ NHU YẾU PHẨM-------------//
+    public static int countNYP() {
+        Connection conn = DBConnection();
+        int id = -1;
+        try {
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery("select count(*) from nhuyeupham");
+
+            if (rs.next()) {
+                id = rs.getInt(1) + 1;
+            }
+
+            conn.close();
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+        }
+        return id;
+    }
+
+    public static boolean createNYP( String tengoi, int thoihan, int dongia, int gioihan) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "insert into nhuyeupham(tengoi, thoihan, dongia, gioihan) values(\"" + tengoi + "\", " + thoihan + ", " + dongia + ", " + gioihan + ");";
+
+            int x = statement.executeUpdate(sql);
+            conn.close();
+            if (x == 0) {
+                JOptionPane.showMessageDialog(null, "Already exists");
+                return false;
+            } else {
+                JOptionPane.showMessageDialog(null, "Add successfully!");
+                return true;
+            }
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean updateNYP(int id, String tengoi, int thoihan, int dongia, int gioihan) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "UPDATE nhuyeupham\n" +
+                    "SET tengoi = '" + tengoi + "', thoihan = " + thoihan + ", dongia =" + dongia + ", gioihan =" + gioihan + "\n" +
+                    "WHERE id_nyp = " + id + ";";
+
+            int x = statement.executeUpdate(sql);
+            conn.close();
+            if (x == 0) {
+                JOptionPane.showMessageDialog(null, "Update fail!");
+                return false;
+            } else {
+                JOptionPane.showMessageDialog(null, "Update successfully!");
+                return true;
+            }
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static ArrayList<NhuYeuPham> getListNYP() {
+        ArrayList<NhuYeuPham> list = new ArrayList<>();
+        String sql = "select * from nhuyeupham";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                NhuYeuPham s = new NhuYeuPham();
+                s.setId_nyp(rs.getInt("id_nyp"));
+                s.setTengoi(rs.getString("tengoi"));
+                s.setThoihan(rs.getInt("thoihan"));
+                s.setDongia(rs.getInt("dongia"));
+                s.setGioihan(rs.getInt("gioihan"));
+
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static ArrayList<NhuYeuPham> searchNYP(String ten) {
+        ArrayList<NhuYeuPham> list = new ArrayList<>();
+        String sql = "select * from nhuyeupham where tengoi LIKE '%" + ten + "%'";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                NhuYeuPham s = new NhuYeuPham();
+                s.setId_nyp(rs.getInt("id_nyp"));
+                s.setTengoi(rs.getString("tengoi"));
+                s.setThoihan(rs.getInt("thoihan"));
+                s.setDongia(rs.getInt("dongia"));
+                s.setGioihan(rs.getInt("gioihan"));
+
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static boolean deleteNYP(String id) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "delete from nhuyeupham where id_nyp = " + id + ";";
+
+            int x = statement.executeUpdate(sql);
+            conn.close();
+            if (x == 0) {
+                JOptionPane.showMessageDialog(null, "Delete fail!");
+                return false;
+            } else {
+                JOptionPane.showMessageDialog(null, "Delete successfully!");
+                return true;
+            }
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
     public static void main(String args[]) {
     }
 }
