@@ -29,6 +29,8 @@ public class NecManagement extends JFrame {
     private JButton refreshButton;
     private JComboBox sortOpt;
     private JTextField tfValue;
+    int idxRow;
+    Object id = null, tengoi = null, thoihan = null, dongia = null, gioihan = null;
 
     NecManagement(){
         add(rootPanel);
@@ -66,7 +68,8 @@ public class NecManagement extends JFrame {
         refreshButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                //làm mới lại table
+                createtable(Database.getListNYP());
             }
         });
         editButton.addActionListener(new ActionListener() {
@@ -78,7 +81,12 @@ public class NecManagement extends JFrame {
         removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                //check xem user chọn 1 row trên table chưa rồi thực hiện xóa
+                retriveNYP();
+                int dialogResult = JOptionPane.showConfirmDialog(null, "Delete " + tengoi.toString() + "?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+                if (dialogResult == JOptionPane.YES_OPTION) {
+                    Database.deleteNYP(id.toString());
+                }
             }
         });
         lbUser.addMouseListener(new MouseAdapter() {
@@ -106,7 +114,7 @@ public class NecManagement extends JFrame {
             }
         });
     }
-    void createtable(ArrayList<NhuYeuPham> dataList){
+    public void createtable(ArrayList<NhuYeuPham> dataList){
 //        String[] tbColName = {"ID", "Name", "Limit/person", "Duration (day(s))","Price"};
 //        Object[] [] data = {{"01","Gói 1","5","2","20000"},{"02","Gói 2","3","3","5000"}};
 //        necTable.setModel(new DefaultTableModel(data,tbColName));
@@ -125,6 +133,17 @@ public class NecManagement extends JFrame {
         necTable.setModel(new DefaultTableModel(data, tbColName));
         if (necTable.getRowCount() > 0)
             necTable.setRowSelectionInterval(0, 0);
+    }
+
+    public void retriveNYP() {
+        idxRow = necTable.getSelectedRow();
+        if (idxRow != -1) {
+            id = necTable.getValueAt(idxRow, 0);
+            tengoi = necTable.getValueAt(idxRow, 1);
+            gioihan = necTable.getValueAt(idxRow, 2);
+            thoihan = necTable.getValueAt(idxRow, 3);
+            dongia = necTable.getValueAt(idxRow, 4);
+        }
     }
     public static void main(String[] args){
         NecManagement n = new NecManagement();
