@@ -62,7 +62,7 @@ public class NecManagement extends JFrame {
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                createtable(Database.searchNYP(textField1.getText()));
             }
         });
         refreshButton.addActionListener(new ActionListener() {
