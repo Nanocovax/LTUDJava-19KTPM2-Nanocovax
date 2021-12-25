@@ -211,10 +211,11 @@ COLLATE = utf8mb4_0900_ai_ci;
 DROP TABLE IF EXISTS `nanocovax`.`noidieutri` ;
 
 CREATE TABLE IF NOT EXISTS `nanocovax`.`noidieutri` (
-  `id_ndt` CHAR(3) NOT NULL,
+  `id_ndt` int NOT NULL auto_increment,
   `ten` VARCHAR(45) NULL DEFAULT NULL,
   `succhua` INT NULL DEFAULT NULL,
   `dangchua` INT NULL DEFAULT NULL,
+  `active` bool NULL DEFAULT 1,
   PRIMARY KEY (`id_ndt`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
@@ -229,7 +230,7 @@ DROP TABLE IF EXISTS `nanocovax`.`lichsundt` ;
 CREATE TABLE IF NOT EXISTS `nanocovax`.`lichsundt` (
   `id` VARCHAR(12) NOT NULL,
   `thoigian` DATETIME NOT NULL,
-  `id_ndt` CHAR(3) NULL DEFAULT NULL,
+  `id_ndt` int NULL DEFAULT NULL,
   PRIMARY KEY (`id`, `thoigian`),
   INDEX `lsndt_ndt_idx` (`id_ndt` ASC) VISIBLE,
   CONSTRAINT `lsndt_nd`
@@ -258,7 +259,7 @@ CREATE TABLE IF NOT EXISTS `nanocovax`.`lichsunql` (
   `hoatdong` VARCHAR(6) NULL DEFAULT NULL,
   `id` VARCHAR(12) NULL DEFAULT NULL,
   `id_nyp` int NULL DEFAULT NULL,
-  `id_ndt` CHAR(3) NULL DEFAULT NULL,
+  `id_ndt` int NULL DEFAULT NULL,
   PRIMARY KEY (`id_nql`, `thoigian`),
   INDEX `lsnql_nd_idx` (`id` ASC) VISIBLE,
   INDEX `lsnql_nyp_idx` (`id_nyp` ASC) VISIBLE,
@@ -386,16 +387,16 @@ insert into xaphuong values('011', 'Thủ Thiêm', '004');
 insert into xaphuong values('012', 'Cát Lái', '004');
 
 insert into noidieutri (id_ndt,ten,succhua,dangchua)
-values ('001','Bệnh viện bệnh nhiệt đới',1000,800);
+values (1,'Bệnh viện bệnh nhiệt đới',1000,800);
 insert into noidieutri (id_ndt,ten,succhua,dangchua)
- values ('002','Bệnh viện nhi đồng TP',500,400);
+ values (2,'Bệnh viện nhi đồng TP',500,400);
 insert into noidieutri (id_ndt,ten,succhua,dangchua)
-values ('003','Bệnh viện điều trị Covid-19 Y Hà Nội',1500,948);
+values (3,'Bệnh viện điều trị Covid-19 Y Hà Nội',1500,948);
 insert into noidieutri (id_ndt,ten,succhua,dangchua)
- values ('005','Bệnh viện dã chiếxaphuongxaphuongn số 2',5000,4489);
+ values (4,'Bệnh viện dã chiếxaphuongxaphuongn số 2',5000,4489);
 insert into noidieutri (id_ndt,ten,succhua,dangchua)
-values ('006','Bệnh viện dã chiến số 4',3000,2898);
+values (5,'Bệnh viện dã chiến số 4',3000,2898);
 insert into noidieutri (id_ndt,ten,succhua,dangchua)
-values ('007','Bệnh viện dã chiến Củ Chi',4000,2501);
+values (6,'Bệnh viện dã chiến Củ Chi',4000,2501);
 insert into noidieutri (id_ndt,ten,succhua,dangchua)
-values ('008','Bệnh viện Phạm Ngọc Thạch',1000,567);
+values (7,'Bệnh viện Phạm Ngọc Thạch',1000,567);
