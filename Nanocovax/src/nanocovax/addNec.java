@@ -14,7 +14,7 @@ public class addNec extends JFrame {
     private JLabel header;
     private JPanel rootPanel;
 
-    addNec() {
+    addNec(String id_nql) {
         add(rootPanel);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(400, 220);
@@ -27,7 +27,7 @@ public class addNec extends JFrame {
                 int duration = Integer.parseInt(tfDuration.getText());
                 int price = Integer.parseInt(tfPrice.getText());
                 int limit = Integer.parseInt(tfLimit.getText());
-                boolean addSuccess = Database.createNYP(name, duration, price, limit);
+                boolean addSuccess = Database.createNYP(id_nql, name, duration, price, limit);
                 if (addSuccess) {
                     tfName.setText("");
                     tfLimit.setText("");
@@ -45,6 +45,6 @@ public class addNec extends JFrame {
     }
 
     public static void main(String[] args) {
-        addNec a = new addNec();
+//        addNec a = new addNec();
     }
 }

@@ -38,7 +38,7 @@ public class NecManagement extends JFrame {
     String valueFilter = "";
     ArrayList<NhuYeuPham> nesList;
 
-    NecManagement() {
+    NecManagement(String username) {
         add(rootPanel);
         nesList = Database.getListNYP(sortValue, order, filterBy, valueFilter);
         createtable(nesList);
@@ -58,27 +58,6 @@ public class NecManagement extends JFrame {
         sortOpt.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //sắp xếp bảng theo item được select
-//                sortValue = sortOpt.getSelectedItem().toString();
-//                if (sortValue.equals("ID: Ascending")) {
-//                    sortValue = "id_nyp";
-//                    order = "asc";
-//                } else if (sortValue.equals("ID: Descending")) {
-//                    sortValue = "id_nyp";
-//                    order = "desc";
-//                } else if (sortValue.equals("Price: Ascending")) {
-//                    sortValue = "dongia";
-//                    order = "asc";
-//                } else if (sortValue.equals("Price: Descending")) {
-//                    sortValue = "dongia";
-//                    order = "desc";
-//                } else if (sortValue.equals("Duration: Ascending")) {
-//                    sortValue = "thoihan";
-//                    order = "asc";
-//                } else if (sortValue.equals("Duration: Descending")) {
-//                    sortValue = "thoihan";
-//                    order = "desc";
-//                }
                 Database.sortListNYP(nesList, sortOpt.getSelectedItem().toString());
                 createtable(nesList);
             }
@@ -101,7 +80,7 @@ public class NecManagement extends JFrame {
                                             ActionListener() {
                                                 @Override
                                                 public void actionPerformed(ActionEvent e) {
-                                                    addNec a = new addNec();
+                                                    addNec a = new addNec(username);
                                                 }
                                             });
         searchButton.addActionListener(new
@@ -130,7 +109,7 @@ public class NecManagement extends JFrame {
                                                  public void actionPerformed(ActionEvent e) {
                                                      if (idxRow != -1) {
                                                          retriveNYP();
-                                                         editNec editNYP = new editNec(id.toString(), tengoi.toString(), thoihan.toString(), dongia.toString(), gioihan.toString());
+                                                         editNec editNYP = new editNec(username, id.toString(), tengoi.toString(), thoihan.toString(), dongia.toString(), gioihan.toString());
                                                      } else {
                                                          editNec editNYP = new editNec();
                                                      }
@@ -145,7 +124,7 @@ public class NecManagement extends JFrame {
                                                        retriveNYP();
                                                        int dialogResult = JOptionPane.showConfirmDialog(null, "Delete " + tengoi.toString() + "?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
                                                        if (dialogResult == JOptionPane.YES_OPTION) {
-                                                           Database.deleteNYP(id.toString());
+                                                           Database.deleteNYP(username, id.toString());
                                                        }
                                                    }
                                                });
@@ -155,7 +134,7 @@ public class NecManagement extends JFrame {
                                             @Override
                                             public void mouseClicked(MouseEvent e) {
                                                 super.mouseClicked(e);
-                                                NQLMenu d = new NQLMenu("nttchau");
+                                                NQLMenu d = new NQLMenu(username);
                                                 setVisible(false);
                                                 dispose();
                                             }
@@ -213,6 +192,6 @@ public class NecManagement extends JFrame {
     }
 
     public static void main(String[] args) {
-        NecManagement n = new NecManagement();
+        NecManagement n = new NecManagement("nttchau");
     }
 }

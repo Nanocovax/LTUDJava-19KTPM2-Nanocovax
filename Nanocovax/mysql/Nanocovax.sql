@@ -169,9 +169,10 @@ DROP TABLE IF EXISTS `nanocovax`.`nhuyeupham` ;
 CREATE TABLE IF NOT EXISTS `nanocovax`.`nhuyeupham` (
   `id_nyp` INT NOT NULL auto_increment,
   `tengoi` VARCHAR(45) NULL DEFAULT NULL,
-  `thoihan` DATETIME NULL DEFAULT NULL,
+  `thoihan` int NULL DEFAULT NULL,
   `dongia` INT NULL DEFAULT NULL,
   `gioihan` INT NULL DEFAULT NULL,
+  `active` bool NULL DEFAULT 1,
   PRIMARY KEY (`id_nyp`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
@@ -254,7 +255,7 @@ DROP TABLE IF EXISTS `nanocovax`.`lichsunql` ;
 CREATE TABLE IF NOT EXISTS `nanocovax`.`lichsunql` (
   `id_nql` VARCHAR(13) NOT NULL,
   `thoigian` DATETIME NOT NULL,
-  `hoatdong` VARCHAR(4) NULL DEFAULT NULL,
+  `hoatdong` VARCHAR(6) NULL DEFAULT NULL,
   `id` VARCHAR(12) NULL DEFAULT NULL,
   `id_nyp` int NULL DEFAULT NULL,
   `id_ndt` CHAR(3) NULL DEFAULT NULL,

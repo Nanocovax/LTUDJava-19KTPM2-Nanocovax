@@ -5,6 +5,8 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import java.sql.*;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import java.text.SimpleDateFormat;
@@ -1507,7 +1509,56 @@ public class Database {
 
 
     //--------QUẢN LÝ NHU YẾU PHẨM-------------//
-    public static boolean createNYP(String tengoi, int thoihan, int dongia, int gioihan) {
+    static int getIdNYP(String ten) {
+        String sql = "select * from nhuyeupham where tengoi =\"" + ten + "\"";
+        Connection conn = DBConnection();
+        NhuYeuPham s = new NhuYeuPham();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                s.setId_nyp(rs.getInt("id_nyp"));
+                s.setTengoi(rs.getString("tengoi"));
+                s.setThoihan(rs.getInt("thoihan"));
+                s.setDongia(rs.getInt("dongia"));
+                s.setGioihan(rs.getInt("gioihan"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return s.getId_nyp();
+    }
+
+    public static boolean historyMod(String id_nql, String thoigian, String hoatdong, String id_khac, String loai) {
+        //loai "id", "id_nyp", "id_ndt"
+        Connection conn = DBConnection();
+
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "";
+            if (loai.equals("id_nyp")) {
+                sql = "insert into lichsunql(id_nql, thoigian, hoatdong, id_nyp) values(\"" + id_nql + "\", \"" + thoigian + "\", \"" + hoatdong + "\", \"" + id_khac + "\");";
+            }
+
+            int x = statement.executeUpdate(sql);
+            conn.close();
+            if (x == 0) {
+                //JOptionPane.showMessageDialog(null, "Already exists");
+                return false;
+            } else {
+                //JOptionPane.showMessageDialog(null, "Add successfully!");
+                return true;
+            }
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean createNYP(String id_nql, String tengoi, int thoihan, int dongia, int gioihan) {
         Connection conn = DBConnection();
         try {
             Statement statement = conn.createStatement();
@@ -1519,6 +1570,15 @@ public class Database {
                 JOptionPane.showMessageDialog(null, "Already exists");
                 return false;
             } else {
+                //id_nyp
+                int id = getIdNYP(tengoi);
+                //time
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                LocalDateTime now = LocalDateTime.now();
+                String thoigian = dtf.format(now);
+
+                historyMod(id_nql, thoigian, "add", String.valueOf(id), "id_nyp");
+
                 JOptionPane.showMessageDialog(null, "Add successfully!");
                 return true;
             }
@@ -1531,7 +1591,7 @@ public class Database {
         }
     }
 
-    public static boolean updateNYP(int id, String tengoi, int thoihan, int dongia, int gioihan) {
+    public static boolean updateNYP(String id_nql, int id, String tengoi, int thoihan, int dongia, int gioihan) {
         Connection conn = DBConnection();
         try {
             Statement statement = conn.createStatement();
@@ -1545,6 +1605,13 @@ public class Database {
                 JOptionPane.showMessageDialog(null, "Update fail!");
                 return false;
             } else {
+                //time
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                LocalDateTime now = LocalDateTime.now();
+                String thoigian = dtf.format(now);
+
+                historyMod(id_nql, thoigian, "update", String.valueOf(id), "id_nyp");
+
                 JOptionPane.showMessageDialog(null, "Update successfully!");
                 return true;
             }
@@ -1568,14 +1635,16 @@ public class Database {
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                NhuYeuPham s = new NhuYeuPham();
-                s.setId_nyp(rs.getInt("id_nyp"));
-                s.setTengoi(rs.getString("tengoi"));
-                s.setThoihan(rs.getInt("thoihan"));
-                s.setDongia(rs.getInt("dongia"));
-                s.setGioihan(rs.getInt("gioihan"));
+                if (rs.getBoolean("active")) {
+                    NhuYeuPham s = new NhuYeuPham();
+                    s.setId_nyp(rs.getInt("id_nyp"));
+                    s.setTengoi(rs.getString("tengoi"));
+                    s.setThoihan(rs.getInt("thoihan"));
+                    s.setDongia(rs.getInt("dongia"));
+                    s.setGioihan(rs.getInt("gioihan"));
 
-                list.add(s);
+                    list.add(s);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1607,14 +1676,16 @@ public class Database {
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                NhuYeuPham s = new NhuYeuPham();
-                s.setId_nyp(rs.getInt("id_nyp"));
-                s.setTengoi(rs.getString("tengoi"));
-                s.setThoihan(rs.getInt("thoihan"));
-                s.setDongia(rs.getInt("dongia"));
-                s.setGioihan(rs.getInt("gioihan"));
+                if (rs.getBoolean("active")) {
+                    NhuYeuPham s = new NhuYeuPham();
+                    s.setId_nyp(rs.getInt("id_nyp"));
+                    s.setTengoi(rs.getString("tengoi"));
+                    s.setThoihan(rs.getInt("thoihan"));
+                    s.setDongia(rs.getInt("dongia"));
+                    s.setGioihan(rs.getInt("gioihan"));
 
-                list.add(s);
+                    list.add(s);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1622,11 +1693,11 @@ public class Database {
         return list;
     }
 
-    public static boolean deleteNYP(String id) {
+    public static boolean deleteNYP(String id_nql, String id) {
         Connection conn = DBConnection();
         try {
             Statement statement = conn.createStatement();
-            String sql = "delete from nhuyeupham where id_nyp = " + id + ";";
+            String sql = "UPDATE nhuyeupham SET active = 0 WHERE id_nyp = \"" + id + "\";";
 
             int x = statement.executeUpdate(sql);
             conn.close();
@@ -1634,6 +1705,13 @@ public class Database {
                 JOptionPane.showMessageDialog(null, "Delete fail!");
                 return false;
             } else {
+                //time
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                LocalDateTime now = LocalDateTime.now();
+                String thoigian = dtf.format(now);
+
+                historyMod(id_nql, thoigian, "delete",  id, "id_nyp");
+
                 JOptionPane.showMessageDialog(null, "Delete successfully!");
                 return true;
             }

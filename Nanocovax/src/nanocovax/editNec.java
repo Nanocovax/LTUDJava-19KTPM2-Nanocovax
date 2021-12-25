@@ -34,7 +34,7 @@ public class editNec extends JFrame {
         });
     }
 
-    editNec(String id, String tengoi, String thoihan, String dongia, String gioihan) {
+    editNec(String id_nql, String id, String tengoi, String thoihan, String dongia, String gioihan) {
         tfID.setText(String.valueOf(id));
 //        tfID.setEditable(false);
         tfName.setText(tengoi);
@@ -52,7 +52,7 @@ public class editNec extends JFrame {
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Database.updateNYP(Integer.valueOf(tfID.getText()), tfName.getText(), Integer.valueOf(tfDuration.getText()), Integer.valueOf(tfPrice.getText()), Integer.valueOf(tfLimit.getText()));
+                Database.updateNYP(id_nql, Integer.valueOf(tfID.getText()), tfName.getText(), Integer.valueOf(tfDuration.getText()), Integer.valueOf(tfPrice.getText()), Integer.valueOf(tfLimit.getText()));
 
 
             }
