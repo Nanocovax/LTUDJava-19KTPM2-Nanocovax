@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.Array;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -33,10 +34,14 @@ public class NecManagement extends JFrame {
     Object id = null, tengoi = null, thoihan = null, dongia = null, gioihan = null;
     String sortValue = "id_nyp";
     String order = "asc";
+    String filterBy = "thoihan";
+    String valueFilter = "";
+    ArrayList<NhuYeuPham> nesList;
 
     NecManagement() {
         add(rootPanel);
-        createtable(Database.getListNYP(sortValue, order));
+        nesList = Database.getListNYP(sortValue, order, filterBy, valueFilter);
+        createtable(nesList);
         setSize(1200, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
@@ -44,7 +49,9 @@ public class NecManagement extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //lọc ra giá trị trong tfValue trong cột chọn bởi cbb filterOpt
-
+                valueFilter = tfValue.getText();
+                nesList = Database.getListNYP(sortValue, order, filterBy, valueFilter);
+                createtable(nesList);
             }
         });
 
@@ -52,98 +59,126 @@ public class NecManagement extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //sắp xếp bảng theo item được select
-                    sortValue = sortOpt.getSelectedItem().toString();
-                    if (sortValue.equals("ID: Ascending")){
-                        sortValue="id_nyp";
-                        order = "asc";
-                    }
-                    else if (sortValue.equals("ID: Descending")){
-                        sortValue="id_nyp";
-                        order = "desc";
-                    }
-                    else if (sortValue.equals("Price: Ascending")){
-                        sortValue="dongia";
-                        order = "asc";
-                    }
-                    else if (sortValue.equals("Price: Descending")){
-                        sortValue="dongia";
-                        order = "desc";
-                    }
-                    else if (sortValue.equals("Duration: Ascending")){
-                        sortValue="thoihan";
-                        order = "asc";
-                    }
-                    else if (sortValue.equals("Duration: Descending")){
-                        sortValue="thoihan";
-                        order = "desc";
-                    }
+//                sortValue = sortOpt.getSelectedItem().toString();
+//                if (sortValue.equals("ID: Ascending")) {
+//                    sortValue = "id_nyp";
+//                    order = "asc";
+//                } else if (sortValue.equals("ID: Descending")) {
+//                    sortValue = "id_nyp";
+//                    order = "desc";
+//                } else if (sortValue.equals("Price: Ascending")) {
+//                    sortValue = "dongia";
+//                    order = "asc";
+//                } else if (sortValue.equals("Price: Descending")) {
+//                    sortValue = "dongia";
+//                    order = "desc";
+//                } else if (sortValue.equals("Duration: Ascending")) {
+//                    sortValue = "thoihan";
+//                    order = "asc";
+//                } else if (sortValue.equals("Duration: Descending")) {
+//                    sortValue = "thoihan";
+//                    order = "desc";
+//                }
+                Database.sortListNYP(nesList, sortOpt.getSelectedItem().toString());
+                createtable(nesList);
             }
         });
-        addButton.addActionListener(new ActionListener() {
+        filterOpt.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                addNec a = new addNec();
-            }
-        });
-        searchButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                createtable(Database.searchNYP(textField1.getText()));
-            }
-        });
-        refreshButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //làm mới lại table
-                createtable(Database.getListNYP(sortValue, order));
-            }
-        });
-        editButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (idxRow != -1) {
-                    retriveNYP();
-                    editNec editNYP = new editNec(id.toString(), tengoi.toString(), thoihan.toString(), dongia.toString(), gioihan.toString());
-                } else {
-                    editNec editNYP = new editNec();
+                filterBy = filterOpt.getSelectedItem().toString();
+                if (filterBy.equals("Duration")) {
+                    filterBy = "thoihan";
+                } else if (filterBy.equals("Limit")) {
+                    filterBy = "gioihan";
+                } else if (filterBy.equals("Price")) {
+                    filterBy = "dongia";
                 }
             }
         });
-        removeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //check xem user chọn 1 row trên table chưa rồi thực hiện xóa
-                retriveNYP();
-                int dialogResult = JOptionPane.showConfirmDialog(null, "Delete " + tengoi.toString() + "?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
-                if (dialogResult == JOptionPane.YES_OPTION) {
-                    Database.deleteNYP(id.toString());
-                }
-            }
-        });
-        lbUser.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                NQLMenu d = new NQLMenu("nttchau");
-                setVisible(false);
-                dispose();
-            }
-        });
-        lbStatistic.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                Statistic statistic = new Statistic();
-                setVisible(false);
-                dispose();
-            }
-        });
-        lbLogout.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-            }
-        });
+        addButton.addActionListener(new
+
+                                            ActionListener() {
+                                                @Override
+                                                public void actionPerformed(ActionEvent e) {
+                                                    addNec a = new addNec();
+                                                }
+                                            });
+        searchButton.addActionListener(new
+
+                                               ActionListener() {
+                                                   @Override
+                                                   public void actionPerformed(ActionEvent e) {
+                                                       nesList = Database.searchNYP(textField1.getText());
+                                                       createtable(nesList);
+                                                   }
+                                               });
+        refreshButton.addActionListener(new
+
+                                                ActionListener() {
+                                                    @Override
+                                                    public void actionPerformed(ActionEvent e) {
+                                                        //làm mới lại table
+                                                        nesList = Database.getListNYP(sortValue, order, filterBy, "");
+                                                        createtable(nesList);
+                                                    }
+                                                });
+        editButton.addActionListener(new
+
+                                             ActionListener() {
+                                                 @Override
+                                                 public void actionPerformed(ActionEvent e) {
+                                                     if (idxRow != -1) {
+                                                         retriveNYP();
+                                                         editNec editNYP = new editNec(id.toString(), tengoi.toString(), thoihan.toString(), dongia.toString(), gioihan.toString());
+                                                     } else {
+                                                         editNec editNYP = new editNec();
+                                                     }
+                                                 }
+                                             });
+        removeButton.addActionListener(new
+
+                                               ActionListener() {
+                                                   @Override
+                                                   public void actionPerformed(ActionEvent e) {
+                                                       //check xem user chọn 1 row trên table chưa rồi thực hiện xóa
+                                                       retriveNYP();
+                                                       int dialogResult = JOptionPane.showConfirmDialog(null, "Delete " + tengoi.toString() + "?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+                                                       if (dialogResult == JOptionPane.YES_OPTION) {
+                                                           Database.deleteNYP(id.toString());
+                                                       }
+                                                   }
+                                               });
+        lbUser.addMouseListener(new
+
+                                        MouseAdapter() {
+                                            @Override
+                                            public void mouseClicked(MouseEvent e) {
+                                                super.mouseClicked(e);
+                                                NQLMenu d = new NQLMenu("nttchau");
+                                                setVisible(false);
+                                                dispose();
+                                            }
+                                        });
+        lbStatistic.addMouseListener(new
+
+                                             MouseAdapter() {
+                                                 @Override
+                                                 public void mouseClicked(MouseEvent e) {
+                                                     super.mouseClicked(e);
+                                                     Statistic statistic = new Statistic();
+                                                     setVisible(false);
+                                                     dispose();
+                                                 }
+                                             });
+        lbLogout.addMouseListener(new
+
+                                          MouseAdapter() {
+                                              @Override
+                                              public void mouseClicked(MouseEvent e) {
+                                                  super.mouseClicked(e);
+                                              }
+                                          });
     }
 
     public void createtable(ArrayList<NhuYeuPham> dataList) {
@@ -154,7 +189,6 @@ public class NecManagement extends JFrame {
         ArrayList<NhuYeuPham> list = dataList;
         String data[][] = new String[list.size()][5];
         for (int i = 0; i < list.size(); i++) {
-
             data[i][0] = String.valueOf(list.get(i).getId_nyp());
             data[i][1] = list.get(i).getTengoi();
             data[i][2] = String.valueOf(list.get(i).getGioihan());

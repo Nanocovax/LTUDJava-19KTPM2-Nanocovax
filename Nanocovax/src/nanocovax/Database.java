@@ -8,6 +8,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 
 public class Database {
@@ -140,7 +141,7 @@ public class Database {
         return id;
     }
 
-    public static boolean createNDT( String ten, int sucChua, int dangChua) {
+    public static boolean createNDT(String ten, int sucChua, int dangChua) {
         Connection conn = DBConnection();
         try {
             Statement statement = conn.createStatement();
@@ -433,8 +434,8 @@ public class Database {
     public static ArrayList<UserBranchActivity> getUserBranchActivity(String idNQL) {
         ArrayList<UserBranchActivity> list = new ArrayList<>();
         String sql = "select nd.id, nd.hoten, ls.hoatdong, ls.thoigian from lichsunql as ls join ttnguoidung nd on ls.id=nd.id\n" +
-                    "where ls.id_nql='" + idNQL + "' and ls.id!=''\n" +
-                    "order by ls.thoigian desc;";
+                "where ls.id_nql='" + idNQL + "' and ls.id!=''\n" +
+                "order by ls.thoigian desc;";
         Connection conn = DBConnection();
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -572,7 +573,7 @@ public class Database {
         try {
             Statement statement = conn.createStatement();
             String sql = "select * from noidieutri\n" +
-                            "where id_ndt = '" + id + "';";
+                    "where id_ndt = '" + id + "';";
 
             ResultSet rs = statement.executeQuery(sql);
 
@@ -583,8 +584,7 @@ public class Database {
                 if (rs.getInt("dangchua") < rs.getInt("succhua")) {
                     conn.close();
                     return true;
-                }
-                else {
+                } else {
                     conn.close();
                     return false;
                 }
@@ -702,12 +702,12 @@ public class Database {
     public static ArrayList<User> getListUser(String order) {
         ArrayList<User> list = new ArrayList<>();
         // String sql = "select id, hoten, ngaysinh, trangthai, ten from ttnguoidung join noidieutri on ndt = id_ndt;";
-        String sql = "select * from ttnguoidung\n"+
+        String sql = "select * from ttnguoidung\n" +
                 "join noidieutri ndt on ndt = ndt.id_ndt\n" +
                 "join tinhthanhpho ttp on tinhtp = ttp.matp\n" +
                 "join quanhuyen qh on quanhuyen = qh.maqh\n" +
                 "join xaphuong xp on xaphuong = xp.maxp\n" +
-                "order by " + order +   ";";
+                "order by " + order + ";";
         Connection conn = DBConnection();
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -762,10 +762,10 @@ public class Database {
 
     public static ArrayList<User> searchUser(String id) {
         ArrayList<User> list = new ArrayList<>();
-        String sql = "select * from ttnguoidung\n"+
-                "join noidieutri ndt on ndt = ndt.id_ndt\n"+
-                "join tinhthanhpho ttp on tinhtp = ttp.matp\n"+
-                "join quanhuyen qh on quanhuyen = qh.maqh\n"+
+        String sql = "select * from ttnguoidung\n" +
+                "join noidieutri ndt on ndt = ndt.id_ndt\n" +
+                "join tinhthanhpho ttp on tinhtp = ttp.matp\n" +
+                "join quanhuyen qh on quanhuyen = qh.maqh\n" +
                 "join xaphuong xp on xaphuong = xp.maxp\n" +
                 "where id = '" + id + "';";
         Connection conn = DBConnection();
@@ -867,8 +867,8 @@ public class Database {
         try {
             Statement statement = conn.createStatement();
             String sql = "UPDATE ttnguoidung\n" +
-                        "SET hoten = '" + name + "', ngaysinh = '" + doB + "', tinhtp = '" + matp + "', quanhuyen = '" + maqh + "', xaphuong = '" + maxp + "', trangthai = '" + status + "', ndt = '" + hospital + "'\n" +
-                        "WHERE id = '" + id + "';";
+                    "SET hoten = '" + name + "', ngaysinh = '" + doB + "', tinhtp = '" + matp + "', quanhuyen = '" + maqh + "', xaphuong = '" + maxp + "', trangthai = '" + status + "', ndt = '" + hospital + "'\n" +
+                    "WHERE id = '" + id + "';";
 
             int x = statement.executeUpdate(sql);
             if (x == 0) {
@@ -1011,8 +1011,7 @@ public class Database {
                 sql = "UPDATE noidieutri\n" +
                         "SET dangchua = dangchua + 1\n" +
                         "WHERE id_ndt = '" + id_ndt + "';";
-            }
-            else {
+            } else {
                 sql = "UPDATE noidieutri\n" +
                         "SET dangchua = dangchua - 1\n" +
                         "WHERE id_ndt = '" + id_ndt + "';";
@@ -1037,7 +1036,7 @@ public class Database {
 
     public static ArrayList<HospitalHistory> getLSNDT(String id) {
         ArrayList<HospitalHistory> list = new ArrayList<>();
-        String sql = "select * from lichsundt lsndt join noidieutri ndt on lsndt.id_ndt = ndt.id_ndt where id = '" + id +  "';";
+        String sql = "select * from lichsundt lsndt join noidieutri ndt on lsndt.id_ndt = ndt.id_ndt where id = '" + id + "';";
         Connection conn = DBConnection();
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -1067,7 +1066,7 @@ public class Database {
 
     public static ArrayList<User> getListNLQ(String id) {
         ArrayList<User> list = new ArrayList<>();
-        String sql = "select * from ttnguoidung ttnd join noidieutri ndt on ttnd.ndt = ndt.id_ndt join tinhthanhpho ttp on tinhtp = ttp.matp join quanhuyen qh on quanhuyen = qh.maqh join xaphuong xp on xaphuong = xp.maxp join lienquan lq on ttnd.id = lq.id where lq.id_lienquan = '" + id +  "';";
+        String sql = "select * from ttnguoidung ttnd join noidieutri ndt on ttnd.ndt = ndt.id_ndt join tinhthanhpho ttp on tinhtp = ttp.matp join quanhuyen qh on quanhuyen = qh.maqh join xaphuong xp on xaphuong = xp.maxp join lienquan lq on ttnd.id = lq.id where lq.id_lienquan = '" + id + "';";
         Connection conn = DBConnection();
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -1137,7 +1136,7 @@ public class Database {
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                dataset2.setValue(rs.getInt("soca"), rs.getString("trangthai"),rs.getString("ngay"));
+                dataset2.setValue(rs.getInt("soca"), rs.getString("trangthai"), rs.getString("ngay"));
             }
             conn.close();
         } catch (Exception e) {
@@ -1260,7 +1259,7 @@ public class Database {
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                dataset3.setValue(rs.getInt("soluongchuyen"), "Being treated",rs.getString("ngay"));
+                dataset3.setValue(rs.getInt("soluongchuyen"), "Being treated", rs.getString("ngay"));
             }
             conn.close();
         } catch (Exception e) {
@@ -1378,7 +1377,7 @@ public class Database {
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                dataset3.setValue(rs.getInt("soluongchuyen"), "Recovered",rs.getString("ngay"));
+                dataset3.setValue(rs.getInt("soluongchuyen"), "Recovered", rs.getString("ngay"));
             }
             conn.close();
         } catch (Exception e) {
@@ -1496,7 +1495,7 @@ public class Database {
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                dataset3.setValue(rs.getInt("soluongchuyen"), "Dead",rs.getString("ngay"));
+                dataset3.setValue(rs.getInt("soluongchuyen"), "Dead", rs.getString("ngay"));
             }
             conn.close();
         } catch (Exception e) {
@@ -1508,28 +1507,7 @@ public class Database {
 
 
     //--------QUẢN LÝ NHU YẾU PHẨM-------------//
-    public static int countNYP() {
-        Connection conn = DBConnection();
-        int id = -1;
-        try {
-            Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery("select count(*) from nhuyeupham");
-
-            if (rs.next()) {
-                id = rs.getInt(1) + 1;
-            }
-
-            conn.close();
-
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            JOptionPane.showMessageDialog(null, e.getMessage());
-            e.printStackTrace();
-        }
-        return id;
-    }
-
-    public static boolean createNYP( String tengoi, int thoihan, int dongia, int gioihan) {
+    public static boolean createNYP(String tengoi, int thoihan, int dongia, int gioihan) {
         Connection conn = DBConnection();
         try {
             Statement statement = conn.createStatement();
@@ -1579,9 +1557,12 @@ public class Database {
         }
     }
 
-    public static ArrayList<NhuYeuPham> getListNYP(String column, String ascDesc) {
+    public static ArrayList<NhuYeuPham> getListNYP(String column, String ascDesc, String filterBy, String filterValue) {
         ArrayList<NhuYeuPham> list = new ArrayList<>();
-        String sql = "select * from nhuyeupham order by " + column + " "+ascDesc+";";
+        String sql = "select * from nhuyeupham order by " + column + " " + ascDesc + ";";
+        if (!filterValue.equals("")) {
+            sql = "select * from nhuyeupham where " + filterBy + " <= " + filterValue + " order by " + column + " " + ascDesc + ";";
+        }
         Connection conn = DBConnection();
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -1600,6 +1581,22 @@ public class Database {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public static void sortListNYP(ArrayList<NhuYeuPham> list, String column) {
+        if (column.equals("ID: Ascending")) {
+            Collections.sort(list, NhuYeuPham.IDComparatorAsc);
+        } else if (column.equals("ID: Descending")) {
+            Collections.sort(list, NhuYeuPham.IDComparatorDesc);
+        } else if (column.equals("Price: Ascending")) {
+            Collections.sort(list, NhuYeuPham.PriceComparatorAsc);
+        } else if (column.equals("Price: Descending")) {
+            Collections.sort(list, NhuYeuPham.PriceComparatorDesc);
+        } else if (column.equals("Duration: Ascending")) {
+            Collections.sort(list, NhuYeuPham.DurationComparatorAsc);
+        } else if (column.equals("Duration: Descending")) {
+            Collections.sort(list, NhuYeuPham.DurationComparatorDesc);
+        }
     }
 
     public static ArrayList<NhuYeuPham> searchNYP(String ten) {
