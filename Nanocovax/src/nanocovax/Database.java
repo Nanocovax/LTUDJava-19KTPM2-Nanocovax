@@ -1579,9 +1579,9 @@ public class Database {
         }
     }
 
-    public static ArrayList<NhuYeuPham> getListNYP() {
+    public static ArrayList<NhuYeuPham> getListNYP(String column, String ascDesc) {
         ArrayList<NhuYeuPham> list = new ArrayList<>();
-        String sql = "select * from nhuyeupham";
+        String sql = "select * from nhuyeupham order by " + column + " "+ascDesc+";";
         Connection conn = DBConnection();
         try {
             PreparedStatement ps = conn.prepareStatement(sql);

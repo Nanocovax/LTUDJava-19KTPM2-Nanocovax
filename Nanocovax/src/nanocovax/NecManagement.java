@@ -31,10 +31,12 @@ public class NecManagement extends JFrame {
     private JTextField tfValue;
     int idxRow;
     Object id = null, tengoi = null, thoihan = null, dongia = null, gioihan = null;
+    String sortValue = "id_nyp";
+    String order = "asc";
 
     NecManagement() {
         add(rootPanel);
-        createtable(Database.getListNYP());
+        createtable(Database.getListNYP(sortValue, order));
         setSize(1200, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
@@ -50,7 +52,31 @@ public class NecManagement extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //sắp xếp bảng theo item được select
-
+                    sortValue = sortOpt.getSelectedItem().toString();
+                    if (sortValue.equals("ID: Ascending")){
+                        sortValue="id_nyp";
+                        order = "asc";
+                    }
+                    else if (sortValue.equals("ID: Descending")){
+                        sortValue="id_nyp";
+                        order = "desc";
+                    }
+                    else if (sortValue.equals("Price: Ascending")){
+                        sortValue="dongia";
+                        order = "asc";
+                    }
+                    else if (sortValue.equals("Price: Descending")){
+                        sortValue="dongia";
+                        order = "desc";
+                    }
+                    else if (sortValue.equals("Duration: Ascending")){
+                        sortValue="thoihan";
+                        order = "asc";
+                    }
+                    else if (sortValue.equals("Duration: Descending")){
+                        sortValue="thoihan";
+                        order = "desc";
+                    }
             }
         });
         addButton.addActionListener(new ActionListener() {
@@ -69,7 +95,7 @@ public class NecManagement extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //làm mới lại table
-                createtable(Database.getListNYP());
+                createtable(Database.getListNYP(sortValue, order));
             }
         });
         editButton.addActionListener(new ActionListener() {
