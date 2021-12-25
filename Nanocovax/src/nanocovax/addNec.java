@@ -3,6 +3,8 @@ package nanocovax;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class addNec extends JFrame {
     private JTextField tfName;
@@ -33,6 +35,12 @@ public class addNec extends JFrame {
                     tfLimit.setText("");
                     tfDuration.setText("");
                     tfPrice.setText("");
+
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
+                    LocalDateTime now = LocalDateTime.now();
+
+                    int id = Database.getIdNYP(name);
+                    Database.updateLSNQL(1, id_nql,  dtf.format(now), "added",String.valueOf(id) );
                 }
             }
         });
