@@ -91,25 +91,31 @@ public class Login extends JFrame {
 					error.setText(errorText);
 				else
 				{
-					error.setText("");
 					if (Database.varifyLogin(username,password) == 0) {
 						error.setText("");
 						AdminMenu p = new AdminMenu();
 						p.setVisible(true);
+						setVisible(false);
+						dispose();
 					}
 					else if (Database.varifyLogin(username,password) == 1) {
-						error.setText(errorText);
+						error.setText("");
 						NQLMenu p = new NQLMenu(username);
 						p.setVisible(true);
+						setVisible(false);
+						dispose();
 					}
 					else if (Database.varifyLogin(username,password) == 3) {
-						error.setText(errorText);
+						error.setText("");
 						ChangePassword p = new ChangePassword(username);
 						p.setVisible(true);
+						setVisible(false);
+						dispose();
+					}
+					else {
+						error.setText(errorText);
 					}
 				}
-				setVisible(false);
-				dispose();
 			}
 		});
 		btnLogin.setBounds(247, 185, 115, 23);
