@@ -26,7 +26,8 @@ public class AdminMenu extends JFrame {
     int indexRow;
     Object id = null, status = null;
 
-    AdminMenu(){
+
+    AdminMenu(String id_nql){
         add(this.rootPanel);
         createTable(Database.getListNQL());
         setSize(1200,600);
@@ -95,7 +96,7 @@ public class AdminMenu extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 //chuyển sang màn hình quản lí nơi điều trị
-                NDTManagement ndtManagement= new NDTManagement();
+                NDTManagement ndtManagement= new NDTManagement(id_nql);
                 setVisible(false);
                 dispose();
 
@@ -153,6 +154,6 @@ public class AdminMenu extends JFrame {
     }
 
     public static void main(String[] args){
-        AdminMenu adminMenu = new AdminMenu();
+        AdminMenu adminMenu = new AdminMenu("nttchau");
     }
 }

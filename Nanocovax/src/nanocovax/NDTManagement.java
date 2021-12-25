@@ -28,9 +28,10 @@ public class NDTManagement extends JFrame {
     private JPanel rootPanel;
     private JButton refreshButton;
     int idxRow;
+
     Object id = null, ten = null, sucChua = null, dangChua = null;
 
-    NDTManagement() {
+    NDTManagement(String id_nql) {
         add(this.rootPanel);
         createTable(Database.getListNDT());
         setSize(1200, 600);
@@ -42,7 +43,7 @@ public class NDTManagement extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (idxRow != -1) {
                     retriveNDT();
-                    editNDT editNDT = new editNDT(id.toString(), ten.toString(), sucChua.toString(), dangChua.toString());
+                    editNDT editNDT = new editNDT(id_nql, id.toString(), ten.toString(), sucChua.toString(), dangChua.toString());
                 } else {
                     editNDT editNDT = new editNDT();
                 }
@@ -55,14 +56,14 @@ public class NDTManagement extends JFrame {
                 retriveNDT();
                 int dialogResult = JOptionPane.showConfirmDialog(null, "Delete " + ten.toString() + "?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
                 if (dialogResult == JOptionPane.YES_OPTION) {
-                    Database.deleteNDT(id.toString());
+                    Database.deleteNDT(id_nql, id.toString());
                 }
             }
         });
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                addNDT addND = new addNDT();
+                addNDT addND = new addNDT(id_nql);
             }
         });
         searchButton.addActionListener(new ActionListener() {
@@ -93,7 +94,7 @@ public class NDTManagement extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                AdminMenu adminMenu = new AdminMenu();
+                AdminMenu adminMenu = new AdminMenu(id_nql);
                 setVisible(false);
                 dispose();
             }
@@ -128,7 +129,7 @@ public class NDTManagement extends JFrame {
         String data[][] = new String[list.size()][4];
         for (int i = 0; i < list.size(); i++) {
             NumberFormat nf = new DecimalFormat("000");
-            data[i][0] = nf.format(list.get(i).getId());
+            data[i][0] = list.get(i).getId();
             data[i][1] = list.get(i).getTen();
             data[i][2] = String.valueOf(list.get(i).getSucChua());
             data[i][3] = String.valueOf(list.get(i).getDangChua());
@@ -140,7 +141,7 @@ public class NDTManagement extends JFrame {
     }
 
     public static void main(String[] args) {
-        NDTManagement ndtManagement = new NDTManagement();
+//        NDTManagement ndtManagement = new NDTManagement();
     }
 
 }

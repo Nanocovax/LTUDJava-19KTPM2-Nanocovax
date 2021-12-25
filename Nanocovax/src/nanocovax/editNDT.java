@@ -40,7 +40,7 @@ public class editNDT extends JFrame {
         });
     }
 
-    editNDT(String id, String ten, String sucChua, String dangChua) {
+    editNDT(String id_nql, String id, String ten, String sucChua, String dangChua) {
         idInput.setText(id);
         idInput.setEditable(false);
         nameInput.setText(ten);
@@ -57,7 +57,7 @@ public class editNDT extends JFrame {
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Database.updateNDT(idInput.getText(), nameInput.getText(), Integer.parseInt(capacityInput.getText()), Integer.parseInt(curInput.getText()));
+                Database.updateNDT(id_nql, idInput.getText(), nameInput.getText(), Integer.parseInt(capacityInput.getText()), Integer.parseInt(curInput.getText()));
             }
         });
         cancelButton.addActionListener(new ActionListener() {

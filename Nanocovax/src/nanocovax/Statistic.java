@@ -47,6 +47,8 @@ public class Statistic extends JFrame {
     private JButton refreshButton4;
     private JPanel chartPanel4;
 
+    String username = "nttchau";
+
     Statistic(){
         add(rootPanel);
         DefaultPieDataset dataset = new DefaultPieDataset();
@@ -112,7 +114,7 @@ public class Statistic extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                NecManagement n = new NecManagement();
+                NecManagement n = new NecManagement(username);
                 setVisible(false);
                 dispose();
             }

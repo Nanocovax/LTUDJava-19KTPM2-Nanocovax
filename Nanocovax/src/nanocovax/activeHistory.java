@@ -17,20 +17,22 @@ public class activeHistory extends JFrame {
     private JLabel lb;
     private JPanel rootPanel;
     String idNQL;
-    int indexRow;
 
-    activeHistory(){
+    int idxRow;
+    Object id_nql = null, thoigian = null, hoatdong = null, id = null, id_nyp = null, id_ndt = null;
+
+    activeHistory() {
 
         add(this.rootPanel);
-        setSize(700,550);
+        setSize(700, 550);
         setResizable(false);
         createTableUserBranchActivity();
         setVisible(true);
     }
 
-    activeHistory(String id){
+    activeHistory(String id) {
         add(this.rootPanel);
-        setSize(700,550);
+        setSize(700, 550);
         setResizable(false);
         createTableUserBranchActivity();
         setVisible(true);
@@ -46,10 +48,12 @@ public class activeHistory extends JFrame {
                         createTableUserBranchActivity();
                         break;
                     case 1:
-                        createTableFPBranchActivity();
+//                        createTableFPBranchActivity();
+                        createtableNYP(Database.getListHistoryModNes(id));
                         break;
                     case 2:
-                        createTableHospitalBranchActivity();
+//                        createTableHospitalBranchActivity();
+                        createtableNDT(Database.getListHistoryModHos(id));
                         break;
                 }
             }
@@ -64,15 +68,15 @@ public class activeHistory extends JFrame {
 
     public void resetTable() {
         String[] tbColName = {"ID", "Activity", "Time"};
-        Object[] [] data = new String[1][3];
-        hisTable.setModel(new DefaultTableModel(data,tbColName));
+        Object[][] data = new String[1][3];
+        hisTable.setModel(new DefaultTableModel(data, tbColName));
     }
 
-    public void createTableUserBranchActivity(){
+    public void createTableUserBranchActivity() {
         ArrayList<UserBranchActivity> list = Database.getUserBranchActivity(idNQL);
         String[] tbColName = {"ID", "Activity", "Time"};
-        Object[] [] data = new String[list.size()][3];
-        hisTable.setModel(new DefaultTableModel(data,tbColName));
+        Object[][] data = new String[list.size()][3];
+        hisTable.setModel(new DefaultTableModel(data, tbColName));
 
         for (int i = 0; i < list.size(); i++) {
             data[i][0] = list.get(i).getUserID();
@@ -87,11 +91,11 @@ public class activeHistory extends JFrame {
             hisTable.setRowSelectionInterval(0, 0);
     }
 
-    public void createTableFPBranchActivity(){
+    public void createTableFPBranchActivity() {
         ArrayList<FoodPackageBranchActivity> list = Database.getFPBranchActivity(idNQL);
         String[] tbColName = {"ID", "Activity", "Time"};
-        Object[] [] data = new String[list.size()][3];
-        hisTable.setModel(new DefaultTableModel(data,tbColName));
+        Object[][] data = new String[list.size()][3];
+        hisTable.setModel(new DefaultTableModel(data, tbColName));
 
         for (int i = 0; i < list.size(); i++) {
             NumberFormat nf = new DecimalFormat("000");
@@ -107,11 +111,11 @@ public class activeHistory extends JFrame {
             hisTable.setRowSelectionInterval(0, 0);
     }
 
-    public void createTableHospitalBranchActivity(){
+    public void createTableHospitalBranchActivity() {
         ArrayList<HospitalBranchActivity> list = Database.getHospitalBranchActivity(idNQL);
         String[] tbColName = {"ID", "Activity", "Time"};
-        Object[] [] data = new String[list.size()][3];
-        hisTable.setModel(new DefaultTableModel(data,tbColName));
+        Object[][] data = new String[list.size()][3];
+        hisTable.setModel(new DefaultTableModel(data, tbColName));
 
         for (int i = 0; i < list.size(); i++) {
             data[i][0] = list.get(i).getHospitalId();
@@ -125,4 +129,37 @@ public class activeHistory extends JFrame {
         if (hisTable.getRowCount() > 0)
             hisTable.setRowSelectionInterval(0, 0);
     }
+
+
+    public void createtableNYP(ArrayList<LichSuNQL> dataList) {
+        String[] tbColName = {"ID", "Activity", "Time"};
+        ArrayList<LichSuNQL> list = dataList;
+        String data[][] = new String[list.size()][3];
+        for (int i = 0; i < list.size(); i++) {
+            data[i][0] = list.get(i).getId_nyp();
+            data[i][1] = list.get(i).getHoatdong();
+            data[i][2] = list.get(i).getThoigian();
+        }
+
+        hisTable.setModel(new DefaultTableModel(data, tbColName));
+        if (hisTable.getRowCount() > 0)
+            hisTable.setRowSelectionInterval(0, 0);
+    }
+
+    public void createtableNDT(ArrayList<LichSuNQL> dataList) {
+        String[] tbColName = {"Hospital", "Activity", "Time"};
+        ArrayList<LichSuNQL> list = dataList;
+        String data[][] = new String[list.size()][3];
+        for (int i = 0; i < list.size(); i++) {
+            data[i][0] = list.get(i).getId_ndt();
+            data[i][1] = list.get(i).getHoatdong();
+            data[i][2] = list.get(i).getThoigian();
+
+        }
+
+        hisTable.setModel(new DefaultTableModel(data, tbColName));
+        if (hisTable.getRowCount() > 0)
+            hisTable.setRowSelectionInterval(0, 0);
+    }
+
 }

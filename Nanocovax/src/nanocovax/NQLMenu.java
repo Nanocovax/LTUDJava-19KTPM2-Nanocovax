@@ -38,6 +38,8 @@ public class NQLMenu extends JFrame{
     static Object rootId;
     String order;
 
+    String username="nttchau";
+
     NQLMenu(String srcId){
         add(this.rootPanel);
         order = "id asc";
@@ -154,7 +156,7 @@ public class NQLMenu extends JFrame{
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                NecManagement n = new NecManagement();
+                NecManagement n = new NecManagement(username);
                 setVisible(false);
                 dispose();
             }
