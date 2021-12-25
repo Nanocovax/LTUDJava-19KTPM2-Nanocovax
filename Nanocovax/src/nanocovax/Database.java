@@ -73,7 +73,7 @@ public class Database {
             if (rs.next() && rs.getString(1).equals("ckh")) {
                 result = 3;
             } else {
-                rs = statement.executeQuery("select phanquyen from TAIKHOAN where id = '" + id + "' and password = '" + password + "';");
+                rs = statement.executeQuery("select phanquyen from TAIKHOAN where id = '" + id + "' and password = '" + password + "' and tinhtrang = 'bt';");
                 if (rs.next()) {
                     String role = rs.getString(1);
                     if (role.equals("admin"))
@@ -726,12 +726,14 @@ public class Database {
     public static ArrayList<User> getListUser(String order) {
         ArrayList<User> list = new ArrayList<>();
         // String sql = "select id, hoten, ngaysinh, trangthai, ten from ttnguoidung join noidieutri on ndt = id_ndt;";
-        String sql = "select * from ttnguoidung\n" +
-                "join noidieutri ndt on ndt = ndt.id_ndt\n" +
-                "join tinhthanhpho ttp on tinhtp = ttp.matp\n" +
-                "join quanhuyen qh on quanhuyen = qh.maqh\n" +
-                "join xaphuong xp on xaphuong = xp.maxp\n" +
-                "order by " + order + ";";
+        String sql = "select * from ttnguoidung ttnd\n" +
+                "join noidieutri ndt on ttnd.ndt = ndt.id_ndt\n" +
+                "join tinhthanhpho ttp on ttnd.tinhtp = ttp.matp\n" +
+                "join quanhuyen qh on ttnd.quanhuyen = qh.maqh\n" +
+                "join xaphuong xp on ttnd.xaphuong = xp.maxp\n" +
+                "join taikhoan tk on ttnd.id = tk.id\n" +
+                "where tk.tinhtrang = 'bt'\n" +
+                "order by ttnd." + order + ";";
         Connection conn = DBConnection();
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -784,14 +786,73 @@ public class Database {
         return list;
     }
 
+    public static User searchAUser(String id) {
+        User s = new User();
+        String sql = "select * from ttnguoidung ttnd\n" +
+                "join noidieutri ndt on ttnd.ndt = ndt.id_ndt\n" +
+                "join tinhthanhpho ttp on ttnd.tinhtp = ttp.matp\n" +
+                "join quanhuyen qh on ttnd.quanhuyen = qh.maqh\n" +
+                "join xaphuong xp on ttnd.xaphuong = xp.maxp\n" +
+                "join taikhoan tk on ttnd.id = tk.id\n" +
+                "where ttnd.id = '" + id + "';";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                s.setId(rs.getString("id"));
+                s.setName(rs.getString("hoten"));
+
+                String d = rs.getString("ngaysinh");
+                SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                Date date = oldFormat.parse(d);
+                SimpleDateFormat newFormat = new SimpleDateFormat("dd/MM/yyyy");
+                String output = newFormat.format(date);
+                s.setDoB(output);
+
+                CityProvince cp = new CityProvince();
+                cp.setId(rs.getString("ttp.matp"));
+                cp.setName(rs.getString("ttp.ten"));
+
+                District district = new District();
+                district.setId(rs.getString("qh.maqh"));
+                district.setName(rs.getString("qh.ten"));
+
+                Ward w = new Ward();
+                w.setId(rs.getString("xp.maxp"));
+                w.setName(rs.getString("xp.ten"));
+
+                Address address = new Address();
+                address.setCityProvince(cp);
+                address.setDistrict(district);
+                address.setWard(w);
+                s.setAddress(address);
+
+                s.setStatus(rs.getString("trangthai"));
+
+                //s.setHospital(rs.getString("ten"));
+                Hospital hospital = new Hospital();
+                hospital.setId(rs.getString("ndt.id_ndt"));
+                hospital.setName(rs.getString("ndt.ten"));
+                hospital.setCapacity(rs.getInt("ndt.succhua"));
+                hospital.setOccupancy(rs.getInt("ndt.dangchua"));
+                s.setHospital(hospital);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return s;
+    }
+
     public static ArrayList<User> searchUser(String id) {
         ArrayList<User> list = new ArrayList<>();
-        String sql = "select * from ttnguoidung\n" +
-                "join noidieutri ndt on ndt = ndt.id_ndt\n" +
-                "join tinhthanhpho ttp on tinhtp = ttp.matp\n" +
-                "join quanhuyen qh on quanhuyen = qh.maqh\n" +
-                "join xaphuong xp on xaphuong = xp.maxp\n" +
-                "where id = '" + id + "';";
+        String sql = "select * from ttnguoidung ttnd\n" +
+                "join noidieutri ndt on ttnd.ndt = ndt.id_ndt\n" +
+                "join tinhthanhpho ttp on ttnd.tinhtp = ttp.matp\n" +
+                "join quanhuyen qh on ttnd.quanhuyen = qh.maqh\n" +
+                "join xaphuong xp on ttnd.xaphuong = xp.maxp\n" +
+                "join taikhoan tk on ttnd.id = tk.id\n" +
+                "where ttnd.id = '" + id + "' and tk.tinhtrang = 'bt';";
         Connection conn = DBConnection();
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -848,7 +909,7 @@ public class Database {
         Connection conn = DBConnection();
         try {
             Statement statement = conn.createStatement();
-            String sql = "delete from lienquan\n" +
+            /*String sql = "delete from lienquan\n" +
                     "where id = '" + id + "' or id_lienquan = '" + id + "';";
             int x = statement.executeUpdate(sql);
 
@@ -866,7 +927,13 @@ public class Database {
 
             sql = "delete from ttnguoidung\n" +
                     "where id = '" + id + "';";
-            x = statement.executeUpdate(sql);
+            x = statement.executeUpdate(sql);*/
+
+            String sql = "UPDATE taikhoan\n" +
+                    "SET tinhtrang = 'khoa'\n" +
+                    "WHERE id = '" + id + "';";
+
+            int x = statement.executeUpdate(sql);
 
             if (x == 0) {
                 JOptionPane.showMessageDialog(null, "Deleting fails!");

@@ -145,7 +145,7 @@ public class NecManagement extends JFrame {
                                                  @Override
                                                  public void mouseClicked(MouseEvent e) {
                                                      super.mouseClicked(e);
-                                                     Statistic statistic = new Statistic();
+                                                     Statistic statistic = new Statistic(username);
                                                      setVisible(false);
                                                      dispose();
                                                  }
@@ -156,6 +156,14 @@ public class NecManagement extends JFrame {
                                               @Override
                                               public void mouseClicked(MouseEvent e) {
                                                   super.mouseClicked(e);
+                                                  int dialogResult = JOptionPane.showConfirmDialog(null, "Would you like to log out?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                                                  if (dialogResult == JOptionPane.YES_OPTION) {
+                                                      setVisible(false);
+                                                      dispose();
+
+                                                      Login frame = new Login();
+                                                      frame.setVisible(true);
+                                                  }
                                               }
                                           });
     }

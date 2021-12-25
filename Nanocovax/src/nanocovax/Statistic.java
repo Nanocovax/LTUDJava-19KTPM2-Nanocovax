@@ -47,9 +47,7 @@ public class Statistic extends JFrame {
     private JButton refreshButton4;
     private JPanel chartPanel4;
 
-    String username = "nttchau";
-
-    Statistic(){
+    Statistic(String username){
         add(rootPanel);
         DefaultPieDataset dataset = new DefaultPieDataset();
         dataset.setValue("Gói 1",10);
@@ -105,7 +103,7 @@ public class Statistic extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                NQLMenu d = new NQLMenu("nttchau");
+                NQLMenu d = new NQLMenu(username);
                 setVisible(false);
                 dispose();
             }
@@ -123,6 +121,15 @@ public class Statistic extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
+
+                int dialogResult = JOptionPane.showConfirmDialog(null, "Would you like to log out?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (dialogResult == JOptionPane.YES_OPTION) {
+                    setVisible(false);
+                    dispose();
+
+                    Login frame = new Login();
+                    frame.setVisible(true);
+                }
             }
         });
     }
@@ -148,6 +155,6 @@ public class Statistic extends JFrame {
         tab.add(chartPanel);
     }
     public static void main(String[] args){
-        Statistic statistic = new Statistic();
+        Statistic statistic = new Statistic("nttchau");
     }
 }
