@@ -94,7 +94,7 @@ public class Login extends JFrame {
 					error.setText("");
 					if (Database.varifyLogin(username,password) == 0) {
 						error.setText("");
-						AdminMenu p = new AdminMenu(username);
+						AdminMenu p = new AdminMenu();
 						p.setVisible(true);
 					}
 					else if (Database.varifyLogin(username,password) == 1) {

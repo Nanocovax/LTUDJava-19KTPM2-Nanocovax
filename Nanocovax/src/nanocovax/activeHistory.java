@@ -48,12 +48,12 @@ public class activeHistory extends JFrame {
                         createTableUserBranchActivity();
                         break;
                     case 1:
-//                        createTableFPBranchActivity();
-                        createtableNYP(Database.getListHistoryModNes(id));
+                        createTableFPBranchActivity();
+//                        createtableNYP(Database.getListHistoryModNes(id));
                         break;
                     case 2:
-//                        createTableHospitalBranchActivity();
-                        createtableNDT(Database.getListHistoryModHos(id));
+                        createTableHospitalBranchActivity();
+//                        createtableNDT(Database.getListHistoryModHos(id));
                         break;
                 }
             }
@@ -131,35 +131,35 @@ public class activeHistory extends JFrame {
     }
 
 
-    public void createtableNYP(ArrayList<LichSuNQL> dataList) {
-        String[] tbColName = {"ID", "Activity", "Time"};
-        ArrayList<LichSuNQL> list = dataList;
-        String data[][] = new String[list.size()][3];
-        for (int i = 0; i < list.size(); i++) {
-            data[i][0] = list.get(i).getId_nyp();
-            data[i][1] = list.get(i).getHoatdong();
-            data[i][2] = list.get(i).getThoigian();
-        }
+//    public void createtableNYP(ArrayList<LichSuNQL> dataList) {
+//        String[] tbColName = {"ID", "Activity", "Time"};
+//        ArrayList<LichSuNQL> list = dataList;
+//        String data[][] = new String[list.size()][3];
+//        for (int i = 0; i < list.size(); i++) {
+//            data[i][0] = list.get(i).getId_nyp();
+//            data[i][1] = list.get(i).getHoatdong();
+//            data[i][2] = list.get(i).getThoigian();
+//        }
+//
+//        hisTable.setModel(new DefaultTableModel(data, tbColName));
+//        if (hisTable.getRowCount() > 0)
+//            hisTable.setRowSelectionInterval(0, 0);
+//    }
 
-        hisTable.setModel(new DefaultTableModel(data, tbColName));
-        if (hisTable.getRowCount() > 0)
-            hisTable.setRowSelectionInterval(0, 0);
-    }
-
-    public void createtableNDT(ArrayList<LichSuNQL> dataList) {
-        String[] tbColName = {"Hospital", "Activity", "Time"};
-        ArrayList<LichSuNQL> list = dataList;
-        String data[][] = new String[list.size()][3];
-        for (int i = 0; i < list.size(); i++) {
-            data[i][0] = list.get(i).getId_ndt();
-            data[i][1] = list.get(i).getHoatdong();
-            data[i][2] = list.get(i).getThoigian();
-
-        }
-
-        hisTable.setModel(new DefaultTableModel(data, tbColName));
-        if (hisTable.getRowCount() > 0)
-            hisTable.setRowSelectionInterval(0, 0);
-    }
+//    public void createtableNDT(ArrayList<LichSuNQL> dataList) {
+//        String[] tbColName = {"Hospital", "Activity", "Time"};
+//        ArrayList<LichSuNQL> list = dataList;
+//        String data[][] = new String[list.size()][3];
+//        for (int i = 0; i < list.size(); i++) {
+//            data[i][0] = list.get(i).getId_ndt();
+//            data[i][1] = list.get(i).getHoatdong();
+//            data[i][2] = list.get(i).getThoigian();
+//
+//        }
+//
+//        hisTable.setModel(new DefaultTableModel(data, tbColName));
+//        if (hisTable.getRowCount() > 0)
+//            hisTable.setRowSelectionInterval(0, 0);
+//    }
 
 }

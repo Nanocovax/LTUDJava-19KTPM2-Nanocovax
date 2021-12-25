@@ -31,7 +31,7 @@ public class NDTManagement extends JFrame {
 
     Object id = null, ten = null, sucChua = null, dangChua = null;
 
-    NDTManagement(String id_nql) {
+    NDTManagement() {
         add(this.rootPanel);
         createTable(Database.getListNDT());
         setSize(1200, 600);
@@ -43,7 +43,7 @@ public class NDTManagement extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (idxRow != -1) {
                     retriveNDT();
-                    editNDT editNDT = new editNDT(id_nql, id.toString(), ten.toString(), sucChua.toString(), dangChua.toString());
+                    editNDT editNDT = new editNDT( id.toString(), ten.toString(), sucChua.toString(), dangChua.toString());
                 } else {
                     editNDT editNDT = new editNDT();
                 }
@@ -56,14 +56,14 @@ public class NDTManagement extends JFrame {
                 retriveNDT();
                 int dialogResult = JOptionPane.showConfirmDialog(null, "Delete " + ten.toString() + "?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
                 if (dialogResult == JOptionPane.YES_OPTION) {
-                    Database.deleteNDT(id_nql, id.toString());
+                    Database.deleteNDT( id.toString());
                 }
             }
         });
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                addNDT addND = new addNDT(id_nql);
+                addNDT addND = new addNDT();
             }
         });
         searchButton.addActionListener(new ActionListener() {
@@ -94,7 +94,7 @@ public class NDTManagement extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                AdminMenu adminMenu = new AdminMenu(id_nql);
+                AdminMenu adminMenu = new AdminMenu();
                 setVisible(false);
                 dispose();
             }
@@ -141,7 +141,7 @@ public class NDTManagement extends JFrame {
     }
 
     public static void main(String[] args) {
-//        NDTManagement ndtManagement = new NDTManagement();
+        NDTManagement ndtManagement = new NDTManagement();
     }
 
 }

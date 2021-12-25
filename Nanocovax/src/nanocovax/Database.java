@@ -139,7 +139,7 @@ public class Database {
     }
 
 
-    public static boolean createNDT(String id_nql, String ten, int sucChua, int dangChua) {
+    public static boolean createNDT( String ten, int sucChua, int dangChua) {
         Connection conn = DBConnection();
         try {
             Statement statement = conn.createStatement();
@@ -158,7 +158,7 @@ public class Database {
                 LocalDateTime now = LocalDateTime.now();
                 String thoigian = dtf.format(now);
 
-                historyMod(id_nql, thoigian, "add", id_ndt, "id_ndt");
+                //historyMod(id_nql, thoigian, "add", id_ndt, "id_ndt");
                 JOptionPane.showMessageDialog(null, "Add successfully!");
                 return true;
             }
@@ -171,7 +171,7 @@ public class Database {
         }
     }
 
-    public static boolean updateNDT(String id_nql, String id, String ten, int sucChua, int dangChua) {
+    public static boolean updateNDT(String id, String ten, int sucChua, int dangChua) {
         Connection conn = DBConnection();
         try {
             Statement statement = conn.createStatement();
@@ -190,7 +190,7 @@ public class Database {
                 LocalDateTime now = LocalDateTime.now();
                 String thoigian = dtf.format(now);
 
-                historyMod(id_nql, thoigian, "update", id, "id_ndt");
+                //historyMod(id_nql, thoigian, "update", id, "id_ndt");
 
                 JOptionPane.showMessageDialog(null, "Update successfully!");
                 return true;
@@ -252,7 +252,7 @@ public class Database {
         return list;
     }
 
-    public static boolean deleteNDT(String id_nql, String id) {
+    public static boolean deleteNDT(String id) {
         Connection conn = DBConnection();
         try {
             Statement statement = conn.createStatement();
@@ -269,7 +269,7 @@ public class Database {
                 LocalDateTime now = LocalDateTime.now();
                 String thoigian = dtf.format(now);
 
-                historyMod(id_nql, thoigian, "delete", id, "id_ndt");
+                //historyMod(id_nql, thoigian, "delete", id, "id_ndt");
 
                 JOptionPane.showMessageDialog(null, "Delete successfully!");
                 return true;

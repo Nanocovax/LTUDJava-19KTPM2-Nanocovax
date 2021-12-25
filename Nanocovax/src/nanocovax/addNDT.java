@@ -18,7 +18,7 @@ public class addNDT extends JFrame{
     private JLabel nameLabel;
     private JLabel curLabel;
     private JButton cancelButton;
-    addNDT(String id_nql){
+    addNDT(){
         add(this.rootPanel);
         setSize(530,220);
         setResizable(false);
@@ -31,7 +31,7 @@ public class addNDT extends JFrame{
                 String ten = nameInput.getText();
                 int sucChua =  Integer.parseInt(textField2.getText());
                 int dangChua = Integer.parseInt(curInput.getText());
-                boolean addSuccess =  Database.createNDT(id_nql, ten, sucChua, dangChua);
+                boolean addSuccess =  Database.createNDT( ten, sucChua, dangChua);
                 if (addSuccess){
                     nameInput.setText("");
                     textField2.setText("");
