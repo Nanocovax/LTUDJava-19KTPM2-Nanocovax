@@ -99,7 +99,7 @@ public class activeHistory extends JFrame {
 
         for (int i = 0; i < list.size(); i++) {
             NumberFormat nf = new DecimalFormat("000");
-            data[i][0] = nf.format(list.get(i).getFPID());
+            data[i][0] = list.get(i).getFPID();
             data[i][1] = list.get(i).getFPName() + " is " + list.get(i).getActivity();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String date = format.format(list.get(i).getDate());

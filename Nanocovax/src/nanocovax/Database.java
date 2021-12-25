@@ -1571,7 +1571,7 @@ public class Database {
                 LocalDateTime now = LocalDateTime.now();
                 String thoigian = dtf.format(now);
 
-                historyMod(id_nql, thoigian, "add", String.valueOf(id), "id_nyp");
+                //historyMod(id_nql, thoigian, "add", String.valueOf(id), "id_nyp");
 
                 JOptionPane.showMessageDialog(null, "Add successfully!");
                 return true;
