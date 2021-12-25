@@ -52,7 +52,7 @@ public class addUser extends JFrame {
         jDateChooser.setDateFormatString("dd/MM/yyyy");
         calPanel.add(jDateChooser);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(700,300);
+        setSize(910,372);
         setResizable(false);
         setVisible(true);
         cbbCityPro.addActionListener(new ActionListener() {

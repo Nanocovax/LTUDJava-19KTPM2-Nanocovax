@@ -43,7 +43,7 @@ public class editUser extends JFrame {
         comboboxInit();
         setDateChooser();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(700,300);
+        setSize(910,350);
         setResizable(false);
         setVisible(true);
         rootId = srcId;
@@ -137,7 +137,7 @@ public class editUser extends JFrame {
         tfHos.setText(root.getHospital().getId());
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(700,300);
+        setSize(700,400);
         setResizable(false);
         setVisible(true);
         cbbCityPro.addActionListener(new ActionListener() {

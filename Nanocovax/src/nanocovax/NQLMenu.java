@@ -35,7 +35,7 @@ public class NQLMenu extends JFrame{
     private JPanel managPanel;
     int indexRow;
     Object id = null;
-    static Object rootId;
+    Object rootId;
     String order;
 
     NQLMenu(String srcId){
@@ -141,6 +141,14 @@ public class NQLMenu extends JFrame{
                     Database.updateOccupancyNDT(t.get(0).getHospital().getId(), 1);
 
                     Database.deleteUser(id.toString(), rootId.toString());
+
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
+                    LocalDateTime now = LocalDateTime.now();
+                    Database.updateLSNQL(0, rootId.toString(), dtf.format(now), "removed", id.toString());
+                    String hospital = Database.searchAUser(id.toString()).getHospital().getId();
+                    Database.updateLSNQL(2, rootId.toString(), dtf.format(now), "removed " + id.toString(), hospital);
+                    Database.updateLSNDT(id.toString(), dtf.format(now), hospital);
+                    Database.updateOccupancyNDT(hospital, 1);
                 }
             }
         });
@@ -154,7 +162,7 @@ public class NQLMenu extends JFrame{
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                NecManagement n = new NecManagement();
+                NecManagement n = new NecManagement(rootId.toString());
                 setVisible(false);
                 dispose();
             }
@@ -164,7 +172,7 @@ public class NQLMenu extends JFrame{
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                Statistic statistic = new Statistic();
+                Statistic statistic = new Statistic(rootId.toString());
                 setVisible(false);
                 dispose();
             }
