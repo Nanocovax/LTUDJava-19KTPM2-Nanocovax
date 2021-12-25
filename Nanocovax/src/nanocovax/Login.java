@@ -92,15 +92,21 @@ public class Login extends JFrame {
 				else
 				{
 					error.setText("");
-					if(Database.varifyLogin(username,password) == 0) {
+					if (Database.varifyLogin(username,password) == 0) {
 						error.setText("");
 						AdminMenu p = new AdminMenu();
 						p.setVisible(true);
 					}
-					else {
+					else if (Database.varifyLogin(username,password) == 1) {
 						error.setText(errorText);
+						NQLMenu p = new NQLMenu(username);
+						p.setVisible(true);
 					}
-					// other cases
+					else if (Database.varifyLogin(username,password) == 3) {
+						error.setText(errorText);
+						ChangePassword p = new ChangePassword(username);
+						p.setVisible(true);
+					}
 				}
 				setVisible(false);
 				dispose();
