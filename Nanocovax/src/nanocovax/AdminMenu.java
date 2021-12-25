@@ -26,6 +26,7 @@ public class AdminMenu extends JFrame {
     int indexRow;
     Object id = null, status = null;
 
+
     AdminMenu(){
         add(this.rootPanel);
         createTable(Database.getListNQL());

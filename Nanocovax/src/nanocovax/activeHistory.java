@@ -17,7 +17,9 @@ public class activeHistory extends JFrame {
     private JLabel lb;
     private JPanel rootPanel;
     String idNQL;
-    int indexRow;
+
+    int idxRow;
+    Object id_nql = null, thoigian = null, hoatdong = null, id = null, id_nyp = null, id_ndt = null;
 
     activeHistory(){
 
@@ -46,7 +48,8 @@ public class activeHistory extends JFrame {
                         createTableUserBranchActivity();
                         break;
                     case 1:
-                        createTableFPBranchActivity();
+//                        createTableFPBranchActivity();
+                        createtable(Database.getListHistoryModNes(id));
                         break;
                     case 2:
                         createTableHospitalBranchActivity();
@@ -125,4 +128,21 @@ public class activeHistory extends JFrame {
         if (hisTable.getRowCount() > 0)
             hisTable.setRowSelectionInterval(0, 0);
     }
+
+
+    public void createtable(ArrayList<LichSuNQL> dataList) {
+        String[] tbColName = {"ID", "Activity", "Time"};
+        ArrayList<LichSuNQL> list = dataList;
+        String data[][] = new String[list.size()][3];
+        for (int i = 0; i < list.size(); i++) {
+            data[i][0] = list.get(i).getId_nyp();
+            data[i][1] = list.get(i).getThoigian();
+            data[i][2] = list.get(i).getHoatdong();
+        }
+
+        hisTable.setModel(new DefaultTableModel(data, tbColName));
+        if (hisTable.getRowCount() > 0)
+            hisTable.setRowSelectionInterval(0, 0);
+    }
+
 }

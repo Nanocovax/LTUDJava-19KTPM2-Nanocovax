@@ -1710,7 +1710,7 @@ public class Database {
                 LocalDateTime now = LocalDateTime.now();
                 String thoigian = dtf.format(now);
 
-                historyMod(id_nql, thoigian, "delete",  id, "id_nyp");
+                historyMod(id_nql, thoigian, "delete", id, "id_nyp");
 
                 JOptionPane.showMessageDialog(null, "Delete successfully!");
                 return true;
@@ -1722,6 +1722,30 @@ public class Database {
             e.printStackTrace();
             return false;
         }
+    }
+
+    //----------------LICH SU NQL-------------------------------//
+    public static ArrayList<LichSuNQL> getListHistoryModNes(String id_nql) {
+        ArrayList<LichSuNQL> list = new ArrayList<>();
+        String sql = "select * from lichsunql ls join nhuyeupham nyp on ls.id_nyp=nyp.id_nyp where id_nql=" + "\"" + id_nql + "\"";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                if (!rs.getString("id_nyp").equals("")) {
+                    LichSuNQL s = new LichSuNQL();
+                    s.setId_nyp(rs.getString("tengoi"));
+                    s.setThoigian(rs.getString("thoigian"));
+                    s.setHoatdong(rs.getString("hoatdong"));
+
+                    list.add(s);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
 
