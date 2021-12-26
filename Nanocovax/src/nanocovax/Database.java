@@ -139,7 +139,7 @@ public class Database {
     }
 
 
-    public static boolean createNDT( String ten, int sucChua, int dangChua) {
+    public static boolean createNDT(String ten, int sucChua, int dangChua) {
         Connection conn = DBConnection();
         try {
             Statement statement = conn.createStatement();
@@ -1795,8 +1795,7 @@ public class Database {
             String sql = "";
             if (loai.equals("id_nyp")) {
                 sql = "insert into lichsunql(id_nql, thoigian, hoatdong, id_nyp) values(\"" + id_nql + "\", \"" + thoigian + "\", \"" + hoatdong + "\", \"" + id_khac + "\");";
-            }
-            else if (loai.equals("id_ndt")){
+            } else if (loai.equals("id_ndt")) {
                 sql = "insert into lichsunql(id_nql, thoigian, hoatdong, id_ndt) values(\"" + id_nql + "\", \"" + thoigian + "\", \"" + hoatdong + "\", \"" + id_khac + "\");";
             }
 
@@ -1841,6 +1840,7 @@ public class Database {
         }
         return list;
     }
+
     public static ArrayList<LichSuNQL> getListHistoryModHos(String id_nql) {
         ArrayList<LichSuNQL> list = new ArrayList<>();
         String sql = "select * from lichsunql ls join noidieutri ndt on ls.id_ndt=ndt.id_ndt where id_nql=" + "\"" + id_nql + "\"";
@@ -1864,6 +1864,111 @@ public class Database {
         return list;
     }
 
+    //--------------------HOA DON-------------------------------//
+    static int getSoHd(String id, String thoigian) {
+        String sql = "select * from hoadon where nguoimua =\"" + id + "\" and thoigian = \"" + thoigian + "\"";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                return (rs.getInt("sohd"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+
+    public static boolean saveHoaDon(String id, String tongtien, String tratruoc, ArrayList<NhuYeuPham> dataList) {
+        Connection conn = DBConnection();
+        try {
+            //time
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+            String thoigian = dtf.format(now);
+
+            Statement statement = conn.createStatement();
+            String sql = "insert into hoadon(nguoimua, thoigian, tongtien, tratruoc) values(\"" + id + "\", \"" + thoigian + "\", " + tongtien + ", " + tratruoc + ");";
+
+            int x = statement.executeUpdate(sql);
+            conn.close();
+            if (x == 0) {
+                JOptionPane.showMessageDialog(null, "Purchase fail!");
+                return false;
+            } else {
+                int soHd = getSoHd(id, thoigian);
+                if (saveCTHD(soHd, dataList) && saveLichSuThanhToan(soHd, thoigian, tratruoc)) {
+                    JOptionPane.showMessageDialog(null, "Purchase successfully!");
+                }
+                return true;
+            }
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean saveCTHD(int sohd, ArrayList<NhuYeuPham> dataList) {
+        Connection conn = DBConnection();
+        try {
+            //time
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+
+            Statement statement = conn.createStatement();
+            String sql = "";
+            for (NhuYeuPham item : dataList) {
+                sql = "insert into cthd(sohd, soluong, id_nyp) values(\"" + sohd + "\", " + item.getSoluong() + ", " + item.getId_nyp() + ");";
+
+                int x = statement.executeUpdate(sql);
+
+                if (x == 0) {
+                    JOptionPane.showMessageDialog(null, "Save in CTHD fail!");
+                    return false;
+                } else {
+               //     JOptionPane.showMessageDialog(null, "successfully!");
+
+                }
+            }
+            conn.close();
+            return true;
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean saveLichSuThanhToan(int soHd, String thoigian, String tongtien) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "insert into lichsuthanhtoan(sohd, thoigian, sotien) values(\"" + soHd + "\", \"" + thoigian + "\", " + tongtien + ");";
+
+            int x = statement.executeUpdate(sql);
+            conn.close();
+            if (x == 0) {
+                JOptionPane.showMessageDialog(null, "Save lichsuthanhtoan fail!");
+                return false;
+            } else {
+                //JOptionPane.showMessageDialog(null, "Save lichsuthanhtoan successfully!");
+                return true;
+            }
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     public static void main(String args[]) {
     }

@@ -36,6 +36,9 @@ public class NecShop extends JFrame {
     String sortValue = "id_nyp";
     String order = "asc";
 
+    long totalMoney= 0;
+    long purchaseMoney = 0;
+
     NecShop() {
         add(this.rootPanel);
         sortOpt.setSelectedIndex(0);
@@ -151,6 +154,8 @@ public class NecShop extends JFrame {
                 if (option == 0) {
                     char[] password = pass.getPassword();
                     System.out.println("Your password is: " + new String(password));
+
+                    Database.saveHoaDon("username",String.valueOf(totalMoney), prePur.getText(), cartList);
                 }
                 //kiểm tra sau khi pre-purchase trước 1 số tiền thì có lớn hơn hạn mức  tối thiểu không
                 //purchase thành công thì remove cart đưa grand total về 0
@@ -237,8 +242,8 @@ public class NecShop extends JFrame {
         cart.setModel(new DefaultTableModel(data, tbColName));
         if (cart.getRowCount() > 0)
             cart.setRowSelectionInterval(0, 0);
-
-        grandTotal.setText(String.valueOf(grandTotal(cartList))+" VND");
+        totalMoney = grandTotal(cartList);
+        grandTotal.setText(String.valueOf(totalMoney)+" VND");
     }
 
     public static void main(String[] args) {
