@@ -642,7 +642,7 @@ public class Database {
                 conn.close();
                 return false;
             } else {
-                sql = "insert into ttnguoidung(id, hoten, ngaysinh, tinhtp, quanhuyen, xaphuong, trangthai, ndt) values('" + id + "', '" + name + "', '" + doB + "', '" + matp + "', '" + maqh + "', '" + maxp + "', '" + status + "', '" + hospital + "');";
+                sql = "insert into ttnguoidung(id, hoten, ngaysinh, tinhtp, quanhuyen, xaphuong, trangthai, ndt, sodu, sono) values('" + id + "', '" + name + "', '" + doB + "', '" + matp + "', '" + maqh + "', '" + maxp + "', '" + status + "', '" + hospital + "', 100000000, 0);";
                 result = statement.executeUpdate(sql);
                 JOptionPane.showMessageDialog(null, "Added new user successfully!");
 
@@ -1899,7 +1899,7 @@ public class Database {
                 return false;
             } else {
                 int soHd = getSoHd(id, thoigian);
-                if (saveCTHD(soHd, dataList) && saveLichSuThanhToan(soHd, thoigian, tratruoc)) {
+                if (saveCTHD(soHd, dataList) && saveLichSuThanhToan(soHd, thoigian, tratruoc) && updateDuNo(id, Long.parseLong(tongtien), Long.parseLong(tratruoc))) {
                     JOptionPane.showMessageDialog(null, "Purchase successfully!");
                 }
                 return true;
@@ -1931,7 +1931,7 @@ public class Database {
                     JOptionPane.showMessageDialog(null, "Save in CTHD fail!");
                     return false;
                 } else {
-               //     JOptionPane.showMessageDialog(null, "successfully!");
+                    //     JOptionPane.showMessageDialog(null, "successfully!");
 
                 }
             }
@@ -1945,6 +1945,52 @@ public class Database {
             return false;
         }
     }
+
+    public static ArrayList<Long> getDuNo(String idUser) {
+        ArrayList<Long> duNo = new ArrayList<Long>();
+        String sql = "select * from ttnguoidung where id =\"" + idUser + "\"";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                duNo.add(rs.getLong("sodu"));
+                duNo.add(rs.getLong("sono"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return duNo;
+    }
+
+    public static boolean updateDuNo(String id, long tongtien, long tratruoc) {
+        Connection conn = DBConnection();
+        ArrayList<Long> cur_duno = getDuNo(id);
+
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "UPDATE ttnguoidung\n" +
+                    "SET sodu = '" + (cur_duno.get(0) - tratruoc) + "', sono = " + (cur_duno.get(1) + tongtien - tratruoc) + "\n" +
+                    "WHERE id = \"" + id + "\";";
+
+            int x = statement.executeUpdate(sql);
+            conn.close();
+            if (x == 0) {
+                JOptionPane.showMessageDialog(null, "Update purchase fail!");
+                return false;
+            } else {
+                //JOptionPane.showMessageDialog(null, "Update successfully!");
+                return true;
+            }
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     public static boolean saveLichSuThanhToan(int soHd, String thoigian, String tongtien) {
         Connection conn = DBConnection();
