@@ -5,6 +5,9 @@ import com.toedter.calendar.JDateChooser;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -18,7 +21,7 @@ public class addUser extends JFrame {
     private JLabel header;
     private JTextField tfName;
     private JTextField tfStatus;
-    private JTextField tfHospital;
+    // private JTextField tfHospital;
     private JTextField tfRelate;
     private JButton cancelButton;
     private JTextField tfID;
@@ -37,33 +40,43 @@ public class addUser extends JFrame {
     private JLabel districtLabel;
     private JLabel cpLabel;
     private JPanel calPanel;
+    private JComboBox cbbHospital;
     private JDateChooser jDateChooser;
-    static Object rootId = null;
 
     ArrayList<CityProvince> cPList = Database.getCityProvinceList();
     ArrayList<District> dList;
     ArrayList<Ward> wList;
+    ArrayList<NoiDieuTri> hospitalList = Database.getListNDT();
 
-    addUser(String srcId){
+    addUser(String username){
         add(rootPanel);
         comboboxInit();
-        rootId = srcId;
         jDateChooser = new JDateChooser();
         jDateChooser.setDateFormatString("dd/MM/yyyy");
         calPanel.add(jDateChooser);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(910,372);
+        setSize(910,380);
         setResizable(false);
         setVisible(true);
+
+        for (NoiDieuTri x: hospitalList) {
+            cbbHospital.addItem(x.getTen());
+        }
+        cbbHospital.setSelectedItem(null);
+
         cbbCityPro.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 cbbDistrict.removeAllItems();
                 cbbWard.removeAllItems();
-                int indexCityPro = cbbCityPro.getSelectedIndex();
-                dList = Database.getDistrictList(cPList.get(indexCityPro).getId());
-                for (District x: dList) {
-                    cbbDistrict.addItem(x.getName());
+
+                if (cbbCityPro.getSelectedItem() != null) {
+                    int indexCityPro = cbbCityPro.getSelectedIndex();
+                    dList = Database.getDistrictList(cPList.get(indexCityPro).getId());
+                    for (District x: dList) {
+                        cbbDistrict.addItem(x.getName());
+                    }
+                    cbbDistrict.setSelectedItem(null);
                 }
             }
         });
@@ -72,12 +85,14 @@ public class addUser extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 cbbWard.removeAllItems();
-                if (cbbDistrict.getItemCount() != 0) {
+
+                if (cbbDistrict.getSelectedItem() != null) {
                     int indexDistrict = cbbDistrict.getSelectedIndex();
                     wList = Database.getWardList(dList.get(indexDistrict).getId());
                     for (Ward x: wList) {
                         cbbWard.addItem(x.getName());
                     }
+                    cbbWard.setSelectedItem(null);
                 }
             }
         });
@@ -92,7 +107,7 @@ public class addUser extends JFrame {
                 String date = format.format(jDateChooser.getDate());
 
                 String status = tfStatus.getText().toString();
-                String hospital = tfHospital.getText().toString();
+                String hospital = hospitalList.get(cbbHospital.getSelectedIndex()).getId();
                 String idNLQ = tfRelate.getText().toString();
 
                 boolean res = Database.createUser(id, name, date, cPList.get(cbbCityPro.getSelectedIndex()).getId(), dList.get(cbbDistrict.getSelectedIndex()).getId(), wList.get(cbbWard.getSelectedIndex()).getId(), status, hospital, idNLQ);
@@ -100,21 +115,23 @@ public class addUser extends JFrame {
                 tfID.setText("");
                 tfName.setText("");
                 tfStatus.setText("");
-                tfHospital.setText("");
                 tfRelate.setText("");
                 cbbCityPro.setSelectedIndex(0);
                 cbbDistrict.removeAllItems();
                 cbbWard.removeAllItems();
                 jDateChooser.setCalendar(null);
 
+                cbbCityPro.setSelectedItem(null);
+                cbbDistrict.setSelectedItem(null);
+                cbbWard.setSelectedItem(null);
+
                 if (res) {
                     Database.updateOccupancyNDT(hospital, 0);
                     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
                     LocalDateTime now = LocalDateTime.now();
-                    Database.updateLSNQL(0, rootId.toString(), dtf.format(now), "added", id);
-                    Database.updateLSNQL(2, rootId.toString(), dtf.format(now), "added " + id, hospital);
+                    Database.updateLSNQL(0, username, dtf.format(now), "added", id);
+                    Database.updateLSNQL(2, username, dtf.format(now), "added " + id, hospital);
                     Database.updateLSNDT(id, dtf.format(now), hospital);
-                    // Database.updateLSTT(id, dtf.format(now), status);
 
                     dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd");
                     String localDate = dtf.format(LocalDate.now());
@@ -137,9 +154,10 @@ public class addUser extends JFrame {
         for (CityProvince x: cPList) {
             cbbCityPro.addItem(x.getName());
         }
+        cbbCityPro.setSelectedItem(null);
     }
 
     public static void main(String[] args){
-        addUser a = new addUser(rootId.toString());
+        addUser a = new addUser("lqtlong");
     }
 }

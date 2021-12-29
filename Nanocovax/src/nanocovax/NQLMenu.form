@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="rootPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="1114" height="669"/>
+      <xy x="20" y="20" width="1150" height="669"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -48,22 +48,6 @@
                 <item value="Status: Ascending"/>
                 <item value="Status: Descending"/>
               </model>
-            </properties>
-          </component>
-          <component id="8abd1" class="javax.swing.JButton" binding="removeButton" default-binding="true">
-            <constraints>
-              <grid row="3" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Remove"/>
-            </properties>
-          </component>
-          <component id="bacd4" class="javax.swing.JButton" binding="editButton" default-binding="true">
-            <constraints>
-              <grid row="3" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Edit"/>
             </properties>
           </component>
           <component id="9afd9" class="javax.swing.JButton" binding="searchButton" default-binding="true">
@@ -113,17 +97,28 @@
           </component>
           <component id="29543" class="javax.swing.JButton" binding="detailButton" default-binding="true">
             <constraints>
-              <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Detail"/>
             </properties>
           </component>
-          <hspacer id="6a42d">
+          <component id="bacd4" class="javax.swing.JButton" binding="editButton" default-binding="true">
             <constraints>
-              <grid row="3" column="1" row-span="1" col-span="2" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
-          </hspacer>
+            <properties>
+              <text value="Edit"/>
+            </properties>
+          </component>
+          <component id="8abd1" class="javax.swing.JButton" binding="removeButton" default-binding="true">
+            <constraints>
+              <grid row="3" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Remove"/>
+            </properties>
+          </component>
         </children>
       </grid>
       <grid id="66ce8" binding="menuPanel" layout-manager="GridLayoutManager" row-count="9" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
