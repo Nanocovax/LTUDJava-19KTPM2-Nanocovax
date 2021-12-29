@@ -6,8 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
-public class NecShop extends JFrame{
+public class NecShop extends JFrame {
     private JPanel menuPanel;
     private JLabel lbLogout;
     private JLabel lbInfo;
@@ -26,13 +27,26 @@ public class NecShop extends JFrame{
     private JPanel rootPanel;
     private JLabel grandTotal;
     private JTextField prePur;
+    private JButton refreshBtn;
+    int idxRowNes, idxRowCart;
+    Object id = null, tengoi = null, thoihan = null, dongia = null, gioihan = null;
+    Object idItemInCart = null;
+    ArrayList<NhuYeuPham> nesList;
+    ArrayList<NhuYeuPham> cartList;
+    String sortValue = "id_nyp";
+    String order = "asc";
 
-    NecShop(){
+    long totalMoney= 0;
+    long purchaseMoney = 0;
+
+    NecShop() {
         add(this.rootPanel);
         sortOpt.setSelectedIndex(0);
-        createTable();
-        createCart();
-        setSize(1320,800);
+        cartList = new ArrayList<NhuYeuPham>();
+        nesList = Database.getListNYP(sortValue, order, "", "");
+        createTable(nesList);
+        createCart(cartList);
+        setSize(1320, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 
@@ -77,12 +91,15 @@ public class NecShop extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 //chọn thứ tự đê sắp xếp
+                Database.sortListNYP(nesList, sortOpt.getSelectedItem().toString());
+                createTable(nesList);
             }
         });
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                nesList = Database.searchNYP(input.getText());
+                createTable(nesList);
             }
         });
         addButton.addActionListener(new ActionListener() {
@@ -90,8 +107,38 @@ public class NecShop extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 //item được add sẽ hiện lên table của phần cart
                 //mỗi lần add 1 item thì set grand total đúng với tổng tiền
+                if (idxRowNes != -1) {
+                    retriveNYP();
+                    for (NhuYeuPham item : cartList) {
+                        if (item.getId_nyp() == Integer.parseInt(id.toString())) {
+                            item.setSoluong(item.getSoluong() + 1);
+                            createCart(cartList);
+                            return;
+                        }
+                    }
+
+                    NhuYeuPham newNYP = new NhuYeuPham();
+                    newNYP.setId_nyp(Integer.parseInt(id.toString()));
+                    newNYP.setTengoi(tengoi.toString());
+                    newNYP.setGioihan(Integer.parseInt(gioihan.toString()));
+                    newNYP.setDongia(Integer.parseInt(dongia.toString()));
+                    newNYP.setThoihan(Integer.parseInt(thoihan.toString()));
+                    cartList.add(newNYP);
+                    createCart(cartList);
+                }
             }
         });
+        refreshBtn.addActionListener(new
+
+                                             ActionListener() {
+                                                 @Override
+                                                 public void actionPerformed(ActionEvent e) {
+                                                     //làm mới lại table
+                                                     nesList = Database.getListNYP(sortValue, order, "", "");
+                                                     createTable(nesList);
+                                                     createCart(cartList);
+                                                 }
+                                             });
         purchaseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -104,10 +151,11 @@ public class NecShop extends JFrame{
                 int option = JOptionPane.showOptionDialog(null, panel, "Password verify",
                         JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
                         null, options, options[1]);
-                if(option == 0)
-                {
+                if (option == 0) {
                     char[] password = pass.getPassword();
                     System.out.println("Your password is: " + new String(password));
+
+                    Database.saveHoaDon("username",String.valueOf(totalMoney), prePur.getText(), cartList);
                 }
                 //kiểm tra sau khi pre-purchase trước 1 số tiền thì có lớn hơn hạn mức  tối thiểu không
                 //purchase thành công thì remove cart đưa grand total về 0
@@ -117,26 +165,88 @@ public class NecShop extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 //xóa 1 item được chọn ở cart
+                retriveNYPCart();
+                for (int i = cartList.size() - 1; i >= 0; i--) {
+                    if (cartList.get(i).getId_nyp() == Integer.parseInt(idItemInCart.toString())) {
+                        cartList.remove(i);
+                        createCart(cartList);
+                        return;
+                    }
+                }
             }
         });
         removeAllButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //xóa tất cả item khỏi cart
+                cartList.clear();
+                createCart(cartList);
             }
         });
     }
-    public void createTable(){
-        String[] tbColName = {"ID","Name","Limit","Duration","Price"};
-        Object[] [] data = {{"01","Gói 1","5","3","10000"},{"02","Gói 2","2","7","50000"}};
-        itemList.setModel(new DefaultTableModel(data,tbColName));
+
+    public void createTable(ArrayList<NhuYeuPham> dataList) {
+        String[] tbColName = {"ID", "Name", "Limit/person", "Duration (day(s))", "Price"};
+        ArrayList<NhuYeuPham> list = dataList;
+        String data[][] = new String[list.size()][5];
+        for (int i = 0; i < list.size(); i++) {
+            data[i][0] = String.valueOf(list.get(i).getId_nyp());
+            data[i][1] = list.get(i).getTengoi();
+            data[i][2] = String.valueOf(list.get(i).getGioihan());
+            data[i][3] = String.valueOf(list.get(i).getThoihan());
+            data[i][4] = String.valueOf(list.get(i).getDongia());
+        }
+
+        itemList.setModel(new DefaultTableModel(data, tbColName));
+        if (itemList.getRowCount() > 0)
+            itemList.setRowSelectionInterval(0, 0);
     }
-    public void createCart(){
-        String[] tbColName = {"ID","Name","Quanity","Price","Total"};
-        Object[] [] data = {{"01","Gói 1","2","10000","20000"}};
-        cart.setModel(new DefaultTableModel(data,tbColName));
+
+    public void retriveNYP() {
+        idxRowNes = itemList.getSelectedRow();
+        if (idxRowNes != -1) {
+            id = itemList.getValueAt(idxRowNes, 0);
+            tengoi = itemList.getValueAt(idxRowNes, 1);
+            gioihan = itemList.getValueAt(idxRowNes, 2);
+            thoihan = itemList.getValueAt(idxRowNes, 3);
+            dongia = itemList.getValueAt(idxRowNes, 4);
+        }
     }
-    public static void main(String[]args){
+
+    public void retriveNYPCart() {
+        idxRowCart = cart.getSelectedRow();
+        if (idxRowCart != -1) {
+            idItemInCart = cart.getValueAt(idxRowCart, 0);
+        }
+    }
+
+    public long grandTotal(ArrayList<NhuYeuPham> dataList){
+        long total = 0;
+        for(NhuYeuPham item:dataList){
+            total += item.getSoluong()*item.getDongia();
+        }
+        return total;
+    }
+    public void createCart(ArrayList<NhuYeuPham> dataList) {
+        String[] tbColName = {"ID", "Name", "Quanity", "Price", "Total"};
+        ArrayList<NhuYeuPham> list = dataList;
+        String data[][] = new String[list.size()][5];
+        for (int i = 0; i < list.size(); i++) {
+            data[i][0] = String.valueOf(list.get(i).getId_nyp());
+            data[i][1] = list.get(i).getTengoi();
+            data[i][2] = String.valueOf(list.get(i).getSoluong());
+            data[i][3] = String.valueOf(list.get(i).getDongia());
+            data[i][4] = String.valueOf(list.get(i).getSoluong() * list.get(i).getDongia());
+        }
+
+        cart.setModel(new DefaultTableModel(data, tbColName));
+        if (cart.getRowCount() > 0)
+            cart.setRowSelectionInterval(0, 0);
+        totalMoney = grandTotal(cartList);
+        grandTotal.setText(String.valueOf(totalMoney)+" VND");
+    }
+
+    public static void main(String[] args) {
         NecShop n = new NecShop();
     }
 }
