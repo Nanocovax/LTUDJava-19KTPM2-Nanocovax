@@ -953,12 +953,12 @@ public class Database {
         }
     }
 
-    public static boolean updateUser(String id, String name, String doB, String matp, String maqh, String maxp, String status, String hospital, String idNLQ) {
+    public static boolean updateUser(String id, String name, String doB, String matp, String maqh, String maxp, String hospital, String idNLQ) {
         Connection conn = DBConnection();
         try {
             Statement statement = conn.createStatement();
             String sql = "UPDATE ttnguoidung\n" +
-                    "SET hoten = '" + name + "', ngaysinh = '" + doB + "', tinhtp = '" + matp + "', quanhuyen = '" + maqh + "', xaphuong = '" + maxp + "', trangthai = '" + status + "', ndt = '" + hospital + "'\n" +
+                    "SET hoten = '" + name + "', ngaysinh = '" + doB + "', tinhtp = '" + matp + "', quanhuyen = '" + maqh + "', xaphuong = '" + maxp + "', ndt = '" + hospital + "'\n" +
                     "WHERE id = '" + id + "';";
 
             int x = statement.executeUpdate(sql);
@@ -969,7 +969,7 @@ public class Database {
             } else {
                 JOptionPane.showMessageDialog(null, "Updated successfully!");
 
-                if (!idNLQ.equals(getNQLId(id))) {
+                if (!idNLQ.equals(getNLQId(id))) {
                     sql = "delete from lienquan\n" +
                             "where id = '" + id + "';";
                     x = statement.executeUpdate(sql);
@@ -991,7 +991,82 @@ public class Database {
         }
     }
 
-    public static String getNQLId(String id) {
+    public static boolean updateUserStatus(String id, String status) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "UPDATE ttnguoidung\n" +
+                    "SET trangthai = '" + status + "'\n" +
+                    "WHERE id = '" + id + "';";
+
+            int x = statement.executeUpdate(sql);
+            if (x == 0) {
+                conn.close();
+                return false;
+            } else {
+                conn.close();
+                return true;
+            }
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static String getUserStatus(String id) {
+        String sql = "select trangthai from ttnguoidung\n" +
+                "where id = '" + id + "';";
+        String status = "";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                status = rs.getString("trangthai");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return status;
+    }
+
+    public static void updateAllStatuses(String id, int option, int n, boolean asc, boolean flag) {
+        if (id == null)
+            return;
+
+        String status = getUserStatus(id);
+        if (flag) {
+            int num = (asc) ? (Integer.parseInt(String.valueOf(status.charAt(1))) + n) : (Integer.parseInt(String.valueOf(status.charAt(1))) - n);
+            status = "F" + num;
+
+            updateUserStatus(id, status);
+        }
+
+        String sql = "";
+        if (option == 0)
+            sql = "select * from lienquan lq join ttnguoidung ttnd on ttnd.id = lq.id join taikhoan tk on tk.id = lq.id  where lq.id_lienquan = '" + id + "' and tk.tinhtrang != 'khoa';";
+        else
+            sql = "select * from lienquan lq join ttnguoidung ttnd on ttnd.id = lq.id_lienquan join taikhoan tk on tk.id = lq.id_lienquan  where lq.id = '" + id + "' and tk.tinhtrang != 'khoa';";
+
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                String s = rs.getString("ttnd.id");
+                updateAllStatuses(s, option, n, asc, true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String getNLQId(String id) {
         String sql = "select id_lienquan from lienquan\n" +
                 "where id = '" + id + "';";
         String idNLQ = "";
@@ -1271,7 +1346,7 @@ public class Database {
                 "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
                 "FROM group_data_3\n" +
                 ")\n" +
-                "SELECT *\n" +
+                "SELECT id\n" +
                 "FROM group_data_4\n" +
                 "group by id\n" +
                 "having count(ngay) = 1\n" +
@@ -1320,7 +1395,7 @@ public class Database {
                 "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
                 "FROM group_data_3\n" +
                 ")\n" +
-                "SELECT *\n" +
+                "SELECT id\n" +
                 "FROM group_data_4\n" +
                 "group by id\n" +
                 "having count(ngay) = 1\n" +
@@ -1389,7 +1464,7 @@ public class Database {
                 "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
                 "FROM group_data_3\n" +
                 ")\n" +
-                "SELECT *\n" +
+                "SELECT id\n" +
                 "FROM group_data_4\n" +
                 "group by id\n" +
                 "having count(ngay) = 1\n" +
@@ -1438,7 +1513,7 @@ public class Database {
                 "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
                 "FROM group_data_3\n" +
                 ")\n" +
-                "SELECT *\n" +
+                "SELECT id\n" +
                 "FROM group_data_4\n" +
                 "group by id\n" +
                 "having count(ngay) = 1\n" +
@@ -1507,7 +1582,7 @@ public class Database {
                 "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
                 "FROM group_data_3\n" +
                 ")\n" +
-                "SELECT *\n" +
+                "SELECT id\n" +
                 "FROM group_data_4\n" +
                 "group by id\n" +
                 "having count(ngay) = 1\n" +
@@ -1556,7 +1631,7 @@ public class Database {
                 "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
                 "FROM group_data_3\n" +
                 ")\n" +
-                "SELECT *\n" +
+                "SELECT id\n" +
                 "FROM group_data_4\n" +
                 "group by id\n" +
                 "having count(ngay) = 1\n" +

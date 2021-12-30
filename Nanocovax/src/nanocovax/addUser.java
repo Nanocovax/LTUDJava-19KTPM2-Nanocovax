@@ -125,6 +125,8 @@ public class addUser extends JFrame {
                 cbbDistrict.setSelectedItem(null);
                 cbbWard.setSelectedItem(null);
 
+                cbbHospital.setSelectedItem(null);
+
                 if (res) {
                     Database.updateOccupancyNDT(hospital, 0);
                     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");

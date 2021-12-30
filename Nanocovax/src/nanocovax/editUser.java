@@ -84,7 +84,7 @@ public class editUser extends JFrame {
 
                 String hospital = hospitalList.get(cbbHospital.getSelectedIndex()).getId();
 
-                boolean res = Database.updateUser(tfID.getText().toString(), tfName.getText().toString(), date, cPList.get(cbbCityPro.getSelectedIndex()).getId(), dList.get(cbbDistrict.getSelectedIndex()).getId(), wList.get(cbbWard.getSelectedIndex()).getId(), tfStatus.getText().toString(), hospital, tfRelate.getText().toString());
+                boolean res = Database.updateUser(tfID.getText().toString(), tfName.getText().toString(), date, cPList.get(cbbCityPro.getSelectedIndex()).getId(), dList.get(cbbDistrict.getSelectedIndex()).getId(), wList.get(cbbWard.getSelectedIndex()).getId(), hospital, tfRelate.getText().toString());
 
                 if (res) {
                     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
@@ -141,7 +141,7 @@ public class editUser extends JFrame {
         int indexH = indexOfHospital(hospitalList, root.getHospital().getId());
         cbbHospital.setSelectedIndex(indexH);
 
-        backupRelated = Database.getNQLId(root.getId());
+        backupRelated = Database.getNLQId(root.getId());
         tfRelate.setText(backupRelated);
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -185,13 +185,13 @@ public class editUser extends JFrame {
 
                 String hospital = hospitalList.get(cbbHospital.getSelectedIndex()).getId();
 
-                Database.updateUser(tfID.getText().toString(), tfName.getText().toString(), date, cPList.get(cbbCityPro.getSelectedIndex()).getId(), dList.get(cbbDistrict.getSelectedIndex()).getId(), wList.get(cbbWard.getSelectedIndex()).getId(), tfStatus.getText().toString(), hospital, tfRelate.getText().toString());
+                Database.updateUser(tfID.getText().toString(), tfName.getText().toString(), date, cPList.get(cbbCityPro.getSelectedIndex()).getId(), dList.get(cbbDistrict.getSelectedIndex()).getId(), wList.get(cbbWard.getSelectedIndex()).getId(), hospital, tfRelate.getText().toString());
 
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
                 LocalDateTime now = LocalDateTime.now();
                 Database.updateLSNQL(0, username, dtf.format(now), "updated", root.getId());
 
-                if (!backupHospital.equals(hospital)) {
+                if (!hospital.isEmpty() && !backupHospital.equals(hospital)) {
                     Database.updateLSNQL(2, username, dtf.format(now), "added " + root.getId(), hospital);
                     Database.updateLSNQL(2, username, dtf.format(now), "removed " + root.getId(), backupHospital);
 
@@ -203,7 +203,21 @@ public class editUser extends JFrame {
                     backupHospital = hospital;
                 }
 
-                if (!backupStatus.equals(tfStatus.getText().toString())) {
+                if (!tfStatus.getText().toString().isEmpty() && !backupStatus.equals(tfStatus.getText().toString())) {
+                    Database.updateUserStatus(root.getId(), tfStatus.getText().toString());
+                    if (tfStatus.getText().toString().contains("F")) {
+                        if (tfStatus.getText().toString().compareTo(backupStatus) > 0) {
+                            int n = Integer.parseInt(String.valueOf(tfStatus.getText().toString().charAt(1))) - Integer.parseInt(String.valueOf(backupStatus.charAt(1)));
+                            Database.updateAllStatuses(root.getId(), 0, n, true, false);
+                            Database.updateAllStatuses(root.getId(), 1, n, true, false);
+                        }
+                        else {
+                            int n = Integer.parseInt(String.valueOf(backupStatus.charAt(1))) - Integer.parseInt(String.valueOf(tfStatus.getText().toString().charAt(1))) ;
+                            Database.updateAllStatuses(root.getId(), 0, n, false, false);
+                            Database.updateAllStatuses(root.getId(), 1, n, false, false);
+                        }
+                    }
+
                     dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd");
                     String localDate = dtf.format(LocalDate.now());
                     dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
