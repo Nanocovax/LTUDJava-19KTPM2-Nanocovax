@@ -435,7 +435,7 @@ public class Database {
         Connection conn = DBConnection();
         try {
             Statement statement = conn.createStatement();
-            String sql = "delete from taikhoan where id = '" + id + "' and phanquyen = 'nql';";
+            String sql = "UPDATE taikhoan SET tinhtrang = 'khoa' WHERE id = '" + id + "' and phanquyen = 'nql';";
 
             int x = statement.executeUpdate(sql);
             conn.close();
@@ -768,7 +768,12 @@ public class Database {
                 address.setWard(w);
                 s.setAddress(address);
 
-                s.setStatus(rs.getString("trangthai"));
+                String status = rs.getString("trangthai");
+                if (status.equals("D"))
+                    status = "Dead";
+                else if (status.equals("R"))
+                    status = "Recovered";
+                s.setStatus(status);
 
                 Hospital hospital = new Hospital();
                 hospital.setId(rs.getString("ndt.id_ndt"));
@@ -828,7 +833,12 @@ public class Database {
                 address.setWard(w);
                 s.setAddress(address);
 
-                s.setStatus(rs.getString("trangthai"));
+                String status = rs.getString("trangthai");
+                if (status.equals("D"))
+                    status = "Dead";
+                else if (status.equals("R"))
+                    status = "Recovered";
+                s.setStatus(status);
 
                 //s.setHospital(rs.getString("ten"));
                 Hospital hospital = new Hospital();
@@ -887,7 +897,12 @@ public class Database {
                 address.setWard(w);
                 s.setAddress(address);
 
-                s.setStatus(rs.getString("trangthai"));
+                String status = rs.getString("trangthai");
+                if (status.equals("D"))
+                    status = "Dead";
+                else if (status.equals("R"))
+                    status = "Recovered";
+                s.setStatus(status);
 
                 //s.setHospital(rs.getString("ten"));
                 Hospital hospital = new Hospital();

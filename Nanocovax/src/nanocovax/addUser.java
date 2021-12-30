@@ -110,6 +110,13 @@ public class addUser extends JFrame {
                 String hospital = hospitalList.get(cbbHospital.getSelectedIndex()).getId();
                 String idNLQ = tfRelate.getText().toString();
 
+                if (status.equals("Dead")) {
+                    status = "D";
+                }
+                else if (status.equals("Recovered")) {
+                    status = "R";
+                }
+
                 boolean res = Database.createUser(id, name, date, cPList.get(cbbCityPro.getSelectedIndex()).getId(), dList.get(cbbDistrict.getSelectedIndex()).getId(), wList.get(cbbWard.getSelectedIndex()).getId(), status, hospital, idNLQ);
 
                 tfID.setText("");

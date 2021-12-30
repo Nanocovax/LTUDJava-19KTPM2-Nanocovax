@@ -131,7 +131,7 @@ public class AdminMenu extends JFrame {
         ArrayList<NguoiQuanLy> list = dataList;
         String[] tbColName = {"No. ID Card", "Role", "Status"};
         Object[] [] data = new String[list.size()][3];
-        table.setModel(new DefaultTableModel(data,tbColName));
+        //table.setModel(new DefaultTableModel(data,tbColName));
 
         for (int i = 0; i < list.size(); i++) {
             NumberFormat nf = new DecimalFormat("000");

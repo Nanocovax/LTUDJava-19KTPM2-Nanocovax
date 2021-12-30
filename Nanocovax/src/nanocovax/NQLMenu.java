@@ -108,7 +108,8 @@ public class NQLMenu extends JFrame{
                 //userDetail u = new userDetail();
                 if (indexRow != -1) {
                     retriveUser();
-                    userDetail u = new userDetail(Database.getListUser(order).get(indexRow), username);
+                    //userDetail u = new userDetail(Database.getListUser(order).get(indexRow), username);
+                    userDetail u = new userDetail(Database.searchAUser(id.toString()), username);
                 } else {
                     userDetail u = new userDetail();
                 }
@@ -121,7 +122,8 @@ public class NQLMenu extends JFrame{
                     //editUser editUser = new editUser();
                     if (indexRow != -1) {
                         retriveUser();
-                        editUser editUser = new editUser(Database.getListUser(order).get(indexRow), username);
+                        //editUser editUser = new editUser(Database.getListUser(order).get(indexRow), username);
+                        editUser editUser = new editUser(Database.searchAUser(id.toString()), username);
                     } else {
                         editUser editNQL = new editUser(username);
                     }

@@ -203,16 +203,24 @@ public class editUser extends JFrame {
                     backupHospital = hospital;
                 }
 
-                if (!tfStatus.getText().toString().isEmpty() && !backupStatus.equals(tfStatus.getText().toString())) {
-                    Database.updateUserStatus(root.getId(), tfStatus.getText().toString());
-                    if (tfStatus.getText().toString().contains("F")) {
-                        if (tfStatus.getText().toString().compareTo(backupStatus) > 0) {
-                            int n = Integer.parseInt(String.valueOf(tfStatus.getText().toString().charAt(1))) - Integer.parseInt(String.valueOf(backupStatus.charAt(1)));
+                String status = tfStatus.getText().toString();
+
+                if (!status.isEmpty() && !backupStatus.equals(status)) {
+                    if (status.equals("Dead")) {
+                        status = "D";
+                    }
+                    else if (status.equals("Recovered")) {
+                        status = "R";
+                    }
+                    Database.updateUserStatus(root.getId(), status);
+                    if (status.contains("F")) {
+                        if (status.compareTo(backupStatus) > 0) {
+                            int n = Integer.parseInt(String.valueOf(status.charAt(1))) - Integer.parseInt(String.valueOf(backupStatus.charAt(1)));
                             Database.updateAllStatuses(root.getId(), 0, n, true, false);
                             Database.updateAllStatuses(root.getId(), 1, n, true, false);
                         }
                         else {
-                            int n = Integer.parseInt(String.valueOf(backupStatus.charAt(1))) - Integer.parseInt(String.valueOf(tfStatus.getText().toString().charAt(1))) ;
+                            int n = Integer.parseInt(String.valueOf(backupStatus.charAt(1))) - Integer.parseInt(String.valueOf(status.charAt(1))) ;
                             Database.updateAllStatuses(root.getId(), 0, n, false, false);
                             Database.updateAllStatuses(root.getId(), 1, n, false, false);
                         }
@@ -222,9 +230,15 @@ public class editUser extends JFrame {
                     String localDate = dtf.format(LocalDate.now());
                     dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
                     String localTime = dtf.format(LocalTime.now());
-                    Database.updateLSTT(root.getId(), localDate, localTime, tfStatus.getText().toString());
+                    Database.updateLSTT(root.getId(), localDate, localTime, status);
 
-                    backupStatus = tfStatus.getText().toString();
+                    if (status.equals("D")) {
+                        status = "Dead";
+                    }
+                    else if (status.equals("R")) {
+                        status = "Recovered";
+                    }
+                    backupStatus = status;
                 }
             }
         });
