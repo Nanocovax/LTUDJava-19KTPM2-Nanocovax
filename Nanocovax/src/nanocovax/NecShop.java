@@ -185,6 +185,150 @@ public class NecShop extends JFrame {
         });
     }
 
+    NecShop(String username) {
+        add(this.rootPanel);
+        sortOpt.setSelectedIndex(0);
+        cartList = new ArrayList<NhuYeuPham>();
+        nesList = Database.getListNYP(sortValue, order, "", "");
+        createTable(nesList);
+        createCart(cartList);
+        setSize(1320, 800);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+
+
+        lbLogout.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                /*setVisible(false);
+                dispose();
+                Login frame = new Login();
+                frame.setVisible(true);*/
+
+                int dialogResult = JOptionPane.showConfirmDialog(null, "Would you like to log out?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (dialogResult == JOptionPane.YES_OPTION) {
+                    setVisible(false);
+                    dispose();
+                    Login frame = new Login();
+                    frame.setVisible(true);
+                }
+            }
+        });
+        lbInfo.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                setVisible(false);
+                dispose();
+                UserMenu u = new UserMenu(username);
+            }
+        });
+        lbPayment.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                setVisible(false);
+                dispose();
+                Payment payment = new Payment(username);
+            }
+        });
+        sortOpt.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //chọn thứ tự đê sắp xếp
+                Database.sortListNYP(nesList, sortOpt.getSelectedItem().toString());
+                createTable(nesList);
+            }
+        });
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                nesList = Database.searchNYP(input.getText());
+                createTable(nesList);
+            }
+        });
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //item được add sẽ hiện lên table của phần cart
+                //mỗi lần add 1 item thì set grand total đúng với tổng tiền
+                if (idxRowNes != -1) {
+                    retriveNYP();
+                    for (NhuYeuPham item : cartList) {
+                        if (item.getId_nyp() == Integer.parseInt(id.toString())) {
+                            item.setSoluong(item.getSoluong() + 1);
+                            createCart(cartList);
+                            return;
+                        }
+                    }
+
+                    NhuYeuPham newNYP = new NhuYeuPham();
+                    newNYP.setId_nyp(Integer.parseInt(id.toString()));
+                    newNYP.setTengoi(tengoi.toString());
+                    newNYP.setGioihan(Integer.parseInt(gioihan.toString()));
+                    newNYP.setDongia(Integer.parseInt(dongia.toString()));
+                    newNYP.setThoihan(Integer.parseInt(thoihan.toString()));
+                    cartList.add(newNYP);
+                    createCart(cartList);
+                }
+            }
+        });
+        refreshBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //làm mới lại table
+                nesList = Database.getListNYP(sortValue, order, "", "");
+                createTable(nesList);
+                createCart(cartList);
+            }
+        });
+        purchaseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JPanel panel = new JPanel();
+                JLabel label = new JLabel("Enter a password:");
+                JPasswordField pass = new JPasswordField(15);
+                panel.add(label);
+                panel.add(pass);
+                String[] options = new String[]{"OK", "Cancel"};
+                int option = JOptionPane.showOptionDialog(null, panel, "Password verify",
+                        JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+                        null, options, options[1]);
+                if (option == 0) {
+                    char[] password = pass.getPassword();
+                    System.out.println("Your password is: " + new String(password));
+
+                    Database.saveHoaDon("username",String.valueOf(totalMoney), prePur.getText(), cartList);
+                }
+                //kiểm tra sau khi pre-purchase trước 1 số tiền thì có lớn hơn hạn mức  tối thiểu không
+                //purchase thành công thì remove cart đưa grand total về 0
+            }
+        });
+        removeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //xóa 1 item được chọn ở cart
+                retriveNYPCart();
+                for (int i = cartList.size() - 1; i >= 0; i--) {
+                    if (cartList.get(i).getId_nyp() == Integer.parseInt(idItemInCart.toString())) {
+                        cartList.remove(i);
+                        createCart(cartList);
+                        return;
+                    }
+                }
+            }
+        });
+        removeAllButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //xóa tất cả item khỏi cart
+                cartList.clear();
+                createCart(cartList);
+            }
+        });
+    }
+
     public void createTable(ArrayList<NhuYeuPham> dataList) {
         String[] tbColName = {"ID", "Name", "Limit/person", "Duration (day(s))", "Price"};
         ArrayList<NhuYeuPham> list = dataList;

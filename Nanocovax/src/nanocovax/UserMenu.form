@@ -238,16 +238,16 @@
                     </constraints>
                     <properties>
                       <font name="Tahoma" size="26" style="1"/>
-                      <text value="Detail"/>
+                      <text value="Details"/>
                     </properties>
                   </component>
                   <component id="fab57" class="javax.swing.JLabel">
                     <constraints>
-                      <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="3" use-parent-layout="false"/>
+                      <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="3" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <font name="Tahoma" size="20" style="1"/>
-                      <text value="Relate"/>
+                      <text value="Related to"/>
                     </properties>
                   </component>
                   <hspacer id="2c170">

@@ -2089,6 +2089,29 @@ public class Database {
         }
     }
 
+    //--------------------NGUOI DUNG-------------------------------//
+    public static ArrayList<StatusHistory> getStatusHistoryList(String id) {
+        ArrayList<StatusHistory> list = new ArrayList<>();
+        String sql = "select * from lichsutrangthai where id = '" + id + "' order by ngay asc;";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                StatusHistory s = new StatusHistory();
+                s.setId(rs.getString("id"));
+                s.setStatus(rs.getString("trangthai"));
+                s.setDate(rs.getString("ngay"));
+                s.setTime(rs.getString("thoigian"));
+
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public static void main(String args[]) {
     }
 }
