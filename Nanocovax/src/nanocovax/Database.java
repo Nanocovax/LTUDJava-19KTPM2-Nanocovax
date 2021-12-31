@@ -16,7 +16,7 @@ import java.util.Date;
 public class Database {
     private static String url = "jdbc:mysql://localhost/Nanocovax";
     private static String username = "root";
-    private static String password = "Baokhuyen2001@";
+    private static String password = "";
 
     public static Connection DBConnection() {
         Connection conn = null;
@@ -435,7 +435,7 @@ public class Database {
         Connection conn = DBConnection();
         try {
             Statement statement = conn.createStatement();
-            String sql = "delete from taikhoan where id = '" + id + "' and phanquyen = 'nql';";
+            String sql = "UPDATE taikhoan SET tinhtrang = 'khoa' WHERE id = '" + id + "' and phanquyen = 'nql';";
 
             int x = statement.executeUpdate(sql);
             conn.close();
@@ -768,7 +768,12 @@ public class Database {
                 address.setWard(w);
                 s.setAddress(address);
 
-                s.setStatus(rs.getString("trangthai"));
+                String status = rs.getString("trangthai");
+                if (status.equals("D"))
+                    status = "Dead";
+                else if (status.equals("R"))
+                    status = "Recovered";
+                s.setStatus(status);
 
                 Hospital hospital = new Hospital();
                 hospital.setId(rs.getString("ndt.id_ndt"));
@@ -828,7 +833,12 @@ public class Database {
                 address.setWard(w);
                 s.setAddress(address);
 
-                s.setStatus(rs.getString("trangthai"));
+                String status = rs.getString("trangthai");
+                if (status.equals("D"))
+                    status = "Dead";
+                else if (status.equals("R"))
+                    status = "Recovered";
+                s.setStatus(status);
 
                 //s.setHospital(rs.getString("ten"));
                 Hospital hospital = new Hospital();
@@ -887,7 +897,12 @@ public class Database {
                 address.setWard(w);
                 s.setAddress(address);
 
-                s.setStatus(rs.getString("trangthai"));
+                String status = rs.getString("trangthai");
+                if (status.equals("D"))
+                    status = "Dead";
+                else if (status.equals("R"))
+                    status = "Recovered";
+                s.setStatus(status);
 
                 //s.setHospital(rs.getString("ten"));
                 Hospital hospital = new Hospital();
@@ -953,12 +968,12 @@ public class Database {
         }
     }
 
-    public static boolean updateUser(String id, String name, String doB, String matp, String maqh, String maxp, String status, String hospital, String idNLQ) {
+    public static boolean updateUser(String id, String name, String doB, String matp, String maqh, String maxp, String hospital, String idNLQ) {
         Connection conn = DBConnection();
         try {
             Statement statement = conn.createStatement();
             String sql = "UPDATE ttnguoidung\n" +
-                    "SET hoten = '" + name + "', ngaysinh = '" + doB + "', tinhtp = '" + matp + "', quanhuyen = '" + maqh + "', xaphuong = '" + maxp + "', trangthai = '" + status + "', ndt = '" + hospital + "'\n" +
+                    "SET hoten = '" + name + "', ngaysinh = '" + doB + "', tinhtp = '" + matp + "', quanhuyen = '" + maqh + "', xaphuong = '" + maxp + "', ndt = '" + hospital + "'\n" +
                     "WHERE id = '" + id + "';";
 
             int x = statement.executeUpdate(sql);
@@ -969,13 +984,15 @@ public class Database {
             } else {
                 JOptionPane.showMessageDialog(null, "Updated successfully!");
 
-                if (!idNLQ.isEmpty()) {
+                if (!idNLQ.equals(getNLQId(id))) {
                     sql = "delete from lienquan\n" +
                             "where id = '" + id + "';";
                     x = statement.executeUpdate(sql);
 
-                    sql = "insert into lienquan values('" + id + "', '" + idNLQ + "');";
-                    x = statement.executeUpdate(sql);
+                    if (!idNLQ.isEmpty()) {
+                        sql = "insert into lienquan values('" + id + "', '" + idNLQ + "');";
+                        x = statement.executeUpdate(sql);
+                    }
                 }
                 conn.close();
                 return true;
@@ -988,6 +1005,100 @@ public class Database {
             return false;
         }
     }
+
+    public static boolean updateUserStatus(String id, String status) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "UPDATE ttnguoidung\n" +
+                    "SET trangthai = '" + status + "'\n" +
+                    "WHERE id = '" + id + "';";
+
+            int x = statement.executeUpdate(sql);
+            if (x == 0) {
+                conn.close();
+                return false;
+            } else {
+                conn.close();
+                return true;
+            }
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static String getUserStatus(String id) {
+        String sql = "select trangthai from ttnguoidung\n" +
+                "where id = '" + id + "';";
+        String status = "";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                status = rs.getString("trangthai");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return status;
+    }
+
+    public static void updateAllStatuses(String id, int option, int n, boolean asc, boolean flag) {
+        if (id == null)
+            return;
+
+        String status = getUserStatus(id);
+        if (flag) {
+            int num = (asc) ? (Integer.parseInt(String.valueOf(status.charAt(1))) + n) : (Integer.parseInt(String.valueOf(status.charAt(1))) - n);
+            status = "F" + num;
+
+            updateUserStatus(id, status);
+        }
+
+        String sql = "";
+        if (option == 0)
+            sql = "select * from lienquan lq join ttnguoidung ttnd on ttnd.id = lq.id join taikhoan tk on tk.id = lq.id  where lq.id_lienquan = '" + id + "' and tk.tinhtrang != 'khoa';";
+        else
+            sql = "select * from lienquan lq join ttnguoidung ttnd on ttnd.id = lq.id_lienquan join taikhoan tk on tk.id = lq.id_lienquan  where lq.id = '" + id + "' and tk.tinhtrang != 'khoa';";
+
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                String s = rs.getString("ttnd.id");
+                updateAllStatuses(s, option, n, asc, true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String getNLQId(String id) {
+        String sql = "select id_lienquan from lienquan\n" +
+                "where id = '" + id + "';";
+        String idNLQ = "";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                idNLQ = rs.getString("id_lienquan");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return idNLQ;
+    }
+
 
     public static boolean updateLSNQL(int option, String idNQL, String date, String activity, String id) {
         Connection conn = DBConnection();
@@ -1046,29 +1157,6 @@ public class Database {
             return false;
         }
     }
-
-    /*public static boolean updateLSTT(String id, String date, String status) {
-        Connection conn = DBConnection();
-        try {
-            Statement statement = conn.createStatement();
-            String sql = "insert into lichsutrangthai values('" + id + "', '" + date + "', '" + status + "');";
-
-            int x = statement.executeUpdate(sql);
-            conn.close();
-            if (x == 0) {
-                //JOptionPane.showMessageDialog(null, "Already exists");
-                return false;
-            } else {
-                //JOptionPane.showMessageDialog(null, "Updated Hospital History successfully!");
-                return true;
-            }
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            JOptionPane.showMessageDialog(null, e.getMessage());
-            e.printStackTrace();
-            return false;
-        }
-    }*/
 
     public static boolean updateLSTT(String id, String date, String time, String status) {
         Connection conn = DBConnection();
@@ -1157,7 +1245,7 @@ public class Database {
 
     public static ArrayList<User> getListNLQ(String id) {
         ArrayList<User> list = new ArrayList<>();
-        String sql = "select * from ttnguoidung ttnd join noidieutri ndt on ttnd.ndt = ndt.id_ndt join tinhthanhpho ttp on tinhtp = ttp.matp join quanhuyen qh on quanhuyen = qh.maqh join xaphuong xp on xaphuong = xp.maxp join lienquan lq on ttnd.id = lq.id where lq.id_lienquan = '" + id + "';";
+        String sql = "select * from ttnguoidung ttnd join noidieutri ndt on ttnd.ndt = ndt.id_ndt join tinhthanhpho ttp on tinhtp = ttp.matp join quanhuyen qh on quanhuyen = qh.maqh join xaphuong xp on xaphuong = xp.maxp join lienquan lq on ttnd.id = lq.id join taikhoan tk on ttnd.id = tk.id where lq.id_lienquan = '" + id + "' and tk.tinhtrang != 'khoa';";
         Connection conn = DBConnection();
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -1273,7 +1361,7 @@ public class Database {
                 "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
                 "FROM group_data_3\n" +
                 ")\n" +
-                "SELECT *\n" +
+                "SELECT id\n" +
                 "FROM group_data_4\n" +
                 "group by id\n" +
                 "having count(ngay) = 1\n" +
@@ -1322,7 +1410,7 @@ public class Database {
                 "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
                 "FROM group_data_3\n" +
                 ")\n" +
-                "SELECT *\n" +
+                "SELECT id\n" +
                 "FROM group_data_4\n" +
                 "group by id\n" +
                 "having count(ngay) = 1\n" +
@@ -1391,7 +1479,7 @@ public class Database {
                 "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
                 "FROM group_data_3\n" +
                 ")\n" +
-                "SELECT *\n" +
+                "SELECT id\n" +
                 "FROM group_data_4\n" +
                 "group by id\n" +
                 "having count(ngay) = 1\n" +
@@ -1440,7 +1528,7 @@ public class Database {
                 "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
                 "FROM group_data_3\n" +
                 ")\n" +
-                "SELECT *\n" +
+                "SELECT id\n" +
                 "FROM group_data_4\n" +
                 "group by id\n" +
                 "having count(ngay) = 1\n" +
@@ -1509,7 +1597,7 @@ public class Database {
                 "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
                 "FROM group_data_3\n" +
                 ")\n" +
-                "SELECT *\n" +
+                "SELECT id\n" +
                 "FROM group_data_4\n" +
                 "group by id\n" +
                 "having count(ngay) = 1\n" +
@@ -1558,7 +1646,7 @@ public class Database {
                 "SELECT *, ROW_NUMBER() OVER(PARTITION BY id ORDER BY ngay DESC, thoigian DESC) as stt\n" +
                 "FROM group_data_3\n" +
                 ")\n" +
-                "SELECT *\n" +
+                "SELECT id\n" +
                 "FROM group_data_4\n" +
                 "group by id\n" +
                 "having count(ngay) = 1\n" +
@@ -2014,6 +2102,29 @@ public class Database {
             e.printStackTrace();
             return false;
         }
+    }
+
+    //--------------------NGUOI DUNG-------------------------------//
+    public static ArrayList<StatusHistory> getStatusHistoryList(String id) {
+        ArrayList<StatusHistory> list = new ArrayList<>();
+        String sql = "select * from lichsutrangthai where id = '" + id + "' order by ngay asc;";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                StatusHistory s = new StatusHistory();
+                s.setId(rs.getString("id"));
+                s.setStatus(rs.getString("trangthai"));
+                s.setDate(rs.getString("ngay"));
+                s.setTime(rs.getString("thoigian"));
+
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
     public static void main(String args[]) {
