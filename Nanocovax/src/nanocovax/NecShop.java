@@ -299,7 +299,7 @@ public class NecShop extends JFrame {
                     char[] password = pass.getPassword();
                     System.out.println("Your password is: " + new String(password));
 
-                    Database.saveHoaDon("username",String.valueOf(totalMoney), prePur.getText(), cartList);
+                    Database.saveHoaDon(username,String.valueOf(totalMoney), prePur.getText(), cartList);
                 }
                 //kiểm tra sau khi pre-purchase trước 1 số tiền thì có lớn hơn hạn mức  tối thiểu không
                 //purchase thành công thì remove cart đưa grand total về 0

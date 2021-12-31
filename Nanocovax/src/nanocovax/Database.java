@@ -1703,6 +1703,25 @@ public class Database {
         return dataset2;
     }
 
+    public static DefaultCategoryDataset getSumDebt() {
+        Connection conn = DBConnection();
+        String sql = "select date(thoigian) as ngay, sum(tongtien-tratruoc) as sono from hoadon\n" +
+                "group by date(thoigian)\n" +
+                "order by date(thoigian) asc";
+        DefaultCategoryDataset dataset2 = new DefaultCategoryDataset();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                dataset2.setValue(rs.getInt("sono"), "", rs.getString("ngay"));
+            }
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dataset2;
+    }
+
     //--------QUẢN LÝ NHU YẾU PHẨM-------------//
     static int getIdNYP(String ten) {
         String sql = "select * from nhuyeupham where tengoi =\"" + ten + "\"";

@@ -59,10 +59,10 @@ public class Statistic extends JFrame {
 
         DefaultCategoryDataset dataset3 = Database.getStatusChange();
 
-        DefaultCategoryDataset dataset4 = new DefaultCategoryDataset();
-        dataset4.setValue(10000,"Debt","Ngày 1");
-        dataset4.setValue(50000,"Debt","Ngày 2");
-        dataset4.setValue(33000,"Debt","Ngày 3");
+        DefaultCategoryDataset dataset4 = Database.getSumDebt();
+//        dataset4.setValue(10000,"Debt","Ngày 1");
+//        dataset4.setValue(50000,"Debt","Ngày 2");
+//        dataset4.setValue(33000,"Debt","Ngày 3");
 
         initBarChart(chartPanel1,dataset2,"Thống kê Số người từng trạng thái theo ngày","Ngày","Người");
         //initLineChart(chartPanel2,dataset3,"Thống kê Số chuyển trạng thái","Ngày","Thông tin");
