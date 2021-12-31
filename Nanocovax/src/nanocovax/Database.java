@@ -1686,7 +1686,7 @@ public class Database {
 
     public static DefaultCategoryDataset getSumNec() {
         Connection conn = DBConnection();
-        String sql = "select ct.id_nyp, nyp.tengoi, count(ct.id_nyp) as soluong from cthd ct left join nhuyeupham nyp on ct.id_nyp=nyp.id_nyp\n" +
+        String sql = "select ct.id_nyp, nyp.tengoi, sum(ct.id_nyp) as soluong from cthd ct left join nhuyeupham nyp on ct.id_nyp=nyp.id_nyp\n" +
                 "group by ct.id_nyp, nyp.tengoi\n" +
                 "order by ct.id_nyp asc";
         DefaultCategoryDataset dataset2 = new DefaultCategoryDataset();
