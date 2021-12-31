@@ -32,7 +32,8 @@ public class Database {
             int x = statement.executeUpdate(sql);
             if (x != 0) {
                 res = true;
-                JOptionPane.showMessageDialog(null, "The customer account has been created!");
+                //JOptionPane.showMessageDialog(null, "The customer account has been created!");
+                System.out.println("The customer account has been created!");
             }
             conn.close();
         } catch (SQLException e) {
@@ -68,8 +69,8 @@ public class Database {
             int accountBalance = getAccountBalance(id);
             if (money > accountBalance) {
                 rs = 0;
-                JOptionPane.showMessageDialog(null, "The account balance has been broke!");
-
+                //JOptionPane.showMessageDialog(null, "The account balance is not adequate!");
+                System.out.println("The account balance is not adequate!");
             }
             else {
                 accountBalance = accountBalance - money;
@@ -78,10 +79,12 @@ public class Database {
                 int x = statement.executeUpdate(sql);
                 if (x != 0) {
                     rs = 1;
-                    JOptionPane.showMessageDialog(null, "The transaction has been done successfully!");
+                    //JOptionPane.showMessageDialog(null, "The transaction has been done successfully!");
+                    System.out.println("The transaction has been done successfully!");
                 }
                 else {
-                    JOptionPane.showMessageDialog(null, "The transaction has been canceled!");
+                    //JOptionPane.showMessageDialog(null, "The transaction has been canceled!");
+                    System.out.println("The transaction has been canceled!");
                 }
             }
 
@@ -149,7 +152,7 @@ public class Database {
                 //JOptionPane.showMessageDialog(null, "Already exists");
                 return false;
             } else {
-                //JOptionPane.showMessageDialog(null, "Updated Hospital History successfully!");
+                //JOptionPane.showMessageDialog(null, "Updated History successfully!");
                 return true;
             }
         } catch (SQLException e) {

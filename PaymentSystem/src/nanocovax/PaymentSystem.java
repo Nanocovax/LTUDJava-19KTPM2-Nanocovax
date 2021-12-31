@@ -169,7 +169,7 @@ class BackEnd implements Runnable {
                         int res = Database.doATransaction(name, expense);
                         if (res == 0) {
                             pw.println("/broke");
-                            display.append(name + " has failed to do a transaction due to broke account balance.\n");
+                            display.append(name + " has failed to do a transaction due to inadequate account balance.\n");
                         }
                         else if (res == 1) {
                             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
@@ -186,6 +186,7 @@ class BackEnd implements Runnable {
                     }
                     else if (input.contains("/cancel")) {
                         display.append(name + " has closed connection to the service.\n");
+                        pw.println("/canceled");
                         break;
                     }
 
