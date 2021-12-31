@@ -16,7 +16,7 @@ import java.util.Date;
 public class Database {
     private static String url = "jdbc:mysql://localhost/Nanocovax";
     private static String username = "root";
-    private static String password = "";
+    private static String password = "Baokhuyen2001@";
 
     public static Connection DBConnection() {
         Connection conn = null;
@@ -1684,6 +1684,24 @@ public class Database {
         return dataset3;
     }
 
+    public static DefaultCategoryDataset getSumNec() {
+        Connection conn = DBConnection();
+        String sql = "select ct.id_nyp, nyp.tengoi, count(ct.id_nyp) as soluong from cthd ct left join nhuyeupham nyp on ct.id_nyp=nyp.id_nyp\n" +
+                "group by ct.id_nyp, nyp.tengoi\n" +
+                "order by ct.id_nyp asc";
+        DefaultCategoryDataset dataset2 = new DefaultCategoryDataset();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                dataset2.setValue(rs.getInt("soluong"), rs.getString("tengoi"), rs.getString("tengoi"));
+            }
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dataset2;
+    }
 
     //--------QUẢN LÝ NHU YẾU PHẨM-------------//
     static int getIdNYP(String ten) {

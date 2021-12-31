@@ -49,10 +49,11 @@ public class Statistic extends JFrame {
 
     Statistic(String username){
         add(rootPanel);
-        DefaultPieDataset dataset = new DefaultPieDataset();
-        dataset.setValue("Gói 1",10);
-        dataset.setValue("Gói 2",20);
-        dataset.setValue("Gói 3",30);
+//        DefaultPieDataset dataset = new DefaultPieDataset();
+//        dataset.setValue("Gói 1",10);
+//        dataset.setValue("Gói 2",20);
+//        dataset.setValue("Gói 3",30);
+        DefaultCategoryDataset dataset = Database.getSumNec();
 
         DefaultCategoryDataset dataset2 = Database.getSumStatus();
 
@@ -66,7 +67,7 @@ public class Statistic extends JFrame {
         initBarChart(chartPanel1,dataset2,"Thống kê Số người từng trạng thái theo ngày","Ngày","Người");
         //initLineChart(chartPanel2,dataset3,"Thống kê Số chuyển trạng thái","Ngày","Thông tin");
         initBarChart(chartPanel2,dataset3,"Thống kê Số chuyển trạng thái","Ngày","Thông tin");
-        initPieChart(chartPanel3,dataset,"Thống kê tiêu thụ nhu yếu phẩm");
+        initBarChart(chartPanel3,dataset,"Thống kê tiêu thụ nhu yếu phẩm", "Tên gói","Số lượng");
         initBarChart(chartPanel4,dataset4,"Thống kê dư nợ","Ngày","VNĐ");
 
         setSize(1200,600);
