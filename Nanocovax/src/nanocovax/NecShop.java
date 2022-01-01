@@ -6,7 +6,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 
 public class NecShop extends JFrame {
@@ -39,6 +44,10 @@ public class NecShop extends JFrame {
 
     long totalMoney= 0;
     long purchaseMoney = 0;
+
+    BufferedReader br;
+    PrintWriter pw;
+    private static int PORT = 1024;
 
     NecShop() {
         add(this.rootPanel);
@@ -129,17 +138,15 @@ public class NecShop extends JFrame {
                 }
             }
         });
-        refreshBtn.addActionListener(new
-
-                                             ActionListener() {
-                                                 @Override
-                                                 public void actionPerformed(ActionEvent e) {
-                                                     //làm mới lại table
-                                                     nesList = Database.getListNYP(sortValue, order, "", "");
-                                                     createTable(nesList);
-                                                     createCart(cartList);
-                                                 }
-                                             });
+        refreshBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //làm mới lại table
+                nesList = Database.getListNYP(sortValue, order, "", "");
+                createTable(nesList);
+                createCart(cartList);
+            }
+        });
         purchaseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -156,13 +163,73 @@ public class NecShop extends JFrame {
                     char[] password = pass.getPassword();
                     System.out.println("Your password is: " + new String(password));
 
-                    Database.saveHoaDon("username",String.valueOf(totalMoney), prePur.getText(), cartList);
+                    //Database.saveHoaDon("username",String.valueOf(totalMoney), prePur.getText(), cartList);
 
+                    Socket socket = null;
                     try {
-                        new Client("username",prePur.getText());
+                        socket = new Socket(InetAddress.getLocalHost(), PORT);
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
+                    try {
+                        br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                    try {
+                        pw = new PrintWriter(socket.getOutputStream(), true);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+
+                    // /name
+                    String message = null;
+                    try {
+                        message = br.readLine();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                    if (message.startsWith("/name")) {
+                        pw.println("19127201"); // get real username
+                    }
+
+                    // /accepted
+                    try {
+                        message = br.readLine();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                    if (message.startsWith("/accepted")) {
+
+                    }
+
+                    // /pay
+                    pw.println("/pay");
+                    pw.println(prePur.getText().toString());
+
+                    try {
+                        message = br.readLine();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                    if (message.startsWith("/broke")) {
+
+                    }
+                    else if (message.startsWith("/done")) {
+
+                    }
+                    else if (message.startsWith("/failed")) {
+
+                    }
+
+                    // /cancel
+                    pw.println("/cancel");
+
+                    /*try {
+                        new Client("username",prePur.getText());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }*/
                 }
                 //kiểm tra sau khi pre-purchase trước 1 số tiền thì có lớn hơn hạn mức  tối thiểu không
                 //purchase thành công thì remove cart đưa grand total về 0
