@@ -48,18 +48,18 @@ public class addUser extends JFrame {
     ArrayList<Ward> wList;
     ArrayList<NoiDieuTri> hospitalList = Database.getListNDT();
 
-    addUser(String username){
+    addUser(String username) {
         add(rootPanel);
         comboboxInit();
         jDateChooser = new JDateChooser();
         jDateChooser.setDateFormatString("dd/MM/yyyy");
         calPanel.add(jDateChooser);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(910,380);
+        setSize(910, 380);
         setResizable(false);
         setVisible(true);
 
-        for (NoiDieuTri x: hospitalList) {
+        for (NoiDieuTri x : hospitalList) {
             cbbHospital.addItem(x.getTen());
         }
         cbbHospital.setSelectedItem(null);
@@ -73,7 +73,7 @@ public class addUser extends JFrame {
                 if (cbbCityPro.getSelectedItem() != null) {
                     int indexCityPro = cbbCityPro.getSelectedIndex();
                     dList = Database.getDistrictList(cPList.get(indexCityPro).getId());
-                    for (District x: dList) {
+                    for (District x : dList) {
                         cbbDistrict.addItem(x.getName());
                     }
                     cbbDistrict.setSelectedItem(null);
@@ -89,7 +89,7 @@ public class addUser extends JFrame {
                 if (cbbDistrict.getSelectedItem() != null) {
                     int indexDistrict = cbbDistrict.getSelectedIndex();
                     wList = Database.getWardList(dList.get(indexDistrict).getId());
-                    for (Ward x: wList) {
+                    for (Ward x : wList) {
                         cbbWard.addItem(x.getName());
                     }
                     cbbWard.setSelectedItem(null);
@@ -112,13 +112,12 @@ public class addUser extends JFrame {
 
                 if (status.equals("Dead")) {
                     status = "D";
-                }
-                else if (status.equals("Recovered")) {
+                } else if (status.equals("Recovered")) {
                     status = "R";
                 }
 
                 boolean res = Database.createUser(id, name, date, cPList.get(cbbCityPro.getSelectedIndex()).getId(), dList.get(cbbDistrict.getSelectedIndex()).getId(), wList.get(cbbWard.getSelectedIndex()).getId(), status, hospital, idNLQ);
-
+                Database2.createCustomer(id);
                 tfID.setText("");
                 tfName.setText("");
                 tfStatus.setText("");
@@ -159,14 +158,14 @@ public class addUser extends JFrame {
         });
     }
 
-    void comboboxInit(){
-        for (CityProvince x: cPList) {
+    void comboboxInit() {
+        for (CityProvince x : cPList) {
             cbbCityPro.addItem(x.getName());
         }
         cbbCityPro.setSelectedItem(null);
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         addUser a = new addUser("lqtlong");
     }
 }

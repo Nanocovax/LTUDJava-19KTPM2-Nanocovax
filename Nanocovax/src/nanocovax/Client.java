@@ -70,10 +70,11 @@ public class Client extends JFrame {
 
         f.setVisible(true);
         run();
+//        return;
     }
 
     private String getClientName() {
-        return JOptionPane.showInputDialog(f,"Please enter your name:","Name Entry", JOptionPane.PLAIN_MESSAGE);
+        return JOptionPane.showInputDialog(f, "Please enter your name:", "Name Entry", JOptionPane.PLAIN_MESSAGE);
     }
 
     private void run() throws IOException {
@@ -84,26 +85,26 @@ public class Client extends JFrame {
         while (true) {
             String message = br.readLine();
             if (message.startsWith("/name")) {
-                String name = getClientName();
-//                String name = username;
+//                String name = getClientName();
+                String name = username;
                 f.setTitle(name);
-                pw.println(name);
+//                pw.println(name);
             } else if (message.startsWith("/accepted")) {
                 t.setEditable(true);
-             //   pw.println();
-            } else if (message.startsWith("/pay")){
+            } else if (message.startsWith("/pay")) {
                 String[] parts = message.split("/pay");
                 pw.println(message);
 
             } else {
                 a.append(message + "\n");
             }
+            pw.println(message);
         }
     }
 
 
     public static void main(String[] args) throws Exception {
-//        Client client = new Client();
+        Client client = new Client("123","0");
 //        client.f.setVisible(true);
 //        client.run();
     }

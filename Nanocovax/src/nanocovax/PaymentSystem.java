@@ -128,6 +128,7 @@ class BackEnd implements Runnable {
                 br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 pw = new PrintWriter(socket.getOutputStream(), true);
 
+
                 while (true) {
                     pw.println("/name");
                     name = br.readLine();

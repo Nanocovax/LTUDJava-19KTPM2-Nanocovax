@@ -42,7 +42,7 @@ public class NecShop extends JFrame {
     String sortValue = "id_nyp";
     String order = "asc";
 
-    long totalMoney= 0;
+    long totalMoney = 0;
     long purchaseMoney = 0;
 
     BufferedReader br;
@@ -214,22 +214,15 @@ public class NecShop extends JFrame {
                     }
                     if (message.startsWith("/broke")) {
 
-                    }
-                    else if (message.startsWith("/done")) {
+                    } else if (message.startsWith("/done")) {
 
-                    }
-                    else if (message.startsWith("/failed")) {
+                    } else if (message.startsWith("/failed")) {
 
                     }
 
                     // /cancel
                     pw.println("/cancel");
 
-                    /*try {
-                        new Client("username",prePur.getText());
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }*/
                 }
                 //kiểm tra sau khi pre-purchase trước 1 số tiền thì có lớn hơn hạn mức  tối thiểu không
                 //purchase thành công thì remove cart đưa grand total về 0
@@ -366,19 +359,81 @@ public class NecShop extends JFrame {
                 panel.add(label);
                 panel.add(pass);
                 String[] options = new String[]{"OK", "Cancel"};
+
                 int option = JOptionPane.showOptionDialog(null, panel, "Password verify",
                         JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
                         null, options, options[1]);
                 if (option == 0) {
                     char[] password = pass.getPassword();
-                    System.out.println("Your password is: " + new String(password));
+                    if (Database.varifyLogin(username, String.valueOf(password)) != 2) {
+                        System.out.println("Password is not correct!");
+                    } else {
+                        System.out.println("Your password is: " + new String(password));
 
-                    Database.saveHoaDon("username",String.valueOf(totalMoney), prePur.getText(), cartList);
+                        Database.saveHoaDon(username, String.valueOf(totalMoney), prePur.getText(), cartList);
 
-                    try {
-                        new Client(username, prePur.getText());
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
+                        Socket socket = null;
+                        try {
+                            socket = new Socket(InetAddress.getLocalHost(), PORT);
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                        try {
+                            br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                        try {
+                            pw = new PrintWriter(socket.getOutputStream(), true);
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+
+                        // /name
+                        String message = username;
+                        try {
+                            message = br.readLine();
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                        if (message.startsWith("/name")) {
+                            pw.println(username); // get real username
+                        }
+
+                        // /accepted
+                        try {
+                            message = br.readLine();
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                        if (message.startsWith("/accepted")) {
+
+                        }
+
+                        // /pay
+                        pw.println("/pay");
+                        pw.println(prePur.getText());
+
+                        try {
+                            message = br.readLine();
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                        if (message.startsWith("/broke")) {
+
+                        } else if (message.startsWith("/done")) {
+                            prePur.setText("");
+                            cartList.clear();
+                            createCart(cartList);
+
+                            System.out.println("You have paid the bill");
+
+                        } else if (message.startsWith("/failed")) {
+
+                        }
+
+                        // /cancel
+                        pw.println("/cancel");
                     }
                 }
                 //kiểm tra sau khi pre-purchase trước 1 số tiền thì có lớn hơn hạn mức  tối thiểu không
@@ -444,13 +499,14 @@ public class NecShop extends JFrame {
         }
     }
 
-    public long grandTotal(ArrayList<NhuYeuPham> dataList){
+    public long grandTotal(ArrayList<NhuYeuPham> dataList) {
         long total = 0;
-        for(NhuYeuPham item:dataList){
-            total += item.getSoluong()*item.getDongia();
+        for (NhuYeuPham item : dataList) {
+            total += item.getSoluong() * item.getDongia();
         }
         return total;
     }
+
     public void createCart(ArrayList<NhuYeuPham> dataList) {
         String[] tbColName = {"ID", "Name", "Quanity", "Price", "Total"};
         ArrayList<NhuYeuPham> list = dataList;
@@ -467,7 +523,7 @@ public class NecShop extends JFrame {
         if (cart.getRowCount() > 0)
             cart.setRowSelectionInterval(0, 0);
         totalMoney = grandTotal(cartList);
-        grandTotal.setText(String.valueOf(totalMoney)+" VND");
+        grandTotal.setText(String.valueOf(totalMoney) + " VND");
     }
 
     public static void main(String[] args) {
