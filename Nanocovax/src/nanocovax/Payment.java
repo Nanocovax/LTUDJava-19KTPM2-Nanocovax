@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 public class Payment extends JFrame {
     private JPanel menuPanel;
@@ -23,11 +24,21 @@ public class Payment extends JFrame {
     private JButton detailButton;
     private JLabel totalDebt;
 
-    Payment(){
+    int idxRow;
+    Object id = null, date = null, cost = null, debt = null;
+
+    ArrayList<HoaDon> paymentList;
+    String sortValue = "sohd";
+    String order = "asc";
+
+
+    Payment() {
         add(this.rootPanel);
-        createTable();
+        paymentList =Database.getListPayment("username", sortValue, order);
+        createTable(paymentList);
+        totalDebt.setText(String.valueOf(totalPayment(paymentList)));
         sortOpt.setSelectedIndex(0);
-        setSize(1200,600);
+        setSize(1200, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         lbInfo.addMouseListener(new MouseAdapter() {
@@ -75,7 +86,9 @@ public class Payment extends JFrame {
         refreshButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+//làm mới lại table
+//                paymentList = Database.getListNYP("username",sortValue, order);
+//                createTable(paymentList);
             }
         });
         sortOpt.addActionListener(new ActionListener() {
@@ -87,7 +100,7 @@ public class Payment extends JFrame {
         detailButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                PaymentDetail invoice= new PaymentDetail();
+                PaymentDetail invoice = new PaymentDetail();
             }
         });
         purchaseButton.addActionListener(new ActionListener() {
@@ -103,8 +116,7 @@ public class Payment extends JFrame {
                 int option = JOptionPane.showOptionDialog(null, panel, "Password verify",
                         JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
                         null, options, options[1]);
-                if(option == 0)
-                {
+                if (option == 0) {
                     char[] password = pass.getPassword();
                     System.out.println("Your password is: " + new String(password));
                 }
@@ -113,11 +125,13 @@ public class Payment extends JFrame {
         });
     }
 
-    Payment(String username){
+    Payment(String username) {
         add(this.rootPanel);
-        createTable();
+        paymentList =Database.getListPayment(username, sortValue, order);
+        createTable(paymentList);
+        totalDebt.setText(String.valueOf(totalPayment(paymentList)));
         sortOpt.setSelectedIndex(0);
-        setSize(1200,600);
+        setSize(1200, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         lbInfo.addMouseListener(new MouseAdapter() {
@@ -165,19 +179,23 @@ public class Payment extends JFrame {
         refreshButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                paymentList = Database.getListPayment(username,sortValue, order);
+                createTable(paymentList);
+                totalDebt.setText(String.valueOf(totalPayment(paymentList)));
             }
         });
         sortOpt.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                Database.sortListPayment(paymentList, sortOpt.getSelectedItem().toString());
+                createTable(paymentList);
+                totalDebt.setText(String.valueOf(totalPayment(paymentList)));
             }
         });
         detailButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                PaymentDetail invoice= new PaymentDetail();
+                PaymentDetail invoice = new PaymentDetail();
             }
         });
         purchaseButton.addActionListener(new ActionListener() {
@@ -193,8 +211,7 @@ public class Payment extends JFrame {
                 int option = JOptionPane.showOptionDialog(null, panel, "Password verify",
                         JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
                         null, options, options[1]);
-                if(option == 0)
-                {
+                if (option == 0) {
                     char[] password = pass.getPassword();
                     System.out.println("Your password is: " + new String(password));
                 }
@@ -203,12 +220,40 @@ public class Payment extends JFrame {
         });
     }
 
-    public void createTable(){
-        String[] tbColName = {"ID","Date","Cost","Debt"};
-        Object[] [] data = {{"01","23/04/2021","100000","90000"}};
-        table.setModel(new DefaultTableModel(data,tbColName));
+    public void createTable(ArrayList<HoaDon> dataList) {
+        String[] tbColName = {"ID", "Date", "Cost", "Debt"};
+        ArrayList<HoaDon> list = dataList;
+        String data[][] = new String[list.size()][4];
+        for (int i = 0; i < list.size(); i++) {
+            data[i][0] = list.get(i).getId();
+            data[i][1] = list.get(i).getDate();
+            data[i][2] = list.get(i).getCost();
+            data[i][3] = list.get(i).getDebt();
+        }
+
+        table.setModel(new DefaultTableModel(data, tbColName));
+        if (table.getRowCount() > 0)
+            table.setRowSelectionInterval(0, 0);
     }
-    public static void main(String[]args){
+
+    public void retriveHD() {
+        idxRow = table.getSelectedRow();
+        if (idxRow != -1) {
+            id = table.getValueAt(idxRow, 0);
+            date = table.getValueAt(idxRow, 1);
+            cost = table.getValueAt(idxRow, 2);
+            debt = table.getValueAt(idxRow, 3);
+        }
+    }
+
+    public long totalPayment(ArrayList<HoaDon> dataList){
+        long total = 0;
+        for (HoaDon item:dataList){
+            total += Long.parseLong(item.getDebt());
+        }
+        return total;
+    }
+    public static void main(String[] args) {
         Payment p = new Payment();
     }
 }

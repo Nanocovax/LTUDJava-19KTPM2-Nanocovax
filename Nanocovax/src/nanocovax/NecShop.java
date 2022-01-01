@@ -43,7 +43,6 @@ public class NecShop extends JFrame {
     String order = "asc";
 
     long totalMoney = 0;
-    long purchaseMoney = 0;
 
     BufferedReader br;
     PrintWriter pw;

@@ -2127,6 +2127,46 @@ public class Database {
         return list;
     }
 
+    //----------------------HOA DON (PAYMENT)--------------------------------------
+    public static ArrayList<HoaDon> getListPayment(String username, String column, String ascDesc) {
+        ArrayList<HoaDon> list = new ArrayList<>();
+        String sql = "select * from hoadon where nguoimua = \"" + username + "\" order by " + column + " " + ascDesc + ";";
+
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                HoaDon s = new HoaDon();
+                s.setId(rs.getString("sohd"));
+                s.setDate(rs.getString("thoigian"));
+                s.setCost(String.valueOf(rs.getInt("tongtien")));
+                s.setDebt(String.valueOf(rs.getInt("tongtien") - rs.getInt("tratruoc")));
+
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static void sortListPayment(ArrayList<HoaDon> list, String column) {
+        if (column.equals("ID: Ascending")) {
+            Collections.sort(list, HoaDon.IDComparatorAsc);
+        } else if (column.equals("ID: Descending")) {
+            Collections.sort(list, HoaDon.IDComparatorDesc);
+        } else if (column.equals("Date: Latest")) {
+            Collections.sort(list, HoaDon.DateComparatorDesc);
+        } else if (column.equals("Date: Oldest")) {
+            Collections.sort(list, HoaDon.DateComparatorAsc);
+        } else if (column.equals("Debt: Ascending")) {
+            Collections.sort(list, HoaDon.DebtComparatorAsc);
+        } else if (column.equals("Debt: Descending")) {
+            Collections.sort(list, HoaDon.DebtComparatorDesc);
+        }
+    }
+
     public static void main(String args[]) {
     }
 }
