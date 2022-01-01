@@ -23,9 +23,14 @@ public class Client extends JFrame {
     BufferedReader br;
     PrintWriter pw;
 
+    String username, money;
+
     private static int PORT = 1024;
 
-    Client() {
+    Client(String username, String money) throws IOException {
+        this.username = username;
+        this.money = money;
+
         layout = new SpringLayout();
 
         // Main client
@@ -40,7 +45,7 @@ public class Client extends JFrame {
         p = new JPanel();
         p.setLayout(layout);
         a = new JTextArea(32, 64);
-        a.setEditable(false);
+//        a.setEditable(false);
         a.setPreferredSize(new Dimension(52, 26));
         t = new JTextField(52);
         sp = new JScrollPane(a, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -62,6 +67,9 @@ public class Client extends JFrame {
             pw.println(t.getText());
             t.setText("");
         });
+
+        f.setVisible(true);
+        run();
     }
 
     private String getClientName() {
@@ -77,10 +85,12 @@ public class Client extends JFrame {
             String message = br.readLine();
             if (message.startsWith("/name")) {
                 String name = getClientName();
+//                String name = username;
                 f.setTitle(name);
                 pw.println(name);
             } else if (message.startsWith("/accepted")) {
                 t.setEditable(true);
+             //   pw.println();
             } else if (message.startsWith("/pay")){
                 String[] parts = message.split("/pay");
                 pw.println(message);
@@ -91,9 +101,10 @@ public class Client extends JFrame {
         }
     }
 
+
     public static void main(String[] args) throws Exception {
-        Client client = new Client();
-        client.f.setVisible(true);
-        client.run();
+//        Client client = new Client();
+//        client.f.setVisible(true);
+//        client.run();
     }
 }

@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class NecShop extends JFrame {
@@ -156,6 +157,12 @@ public class NecShop extends JFrame {
                     System.out.println("Your password is: " + new String(password));
 
                     Database.saveHoaDon("username",String.valueOf(totalMoney), prePur.getText(), cartList);
+
+                    try {
+                        new Client("username",prePur.getText());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
                 }
                 //kiểm tra sau khi pre-purchase trước 1 số tiền thì có lớn hơn hạn mức  tối thiểu không
                 //purchase thành công thì remove cart đưa grand total về 0
@@ -300,6 +307,12 @@ public class NecShop extends JFrame {
                     System.out.println("Your password is: " + new String(password));
 
                     Database.saveHoaDon("username",String.valueOf(totalMoney), prePur.getText(), cartList);
+
+                    try {
+                        new Client(username, prePur.getText());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
                 }
                 //kiểm tra sau khi pre-purchase trước 1 số tiền thì có lớn hơn hạn mức  tối thiểu không
                 //purchase thành công thì remove cart đưa grand total về 0
