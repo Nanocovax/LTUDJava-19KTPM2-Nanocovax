@@ -142,7 +142,9 @@
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
-            <properties/>
+            <properties>
+              <text value="Search by date"/>
+            </properties>
           </component>
           <component id="5ae48" class="javax.swing.JComboBox" binding="sortOpt">
             <constraints>

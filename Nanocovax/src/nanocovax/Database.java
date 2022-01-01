@@ -2167,6 +2167,28 @@ public class Database {
         }
     }
 
+    public static ArrayList<HoaDon> searchPayment(String username, String date) {
+        ArrayList<HoaDon> list = new ArrayList<>();
+        String sql = "select * from hoadon where  nguoimua = \"" + username + "\" and date(thoigian) = \"" + date + "\";";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                HoaDon s = new HoaDon();
+                s.setId(rs.getString("sohd"));
+                s.setDate(rs.getString("thoigian"));
+                s.setCost(String.valueOf(rs.getInt("tongtien")));
+                s.setDebt(String.valueOf(rs.getInt("tongtien") - rs.getInt("tratruoc")));
+
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public static void main(String args[]) {
     }
 }

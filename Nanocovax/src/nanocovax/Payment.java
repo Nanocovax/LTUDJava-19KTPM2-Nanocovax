@@ -173,7 +173,9 @@ public class Payment extends JFrame {
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                paymentList = Database.searchPayment(username,input.getText());
+                createTable(paymentList);
+                totalDebt.setText(String.valueOf(totalPayment(paymentList)));
             }
         });
         refreshButton.addActionListener(new ActionListener() {
