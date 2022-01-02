@@ -6,6 +6,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 
 public class Payment extends JFrame {
@@ -32,11 +38,13 @@ public class Payment extends JFrame {
     String order = "asc";
 
 
+    BufferedReader br;
+    PrintWriter pw;
+    private static int PORT = 1024;
+
     Payment() {
         add(this.rootPanel);
-        paymentList = Database.getListPayment("username", sortValue, order);
-        createTable(paymentList);
-        totalDebt.setText(String.valueOf(totalPayment(paymentList)));
+        refreshTable("username");
         sortOpt.setSelectedIndex(0);
         setSize(1200, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -127,9 +135,7 @@ public class Payment extends JFrame {
 
     Payment(String username) {
         add(this.rootPanel);
-        paymentList = Database.getListPayment(username, sortValue, order);
-        createTable(paymentList);
-        totalDebt.setText(String.valueOf(totalPayment(paymentList)));
+        refreshTable(username);
         sortOpt.setSelectedIndex(0);
         setSize(1200, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -181,9 +187,7 @@ public class Payment extends JFrame {
         refreshButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                paymentList = Database.getListPayment(username, sortValue, order);
-                createTable(paymentList);
-                totalDebt.setText(String.valueOf(totalPayment(paymentList)));
+                refreshTable(username);
             }
         });
         sortOpt.addActionListener(new ActionListener() {
@@ -199,7 +203,7 @@ public class Payment extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (idxRow != -1) {
                     retrivePayment();
-                    PaymentDetail invoice = new PaymentDetail(id.toString(),String.valueOf(cost), String.valueOf(debt));
+                    PaymentDetail invoice = new PaymentDetail(id.toString(), String.valueOf(cost), String.valueOf(debt));
                 }
 
             }
@@ -220,6 +224,78 @@ public class Payment extends JFrame {
                 if (option == 0) {
                     char[] password = pass.getPassword();
                     System.out.println("Your password is: " + new String(password));
+
+                    if (Database.varifyLogin(username, String.valueOf(password)) != 2) {
+                        System.out.println("Password is not correct!");
+                    } else {
+                        System.out.println("Your password is: " + new String(password));
+                        retrivePayment();
+
+                        boolean res = Database.updateHoaDon(username, id.toString(), debt.toString());
+
+                        if (res) {
+                            Socket socket = null;
+                            try {
+                                socket = new Socket(InetAddress.getLocalHost(), PORT);
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
+                            try {
+                                br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
+                            try {
+                                pw = new PrintWriter(socket.getOutputStream(), true);
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
+
+                            // /name
+                            String message = username;
+                            try {
+                                message = br.readLine();
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
+                            if (message.startsWith("/name")) {
+                                pw.println(username); // get real username
+                            }
+
+                            // /accepted
+                            try {
+                                message = br.readLine();
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
+                            if (message.startsWith("/accepted")) {
+
+                            }
+
+                            // /pay
+                            pw.println("/pay");
+                            pw.println(debt.toString());
+
+                            try {
+                                message = br.readLine();
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
+                            if (message.startsWith("/broke")) {
+
+                            } else if (message.startsWith("/done")) {
+                                refreshTable(username);
+                                System.out.println("You have paid the bill");
+
+                            } else if (message.startsWith("/failed")) {
+
+                            }
+
+                            // /cancel
+                            pw.println("/cancel");
+                        }
+
+                    }
                 }
                 //Kiểm tra hóa đơn đã được thanh toán hoàn toàn chưa nếu rồi thì đưa ra thông báo
             }
@@ -250,6 +326,12 @@ public class Payment extends JFrame {
             cost = table.getValueAt(idxRow, 2);
             debt = table.getValueAt(idxRow, 3);
         }
+    }
+
+    public void refreshTable(String username) {
+        paymentList = Database.getListPayment(username, sortValue, order);
+        createTable(paymentList);
+        totalDebt.setText(String.valueOf(totalPayment(paymentList)));
     }
 
     public long totalPayment(ArrayList<HoaDon> dataList) {

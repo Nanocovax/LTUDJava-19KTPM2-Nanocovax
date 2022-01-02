@@ -2001,6 +2001,7 @@ public class Database {
         }
     }
 
+
     public static boolean saveCTHD(int sohd, ArrayList<NhuYeuPham> dataList) {
         Connection conn = DBConnection();
         try {
@@ -2213,6 +2214,41 @@ public class Database {
         }
         return list;
     }
+
+    public static boolean updateHoaDon(String username, String sohd, String tratruoc) {
+        Connection conn = DBConnection();
+
+        try {
+            //time
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+            String thoigian = dtf.format(now);
+
+            Statement statement = conn.createStatement();
+            String sql = "update hoadon\n" +
+                    "set thoigian = \"" + thoigian + "\", tratruoc = tongtien\n" +
+                    "where sohd = \"" + sohd + "\";";
+
+            int x = statement.executeUpdate(sql);
+            conn.close();
+            if (x == 0) {
+                JOptionPane.showMessageDialog(null, "Update purchase fail!");
+                return false;
+            } else {
+                if (saveLichSuThanhToan(Integer.valueOf(sohd), thoigian, tratruoc) && updateDuNo(username, 0, Long.parseLong(tratruoc))) {
+                    JOptionPane.showMessageDialog(null, "Purchase successfully!");
+                }
+                return true;
+            }
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
 
     public static void main(String args[]) {
