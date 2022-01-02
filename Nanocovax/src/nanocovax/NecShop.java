@@ -48,6 +48,10 @@ public class NecShop extends JFrame {
     PrintWriter pw;
     private static int PORT = 1024;
 
+    ArrayList<Long> duNo;
+
+    private final long DEBT_LIMIT = 100000;
+
     NecShop() {
         add(this.rootPanel);
         sortOpt.setSelectedIndex(0);
@@ -160,7 +164,7 @@ public class NecShop extends JFrame {
                         null, options, options[1]);
                 if (option == 0) {
                     char[] password = pass.getPassword();
-                    System.out.println("Your password is: " + new String(password));
+//                    System.out.println("Your password is: " + new String(password));
 
                     //Database.saveHoaDon("username",String.valueOf(totalMoney), prePur.getText(), cartList);
 
@@ -255,6 +259,8 @@ public class NecShop extends JFrame {
         add(this.rootPanel);
         sortOpt.setSelectedIndex(0);
         cartList = new ArrayList<NhuYeuPham>();
+        duNo = Database.getDuNo(username);
+
         nesList = Database.getListNYP(sortValue, order, "", "");
         createTable(nesList);
         createCart(cartList);
@@ -352,6 +358,13 @@ public class NecShop extends JFrame {
         purchaseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (prePur.getText().equals("")) {
+                    JOptionPane.showMessageDialog(null,
+                            "Please enter the pre-purchase!",
+                            "Missing Pre-purchase",
+                            JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
                 JPanel panel = new JPanel();
                 JLabel label = new JLabel("Enter a password:");
                 JPasswordField pass = new JPasswordField(15);
@@ -366,8 +379,20 @@ public class NecShop extends JFrame {
                     char[] password = pass.getPassword();
                     if (Database.varifyLogin(username, String.valueOf(password)) != 2) {
                         System.out.println("Password is not correct!");
+                        JOptionPane.showMessageDialog(panel,
+                                "The password is incorrect. Try again.",
+                                "Incorrect Password",
+                                JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                    if (duNo.get(1) + totalMoney - Long.parseLong(prePur.getText()) > DEBT_LIMIT) {
+                        System.out.println("You have exceeded the debt limit");
+                        JOptionPane.showMessageDialog(panel,
+                                "You have exceeded the debt limit " + DEBT_LIMIT + " VND",
+                                "Debt Limit",
+                                JOptionPane.WARNING_MESSAGE);
                     } else {
-                        System.out.println("Your password is: " + new String(password));
+//                        System.out.println("Your password is: " + new String(password));
 
                         Database.saveHoaDon(username, String.valueOf(totalMoney), prePur.getText(), cartList);
 
@@ -424,6 +449,7 @@ public class NecShop extends JFrame {
                             prePur.setText("");
                             cartList.clear();
                             createCart(cartList);
+                            duNo = Database.getDuNo(username);
 
                             System.out.println("You have paid the bill");
 
@@ -433,6 +459,7 @@ public class NecShop extends JFrame {
 
                         // /cancel
                         pw.println("/cancel");
+
                     }
                 }
                 //kiểm tra sau khi pre-purchase trước 1 số tiền thì có lớn hơn hạn mức  tối thiểu không

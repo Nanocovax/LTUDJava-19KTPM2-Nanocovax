@@ -126,7 +126,7 @@ public class Payment extends JFrame {
                         null, options, options[1]);
                 if (option == 0) {
                     char[] password = pass.getPassword();
-                    System.out.println("Your password is: " + new String(password));
+//                    System.out.println("Your password is: " + new String(password));
                 }
                 //Kiểm tra hóa đơn đã được thanh toán hoàn toàn chưa nếu rồi thì đưa ra thông báo
             }
@@ -223,78 +223,78 @@ public class Payment extends JFrame {
                         null, options, options[1]);
                 if (option == 0) {
                     char[] password = pass.getPassword();
-                    System.out.println("Your password is: " + new String(password));
+//                    System.out.println("Your password is: " + new String(password));
 
                     if (Database.varifyLogin(username, String.valueOf(password)) != 2) {
                         System.out.println("Password is not correct!");
-                    } else {
-                        System.out.println("Your password is: " + new String(password));
-                        retrivePayment();
+                        JOptionPane.showMessageDialog(panel,
+                                "The password is incorrect. Try again.",
+                                "Incorrect Password",
+                                JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+//                    System.out.println("Your password is: " + new String(password));
+                    retrivePayment();
 
-                        boolean res = Database.updateHoaDon(username, id.toString(), debt.toString());
+                    boolean res = Database.updateHoaDon(username, id.toString(), debt.toString());
 
-                        if (res) {
-                            Socket socket = null;
-                            try {
-                                socket = new Socket(InetAddress.getLocalHost(), PORT);
-                            } catch (IOException ex) {
-                                ex.printStackTrace();
-                            }
-                            try {
-                                br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                            } catch (IOException ex) {
-                                ex.printStackTrace();
-                            }
-                            try {
-                                pw = new PrintWriter(socket.getOutputStream(), true);
-                            } catch (IOException ex) {
-                                ex.printStackTrace();
-                            }
-
-                            // /name
-                            String message = username;
-                            try {
-                                message = br.readLine();
-                            } catch (IOException ex) {
-                                ex.printStackTrace();
-                            }
-                            if (message.startsWith("/name")) {
-                                pw.println(username); // get real username
-                            }
-
-                            // /accepted
-                            try {
-                                message = br.readLine();
-                            } catch (IOException ex) {
-                                ex.printStackTrace();
-                            }
-                            if (message.startsWith("/accepted")) {
-
-                            }
-
-                            // /pay
-                            pw.println("/pay");
-                            pw.println(debt.toString());
-
-                            try {
-                                message = br.readLine();
-                            } catch (IOException ex) {
-                                ex.printStackTrace();
-                            }
-                            if (message.startsWith("/broke")) {
-
-                            } else if (message.startsWith("/done")) {
-                                refreshTable(username);
-                                System.out.println("You have paid the bill");
-
-                            } else if (message.startsWith("/failed")) {
-
-                            }
-
-                            // /cancel
-                            pw.println("/cancel");
+                    if (res) {
+                        Socket socket = null;
+                        try {
+                            socket = new Socket(InetAddress.getLocalHost(), PORT);
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                        try {
+                            br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                        try {
+                            pw = new PrintWriter(socket.getOutputStream(), true);
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
                         }
 
+                        // /name
+                        String message = username;
+                        try {
+                            message = br.readLine();
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                        if (message.startsWith("/name")) {
+                            pw.println(username); // get real username
+                        }
+
+                        // /accepted
+                        try {
+                            message = br.readLine();
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                        if (message.startsWith("/accepted")) {
+
+                        }
+                        // /pay
+                        pw.println("/pay");
+                        pw.println(debt.toString());
+
+                        try {
+                            message = br.readLine();
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                        if (message.startsWith("/broke")) {
+
+                        } else if (message.startsWith("/done")) {
+                            refreshTable(username);
+                            System.out.println("You have paid the bill");
+
+                        } else if (message.startsWith("/failed")) {
+                        }
+                        // /cancel
+                        pw.println("/cancel");
                     }
                 }
                 //Kiểm tra hóa đơn đã được thanh toán hoàn toàn chưa nếu rồi thì đưa ra thông báo

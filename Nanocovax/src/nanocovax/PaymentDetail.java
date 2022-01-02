@@ -56,7 +56,7 @@ public class PaymentDetail extends JFrame {
                         null, options, options[1]);
                 if (option == 0) {
                     char[] password = pass.getPassword();
-                    System.out.println("Your password is: " + new String(password));
+                    //System.out.println("Your password is: " + new String(password));
                     //sau khi xác nhận được pw thì cho showInputDialog để lấy số tiền muốn trả
                 }
 
