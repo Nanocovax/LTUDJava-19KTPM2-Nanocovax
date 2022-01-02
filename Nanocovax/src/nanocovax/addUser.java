@@ -7,7 +7,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.lang.reflect.Array;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -42,6 +48,10 @@ public class addUser extends JFrame {
     private JPanel calPanel;
     private JComboBox cbbHospital;
     private JDateChooser jDateChooser;
+
+    BufferedReader br;
+    PrintWriter pw;
+    private static int PORT = 1024;
 
     ArrayList<CityProvince> cPList = Database.getCityProvinceList();
     ArrayList<District> dList;
@@ -117,7 +127,67 @@ public class addUser extends JFrame {
                 }
 
                 boolean res = Database.createUser(id, name, date, cPList.get(cbbCityPro.getSelectedIndex()).getId(), dList.get(cbbDistrict.getSelectedIndex()).getId(), wList.get(cbbWard.getSelectedIndex()).getId(), status, hospital, idNLQ);
-                Database2.createCustomer(id);
+//                Database2.createCustomer(id);
+                //---------Socket----------------
+
+                Socket socket = null;
+                try {
+                    socket = new Socket(InetAddress.getLocalHost(), PORT);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                try {
+                    br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                try {
+                    pw = new PrintWriter(socket.getOutputStream(), true);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+
+                // /name
+                String message = id;
+                try {
+                    message = br.readLine();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                if (message.startsWith("/name")) {
+                    pw.println(id); // get real username
+                }
+
+                // /accepted
+                try {
+                    message = br.readLine();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                if (message.startsWith("/accepted")) {
+
+                }
+
+                // create account
+                pw.println("/add");
+                pw.println(id);
+
+                try {
+                    message = br.readLine();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                if (message.startsWith("/done")) {
+                    System.out.println("Created account " + id);
+                } else if (message.startsWith("/failed")) {
+                    System.out.println("Cannot create account " + id);
+                }
+
+                // /cancel
+                pw.println("/cancel");
+
+                //--------------------------
+
                 tfID.setText("");
                 tfName.setText("");
                 tfStatus.setText("");
