@@ -1,5 +1,7 @@
 package nanocovax;
 
+import com.toedter.calendar.JDateChooser;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
@@ -12,6 +14,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class Payment extends JFrame {
@@ -23,12 +26,15 @@ public class Payment extends JFrame {
     private JPanel rootPanel;
     private JTable table;
     private JButton purchaseButton;
-    private JTextField input;
     private JButton searchButton;
     private JButton refreshButton;
     private JComboBox sortOpt;
     private JButton detailButton;
     private JLabel totalDebt;
+    private JPanel calPanel;
+
+    private JDateChooser jDateChooser;
+
 
     int idxRow;
     Object id = null, date = null, cost = null, debt = null;
@@ -134,7 +140,14 @@ public class Payment extends JFrame {
     }
 
     Payment(String username) {
+
+
         add(this.rootPanel);
+
+        jDateChooser = new JDateChooser();
+        jDateChooser.setDateFormatString("dd/MM/yyyy");
+        calPanel.add(jDateChooser);
+
         refreshTable(username);
         sortOpt.setSelectedIndex(0);
         setSize(1200, 600);
@@ -179,7 +192,11 @@ public class Payment extends JFrame {
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                paymentList = Database.searchPayment(username, input.getText());
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                String date = format.format(jDateChooser.getDate());
+                System.out.println(date);
+
+                paymentList = Database.searchPayment(username, date);
                 createTable(paymentList);
                 totalDebt.setText(String.valueOf(totalPayment(paymentList)));
             }
