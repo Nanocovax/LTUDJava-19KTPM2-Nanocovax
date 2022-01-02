@@ -6,6 +6,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 
 public class NecShop extends JFrame {
@@ -36,8 +42,15 @@ public class NecShop extends JFrame {
     String sortValue = "id_nyp";
     String order = "asc";
 
-    long totalMoney= 0;
-    long purchaseMoney = 0;
+    long totalMoney = 0;
+
+    BufferedReader br;
+    PrintWriter pw;
+    private static int PORT = 1024;
+
+    ArrayList<Long> duNo;
+
+    private final long DEBT_LIMIT = 100000;
 
     NecShop() {
         add(this.rootPanel);
@@ -128,17 +141,15 @@ public class NecShop extends JFrame {
                 }
             }
         });
-        refreshBtn.addActionListener(new
-
-                                             ActionListener() {
-                                                 @Override
-                                                 public void actionPerformed(ActionEvent e) {
-                                                     //làm mới lại table
-                                                     nesList = Database.getListNYP(sortValue, order, "", "");
-                                                     createTable(nesList);
-                                                     createCart(cartList);
-                                                 }
-                                             });
+        refreshBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //làm mới lại table
+                nesList = Database.getListNYP(sortValue, order, "", "");
+                createTable(nesList);
+                createCart(cartList);
+            }
+        });
         purchaseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -153,9 +164,68 @@ public class NecShop extends JFrame {
                         null, options, options[1]);
                 if (option == 0) {
                     char[] password = pass.getPassword();
-                    System.out.println("Your password is: " + new String(password));
+//                    System.out.println("Your password is: " + new String(password));
 
-                    Database.saveHoaDon("username",String.valueOf(totalMoney), prePur.getText(), cartList);
+                    //Database.saveHoaDon("username",String.valueOf(totalMoney), prePur.getText(), cartList);
+
+                    Socket socket = null;
+                    try {
+                        socket = new Socket(InetAddress.getLocalHost(), PORT);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                    try {
+                        br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                    try {
+                        pw = new PrintWriter(socket.getOutputStream(), true);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+
+                    // /name
+                    String message = null;
+                    try {
+                        message = br.readLine();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                    if (message.startsWith("/name")) {
+                        pw.println("19127201"); // get real username
+                    }
+
+                    // /accepted
+                    try {
+                        message = br.readLine();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                    if (message.startsWith("/accepted")) {
+
+                    }
+
+                    // /pay
+                    pw.println("/pay");
+                    pw.println(prePur.getText().toString());
+
+                    try {
+                        message = br.readLine();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                    if (message.startsWith("/broke")) {
+
+                    } else if (message.startsWith("/done")) {
+
+                    } else if (message.startsWith("/failed")) {
+
+                    }
+
+                    // /cancel
+                    pw.println("/cancel");
+
                 }
                 //kiểm tra sau khi pre-purchase trước 1 số tiền thì có lớn hơn hạn mức  tối thiểu không
                 //purchase thành công thì remove cart đưa grand total về 0
@@ -189,6 +259,8 @@ public class NecShop extends JFrame {
         add(this.rootPanel);
         sortOpt.setSelectedIndex(0);
         cartList = new ArrayList<NhuYeuPham>();
+        duNo = Database.getDuNo(username);
+
         nesList = Database.getListNYP(sortValue, order, "", "");
         createTable(nesList);
         createCart(cartList);
@@ -286,20 +358,109 @@ public class NecShop extends JFrame {
         purchaseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (prePur.getText().equals("")) {
+                    JOptionPane.showMessageDialog(null,
+                            "Please enter the pre-purchase!",
+                            "Missing Pre-purchase",
+                            JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
                 JPanel panel = new JPanel();
                 JLabel label = new JLabel("Enter a password:");
                 JPasswordField pass = new JPasswordField(15);
                 panel.add(label);
                 panel.add(pass);
                 String[] options = new String[]{"OK", "Cancel"};
+
                 int option = JOptionPane.showOptionDialog(null, panel, "Password verify",
                         JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
                         null, options, options[1]);
                 if (option == 0) {
                     char[] password = pass.getPassword();
-                    System.out.println("Your password is: " + new String(password));
+                    if (Database.varifyLogin(username, String.valueOf(password)) != 2) {
+                        System.out.println("Password is not correct!");
+                        JOptionPane.showMessageDialog(panel,
+                                "The password is incorrect. Try again.",
+                                "Incorrect Password",
+                                JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                    if (duNo.get(1) + totalMoney - Long.parseLong(prePur.getText()) > DEBT_LIMIT) {
+                        System.out.println("You have exceeded the debt limit");
+                        JOptionPane.showMessageDialog(panel,
+                                "You have exceeded the debt limit " + DEBT_LIMIT + " VND",
+                                "Debt Limit",
+                                JOptionPane.WARNING_MESSAGE);
+                    } else {
+//                        System.out.println("Your password is: " + new String(password));
 
-                    Database.saveHoaDon(username,String.valueOf(totalMoney), prePur.getText(), cartList);
+                        Database.saveHoaDon(username, String.valueOf(totalMoney), prePur.getText(), cartList);
+
+                        Socket socket = null;
+                        try {
+                            socket = new Socket(InetAddress.getLocalHost(), PORT);
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                        try {
+                            br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                        try {
+                            pw = new PrintWriter(socket.getOutputStream(), true);
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+
+                        // /name
+                        String message = username;
+                        try {
+                            message = br.readLine();
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                        if (message.startsWith("/name")) {
+                            pw.println(username); // get real username
+                        }
+
+                        // /accepted
+                        try {
+                            message = br.readLine();
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                        if (message.startsWith("/accepted")) {
+
+                        }
+
+                        // /pay
+                        pw.println("/pay");
+                        pw.println(prePur.getText());
+
+                        try {
+                            message = br.readLine();
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                        if (message.startsWith("/broke")) {
+
+                        } else if (message.startsWith("/done")) {
+                            prePur.setText("");
+                            cartList.clear();
+                            createCart(cartList);
+                            duNo = Database.getDuNo(username);
+
+                            System.out.println("You have paid the bill");
+
+                        } else if (message.startsWith("/failed")) {
+
+                        }
+
+                        // /cancel
+                        pw.println("/cancel");
+
+                    }
                 }
                 //kiểm tra sau khi pre-purchase trước 1 số tiền thì có lớn hơn hạn mức  tối thiểu không
                 //purchase thành công thì remove cart đưa grand total về 0
@@ -364,13 +525,14 @@ public class NecShop extends JFrame {
         }
     }
 
-    public long grandTotal(ArrayList<NhuYeuPham> dataList){
+    public long grandTotal(ArrayList<NhuYeuPham> dataList) {
         long total = 0;
-        for(NhuYeuPham item:dataList){
-            total += item.getSoluong()*item.getDongia();
+        for (NhuYeuPham item : dataList) {
+            total += item.getSoluong() * item.getDongia();
         }
         return total;
     }
+
     public void createCart(ArrayList<NhuYeuPham> dataList) {
         String[] tbColName = {"ID", "Name", "Quanity", "Price", "Total"};
         ArrayList<NhuYeuPham> list = dataList;
@@ -387,7 +549,7 @@ public class NecShop extends JFrame {
         if (cart.getRowCount() > 0)
             cart.setRowSelectionInterval(0, 0);
         totalMoney = grandTotal(cartList);
-        grandTotal.setText(String.valueOf(totalMoney)+" VND");
+        grandTotal.setText(String.valueOf(totalMoney) + " VND");
     }
 
     public static void main(String[] args) {

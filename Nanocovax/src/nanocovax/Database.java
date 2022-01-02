@@ -2038,6 +2038,7 @@ public class Database {
         }
     }
 
+
     public static boolean saveCTHD(int sohd, ArrayList<NhuYeuPham> dataList) {
         Connection conn = DBConnection();
         try {
@@ -2163,6 +2164,129 @@ public class Database {
         }
         return list;
     }
+
+    //----------------------HOA DON (PAYMENT)--------------------------------------
+    public static ArrayList<HoaDon> getListPayment(String username, String column, String ascDesc) {
+        ArrayList<HoaDon> list = new ArrayList<>();
+        String sql = "select * from hoadon where nguoimua = \"" + username + "\" order by " + column + " " + ascDesc + ";";
+
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                HoaDon s = new HoaDon();
+                s.setId(rs.getString("sohd"));
+                s.setDate(rs.getString("thoigian"));
+                s.setCost(String.valueOf(rs.getInt("tongtien")));
+                s.setDebt(String.valueOf(rs.getInt("tongtien") - rs.getInt("tratruoc")));
+
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static void sortListPayment(ArrayList<HoaDon> list, String column) {
+        if (column.equals("ID: Ascending")) {
+            Collections.sort(list, HoaDon.IDComparatorAsc);
+        } else if (column.equals("ID: Descending")) {
+            Collections.sort(list, HoaDon.IDComparatorDesc);
+        } else if (column.equals("Date: Latest")) {
+            Collections.sort(list, HoaDon.DateComparatorDesc);
+        } else if (column.equals("Date: Oldest")) {
+            Collections.sort(list, HoaDon.DateComparatorAsc);
+        } else if (column.equals("Debt: Ascending")) {
+            Collections.sort(list, HoaDon.DebtComparatorAsc);
+        } else if (column.equals("Debt: Descending")) {
+            Collections.sort(list, HoaDon.DebtComparatorDesc);
+        }
+    }
+
+    public static ArrayList<HoaDon> searchPayment(String username, String date) {
+        ArrayList<HoaDon> list = new ArrayList<>();
+        String sql = "select * from hoadon where  nguoimua = \"" + username + "\" and date(thoigian) = \"" + date + "\";";
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                HoaDon s = new HoaDon();
+                s.setId(rs.getString("sohd"));
+                s.setDate(rs.getString("thoigian"));
+                s.setCost(String.valueOf(rs.getInt("tongtien")));
+                s.setDebt(String.valueOf(rs.getInt("tongtien") - rs.getInt("tratruoc")));
+
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static ArrayList<NhuYeuPham> getListPaymentDetail(String sohd) {
+        ArrayList<NhuYeuPham> list = new ArrayList<>();
+        String sql = "select * from cthd ct left join nhuyeupham nyp on ct.id_nyp=nyp.id_nyp\n" +
+                "where sohd = \"" + sohd + "\";";
+
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+
+                NhuYeuPham s = new NhuYeuPham();
+                s.setId_nyp(rs.getInt("id_nyp"));
+                s.setTengoi(rs.getString("tengoi"));
+                s.setSoluong(rs.getInt("soluong"));
+                s.setDongia(rs.getInt("dongia"));
+
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static boolean updateHoaDon(String username, String sohd, String tratruoc) {
+        Connection conn = DBConnection();
+
+        try {
+            //time
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+            String thoigian = dtf.format(now);
+
+            Statement statement = conn.createStatement();
+            String sql = "update hoadon\n" +
+                    "set thoigian = \"" + thoigian + "\", tratruoc = tongtien\n" +
+                    "where sohd = \"" + sohd + "\";";
+
+            int x = statement.executeUpdate(sql);
+            conn.close();
+            if (x == 0) {
+                JOptionPane.showMessageDialog(null, "Update purchase fail!");
+                return false;
+            } else {
+                if (saveLichSuThanhToan(Integer.valueOf(sohd), thoigian, tratruoc) && updateDuNo(username, 0, Long.parseLong(tratruoc))) {
+                    JOptionPane.showMessageDialog(null, "Purchase successfully!");
+                }
+                return true;
+            }
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
 
     public static void main(String args[]) {
     }
