@@ -60,7 +60,7 @@
           <text value="Grand total:"/>
         </properties>
       </component>
-      <component id="d0dcd" class="javax.swing.JLabel">
+      <component id="d0dcd" class="javax.swing.JLabel" binding="totalLabel">
         <constraints>
           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -75,16 +75,16 @@
         </constraints>
         <properties>
           <font name="Tahoma" size="16" style="1"/>
-          <text value="Paid:"/>
+          <text value="Debt:"/>
         </properties>
       </component>
-      <component id="d1c46" class="javax.swing.JLabel" binding="paid">
+      <component id="d1c46" class="javax.swing.JLabel" binding="debtLabel">
         <constraints>
           <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <font size="16" style="0"/>
-          <text value="paid"/>
+          <text value="debt"/>
         </properties>
       </component>
     </children>

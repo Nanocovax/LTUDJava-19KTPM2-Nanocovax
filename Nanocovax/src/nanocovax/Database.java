@@ -2189,6 +2189,32 @@ public class Database {
         return list;
     }
 
+    public static ArrayList<NhuYeuPham> getListPaymentDetail(String sohd) {
+        ArrayList<NhuYeuPham> list = new ArrayList<>();
+        String sql = "select * from cthd ct left join nhuyeupham nyp on ct.id_nyp=nyp.id_nyp\n" +
+                "where sohd = \"" + sohd + "\";";
+
+        Connection conn = DBConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+
+                NhuYeuPham s = new NhuYeuPham();
+                s.setId_nyp(rs.getInt("id_nyp"));
+                s.setTengoi(rs.getString("tengoi"));
+                s.setSoluong(rs.getInt("soluong"));
+                s.setDongia(rs.getInt("dongia"));
+
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+
     public static void main(String args[]) {
     }
 }

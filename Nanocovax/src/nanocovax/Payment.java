@@ -34,7 +34,7 @@ public class Payment extends JFrame {
 
     Payment() {
         add(this.rootPanel);
-        paymentList =Database.getListPayment("username", sortValue, order);
+        paymentList = Database.getListPayment("username", sortValue, order);
         createTable(paymentList);
         totalDebt.setText(String.valueOf(totalPayment(paymentList)));
         sortOpt.setSelectedIndex(0);
@@ -100,7 +100,7 @@ public class Payment extends JFrame {
         detailButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                PaymentDetail invoice = new PaymentDetail();
+//                PaymentDetail invoice = new PaymentDetail();
             }
         });
         purchaseButton.addActionListener(new ActionListener() {
@@ -127,7 +127,7 @@ public class Payment extends JFrame {
 
     Payment(String username) {
         add(this.rootPanel);
-        paymentList =Database.getListPayment(username, sortValue, order);
+        paymentList = Database.getListPayment(username, sortValue, order);
         createTable(paymentList);
         totalDebt.setText(String.valueOf(totalPayment(paymentList)));
         sortOpt.setSelectedIndex(0);
@@ -173,7 +173,7 @@ public class Payment extends JFrame {
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                paymentList = Database.searchPayment(username,input.getText());
+                paymentList = Database.searchPayment(username, input.getText());
                 createTable(paymentList);
                 totalDebt.setText(String.valueOf(totalPayment(paymentList)));
             }
@@ -181,7 +181,7 @@ public class Payment extends JFrame {
         refreshButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                paymentList = Database.getListPayment(username,sortValue, order);
+                paymentList = Database.getListPayment(username, sortValue, order);
                 createTable(paymentList);
                 totalDebt.setText(String.valueOf(totalPayment(paymentList)));
             }
@@ -197,7 +197,11 @@ public class Payment extends JFrame {
         detailButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                PaymentDetail invoice = new PaymentDetail();
+                if (idxRow != -1) {
+                    retrivePayment();
+                    PaymentDetail invoice = new PaymentDetail(id.toString(),String.valueOf(cost), String.valueOf(debt));
+                }
+
             }
         });
         purchaseButton.addActionListener(new ActionListener() {
@@ -238,7 +242,7 @@ public class Payment extends JFrame {
             table.setRowSelectionInterval(0, 0);
     }
 
-    public void retriveHD() {
+    public void retrivePayment() {
         idxRow = table.getSelectedRow();
         if (idxRow != -1) {
             id = table.getValueAt(idxRow, 0);
@@ -248,13 +252,14 @@ public class Payment extends JFrame {
         }
     }
 
-    public long totalPayment(ArrayList<HoaDon> dataList){
+    public long totalPayment(ArrayList<HoaDon> dataList) {
         long total = 0;
-        for (HoaDon item:dataList){
+        for (HoaDon item : dataList) {
             total += Long.parseLong(item.getDebt());
         }
         return total;
     }
+
     public static void main(String[] args) {
         Payment p = new Payment();
     }
