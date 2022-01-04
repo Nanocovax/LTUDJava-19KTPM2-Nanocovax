@@ -30,7 +30,7 @@ public class AdminMenu extends JFrame {
     AdminMenu(){
         add(this.rootPanel);
         createTable(Database.getListNQL());
-        setSize(1200,600);
+        setSize(1900,1000);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         addButton.addActionListener(new ActionListener() {

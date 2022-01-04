@@ -42,7 +42,7 @@ public class NecManagement extends JFrame {
         add(rootPanel);
         nesList = Database.getListNYP(sortValue, order, filterBy, valueFilter);
         createtable(nesList);
-        setSize(1200, 600);
+        setSize(1900,1000);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         filterButton.addActionListener(new ActionListener() {

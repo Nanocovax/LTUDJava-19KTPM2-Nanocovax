@@ -70,7 +70,7 @@ public class Statistic extends JFrame {
         initBarChart(chartPanel3,dataset,"Thống kê tiêu thụ nhu yếu phẩm", "Tên gói","Số lượng");
         initBarChart(chartPanel4,dataset4,"Thống kê dư nợ","Ngày","VNĐ");
 
-        setSize(1200,600);
+        setSize(1900,1000);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         //refresh để lấy data mới vẽ chart mới
