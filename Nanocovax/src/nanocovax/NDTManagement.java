@@ -34,7 +34,7 @@ public class NDTManagement extends JFrame {
     NDTManagement() {
         add(this.rootPanel);
         createTable(Database.getListNDT());
-        setSize(1900,1000);
+        setSize(1900,900);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 

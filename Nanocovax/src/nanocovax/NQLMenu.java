@@ -41,7 +41,7 @@ public class NQLMenu extends JFrame{
         add(this.rootPanel);
         order = "id asc";
         createTable(Database.getListUser(order));
-        setSize(1900,1000);
+        setSize(1900,900);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         sortOption.setSelectedIndex(0);

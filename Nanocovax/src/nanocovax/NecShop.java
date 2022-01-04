@@ -59,7 +59,7 @@ public class NecShop extends JFrame {
         nesList = Database.getListNYP(sortValue, order, "", "");
         createTable(nesList);
         createCart(cartList);
-        setSize(1900,1000);
+        setSize(1900,900);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 
@@ -264,7 +264,7 @@ public class NecShop extends JFrame {
         nesList = Database.getListNYP(sortValue, order, "", "");
         createTable(nesList);
         createCart(cartList);
-        setSize(1900,1000);
+        setSize(1900,900);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 
