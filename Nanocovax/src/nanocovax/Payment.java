@@ -150,7 +150,7 @@ public class Payment extends JFrame {
 
         refreshTable(username);
         sortOpt.setSelectedIndex(0);
-        setSize(1200, 600);
+        setSize(1900, 1000);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         lbInfo.addMouseListener(new MouseAdapter() {
