@@ -16,7 +16,7 @@ import java.util.Date;
 public class Database {
     private static String url = "jdbc:mysql://localhost/Nanocovax";
     private static String username = "root";
-    private static String password = "Baokhuyen2001@";
+    private static String password = "";
 
     public static Connection DBConnection() {
         Connection conn = null;
@@ -1055,10 +1055,12 @@ public class Database {
 
         String status = getUserStatus(id);
         if (flag) {
-            int num = (asc) ? (Integer.parseInt(String.valueOf(status.charAt(1))) + n) : (Integer.parseInt(String.valueOf(status.charAt(1))) - n);
-            status = "F" + num;
+            if (status.contains("F")) {
+                int num = (asc) ? (Integer.parseInt(String.valueOf(status.charAt(1))) + n) : (Integer.parseInt(String.valueOf(status.charAt(1))) - n);
+                status = "F" + num;
 
-            updateUserStatus(id, status);
+                updateUserStatus(id, status);
+            }
         }
 
         String sql = "";
