@@ -622,6 +622,26 @@ public class Database {
         }
     }
 
+    public static boolean checkIfExistentUser(String id) {
+        Connection conn = DBConnection();
+        boolean res = false;
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "select * from taikhoan where id = '" + id + "';";
+
+            ResultSet rs = statement.executeQuery(sql);
+            if (rs.next()) {
+                res = true;
+            }
+            conn.close();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+        }
+        return res;
+    }
+
     public static boolean createUser(String id, String name, String doB, String matp, String maqh, String maxp, String status, String hospital, String idNLQ) {
         Connection conn = DBConnection();
         try {
@@ -634,9 +654,15 @@ public class Database {
                 return false;
             }
 
-            String sql = "insert into taikhoan values('" + id + "', '" + password + "', 'nguoidung', 'bt');";
+            if (checkIfExistentUser(id)) {
+                JOptionPane.showMessageDialog(null, "User account has already existed!");
+                conn.close();
+                return false;
+            }
 
+            String sql = "insert into taikhoan values('" + id + "', '" + password + "', 'nguoidung', 'bt');";
             int result = statement.executeUpdate(sql);
+
             if (result == 0) {
                 JOptionPane.showMessageDialog(null, "Already existed");
                 conn.close();
@@ -650,7 +676,6 @@ public class Database {
                     sql = "insert into lienquan values('" + id + "', '" + idNLQ + "');";
                     result = statement.executeUpdate(sql);
                 }
-
                 conn.close();
                 return true;
             }
