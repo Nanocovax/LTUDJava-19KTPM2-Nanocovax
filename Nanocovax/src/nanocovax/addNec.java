@@ -19,7 +19,7 @@ public class addNec extends JFrame {
     addNec(String id_nql) {
         add(rootPanel);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(400, 220);
+        setSize(400, 250);
         setResizable(false);
         setVisible(true);
         addButton.addActionListener(new ActionListener() {
