@@ -18,6 +18,7 @@ public class addNDT extends JFrame{
     private JLabel nameLabel;
     private JLabel curLabel;
     private JButton cancelButton;
+
     addNDT(){
         add(this.rootPanel);
         setSize(530,220);
