@@ -116,7 +116,7 @@ public class addUser extends JFrame {
                 String status = tfStatus.getText().toString();
                 String idNLQ = tfRelate.getText().toString();
 
-                if (!id.isEmpty() && !name.isEmpty() && !status.isEmpty() && (cbbHospital.getSelectedItem() != null) && name.length() <= 50 && Utilities.validateIfOnlyNumber(id) && (jDateChooser.getDate() != null) && (cbbCityPro.getSelectedItem() != null) && (cbbDistrict.getSelectedItem() != null) && (cbbWard.getSelectedItem() != null) && !status.equals("Dead")) {
+                if (!id.isEmpty() && !name.isEmpty() && !status.isEmpty() && (cbbHospital.getSelectedItem() != null) && name.length() <= 50 && Utilities.validateIfOnlyNumber(id) && (jDateChooser.getDate() != null) && (cbbCityPro.getSelectedItem() != null) && (cbbDistrict.getSelectedItem() != null) && (cbbWard.getSelectedItem() != null) && !status.equals("Dead") && Utilities.validateRelatedPerson(status, idNLQ)) {
                     String hospital = hospitalList.get(cbbHospital.getSelectedIndex()).getId();
 
                     if (status.equals("Recovered")) {

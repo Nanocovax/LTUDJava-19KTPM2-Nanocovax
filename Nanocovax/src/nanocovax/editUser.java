@@ -180,65 +180,76 @@ public class editUser extends JFrame {
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                String date = format.format(dateChooser.getDate());
+                if (!tfName.getText().isEmpty() && tfName.getText().length() <= 50 && !tfStatus.getText().isEmpty() && (cbbHospital.getSelectedItem() != null)  && (dateChooser.getDate() != null) && (cbbCityPro.getSelectedItem() != null) && (cbbDistrict.getSelectedItem() != null) && (cbbWard.getSelectedItem() != null) && Utilities.validateRelatedPerson(tfStatus.getText(), tfRelate.getText())) {
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                    String date = format.format(dateChooser.getDate());
 
-                String hospital = hospitalList.get(cbbHospital.getSelectedIndex()).getId();
+                    LocalDate currentDate = LocalDate.now();
+                    LocalDate jdcDate = LocalDate.parse(date);
 
-                Database.updateUser(tfID.getText().toString(), tfName.getText().toString(), date, cPList.get(cbbCityPro.getSelectedIndex()).getId(), dList.get(cbbDistrict.getSelectedIndex()).getId(), wList.get(cbbWard.getSelectedIndex()).getId(), hospital, tfRelate.getText().toString());
+                    if (jdcDate.compareTo(currentDate) > 0) {
+                        JOptionPane.showMessageDialog(null, "The input data is invalid. Please try again!");
+                    } else {
+                        String hospital = hospitalList.get(cbbHospital.getSelectedIndex()).getId();
 
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
-                LocalDateTime now = LocalDateTime.now();
-                Database.updateLSNQL(0, username, dtf.format(now), "updated", root.getId());
+                        boolean res = Database.updateUser(tfID.getText().toString(), tfName.getText().toString(), date, cPList.get(cbbCityPro.getSelectedIndex()).getId(), dList.get(cbbDistrict.getSelectedIndex()).getId(), wList.get(cbbWard.getSelectedIndex()).getId(), hospital, tfRelate.getText().toString());
 
-                if (!hospital.isEmpty() && !backupHospital.equals(hospital)) {
-                    Database.updateLSNQL(2, username, dtf.format(now), "added " + root.getId(), hospital);
-                    Database.updateLSNQL(2, username, dtf.format(now), "removed " + root.getId(), backupHospital);
+                        if (res) {
+                            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
+                            LocalDateTime now = LocalDateTime.now();
+                            Database.updateLSNQL(0, username, dtf.format(now), "updated", root.getId());
 
-                    Database.updateLSNDT(root.getId(), dtf.format(now), hospital);
+                            if (!backupHospital.equals(hospital)) {
+                                Database.updateLSNQL(2, username, dtf.format(now), "added " + root.getId(), hospital);
+                                Database.updateLSNQL(2, username, dtf.format(now), "removed " + root.getId(), backupHospital);
 
-                    Database.updateOccupancyNDT(backupHospital, 1);
-                    Database.updateOccupancyNDT(hospital, 0);
+                                Database.updateLSNDT(root.getId(), dtf.format(now), hospital);
 
-                    backupHospital = hospital;
+                                Database.updateOccupancyNDT(backupHospital, 1);
+                                Database.updateOccupancyNDT(hospital, 0);
+
+                                backupHospital = hospital;
+                            }
+
+                            String status = tfStatus.getText().toString();
+
+                            if (!backupStatus.equals(status)) {
+                                if (status.equals("Dead")) {
+                                    status = "D";
+                                } else if (status.equals("Recovered")) {
+                                    status = "R";
+                                }
+                                Database.updateUserStatus(root.getId(), status);
+                                if (status.contains("F")) {
+                                    if (status.compareTo(backupStatus) > 0) {
+                                        int n = Integer.parseInt(String.valueOf(status.charAt(1))) - Integer.parseInt(String.valueOf(backupStatus.charAt(1)));
+                                        Database.updateAllStatuses(root.getId(), 0, n, true, false);
+                                        Database.updateAllStatuses(root.getId(), 1, n, true, false);
+                                    } else {
+                                        int n = Integer.parseInt(String.valueOf(backupStatus.charAt(1))) - Integer.parseInt(String.valueOf(status.charAt(1)));
+                                        Database.updateAllStatuses(root.getId(), 0, n, false, false);
+                                        Database.updateAllStatuses(root.getId(), 1, n, false, false);
+                                    }
+                                }
+
+                                dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd");
+                                String localDate = dtf.format(LocalDate.now());
+                                dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+                                String localTime = dtf.format(LocalTime.now());
+                                Database.updateLSTT(root.getId(), localDate, localTime, status);
+
+                                if (status.equals("D")) {
+                                    status = "Dead";
+                                } else if (status.equals("R")) {
+                                    status = "Recovered";
+                                }
+                                backupStatus = status;
+                            }
+                        }
+                    }
                 }
-
-                String status = tfStatus.getText().toString();
-
-                if (!status.isEmpty() && !backupStatus.equals(status)) {
-                    if (status.equals("Dead")) {
-                        status = "D";
-                    }
-                    else if (status.equals("Recovered")) {
-                        status = "R";
-                    }
-                    Database.updateUserStatus(root.getId(), status);
-                    if (status.contains("F")) {
-                        if (status.compareTo(backupStatus) > 0) {
-                            int n = Integer.parseInt(String.valueOf(status.charAt(1))) - Integer.parseInt(String.valueOf(backupStatus.charAt(1)));
-                            Database.updateAllStatuses(root.getId(), 0, n, true, false);
-                            Database.updateAllStatuses(root.getId(), 1, n, true, false);
-                        }
-                        else {
-                            int n = Integer.parseInt(String.valueOf(backupStatus.charAt(1))) - Integer.parseInt(String.valueOf(status.charAt(1))) ;
-                            Database.updateAllStatuses(root.getId(), 0, n, false, false);
-                            Database.updateAllStatuses(root.getId(), 1, n, false, false);
-                        }
-                    }
-
-                    dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd");
-                    String localDate = dtf.format(LocalDate.now());
-                    dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
-                    String localTime = dtf.format(LocalTime.now());
-                    Database.updateLSTT(root.getId(), localDate, localTime, status);
-
-                    if (status.equals("D")) {
-                        status = "Dead";
-                    }
-                    else if (status.equals("R")) {
-                        status = "Recovered";
-                    }
-                    backupStatus = status;
+                else {
+                    JOptionPane.showMessageDialog(null, "The input data is invalid. Please try again!");
                 }
             }
         });

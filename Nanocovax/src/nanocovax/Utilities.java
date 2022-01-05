@@ -1,13 +1,20 @@
 package nanocovax;
 
 public class Utilities {
-    public boolean validateIfOnlyString(String str) {
-        str = str.toLowerCase();
-        char[] charArray = str.toCharArray();
-        for (int i = 0; i < charArray.length; i++) {
-            char ch = charArray[i];
-            if (!(ch >= 'a' && ch <= 'z')) {
+    public static boolean validateRelatedPerson(String status, String relatedPerson) {
+        if (status.equals("F0")) {
+            if (!relatedPerson.isEmpty())
                 return false;
+        }
+        else if (status.contains("F")) {
+            if (relatedPerson.isEmpty())
+                return false;
+            String statusRP = Database.getUserStatus(relatedPerson);
+            if (statusRP.isEmpty())
+                return false;
+            if (statusRP.contains("F")) {
+                if (Integer.parseInt(String.valueOf(statusRP.charAt(1))) >= Integer.parseInt(String.valueOf(status.charAt(1))))
+                    return false;
             }
         }
         return true;
@@ -25,12 +32,12 @@ public class Utilities {
     }
 
     public static void main(String args[]) {
-        String str = "312471727";
-        boolean bool = validateIfOnlyNumber(str);
+        String str = "F3";
+        boolean bool = validateRelatedPerson(str, "666666666");
         if(!bool) {
-            System.out.println("Given String is invalid");
+            System.out.println("Invalid!");
         }else{
-            System.out.println("Given String is valid");
+            System.out.println("Valid!");
         }
     }
 }

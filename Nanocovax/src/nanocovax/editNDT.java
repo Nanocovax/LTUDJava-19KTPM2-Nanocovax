@@ -57,7 +57,15 @@ public class editNDT extends JFrame {
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Database.updateNDT(idInput.getText(), nameInput.getText(), Integer.parseInt(capacityInput.getText()), Integer.parseInt(curInput.getText()));
+                if (!nameInput.getText().isEmpty() && nameInput.getText().length() <= 45 && !capacityInput.getText().isEmpty() && !curInput.getText().isEmpty() && Utilities.validateIfOnlyNumber(capacityInput.getText()) && Utilities.validateIfOnlyNumber(curInput.getText())) {
+                    if (Integer.parseInt(capacityInput.getText()) >= Integer.parseInt(curInput.getText()))
+                        Database.updateNDT(idInput.getText(), nameInput.getText(), Integer.parseInt(capacityInput.getText()), Integer.parseInt(curInput.getText()));
+                    else
+                        JOptionPane.showMessageDialog(null, "The input data is invalid. Please try again!");
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "The input data is invalid. Please try again!");
+                }
             }
         });
         cancelButton.addActionListener(new ActionListener() {
