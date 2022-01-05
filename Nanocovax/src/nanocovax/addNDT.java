@@ -30,15 +30,26 @@ public class addNDT extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 String ten = nameInput.getText();
-                int sucChua =  Integer.parseInt(textField2.getText());
-                int dangChua = Integer.parseInt(curInput.getText());
-                boolean addSuccess =  Database.createNDT( ten, sucChua, dangChua);
-                if (addSuccess){
-                    nameInput.setText("");
-                    textField2.setText("");
-                    curInput.setText("");
-                }
 
+                if (!ten.isEmpty() && ten.length() <= 45 && !textField2.getText().toString().isEmpty() && !curInput.getText().toString().isEmpty() && Utilities.validateIfOnlyNumber(textField2.getText().toString()) && Utilities.validateIfOnlyNumber(curInput.getText().toString())) {
+                    int sucChua =  Integer.parseInt(textField2.getText());
+                    int dangChua = Integer.parseInt(curInput.getText());
+
+                    if (dangChua <= sucChua) {
+                        boolean addSuccess =  Database.createNDT( ten, sucChua, dangChua);
+                        if (addSuccess){
+                            nameInput.setText("");
+                            textField2.setText("");
+                            curInput.setText("");
+                        }
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null, "The input data is invalid. Please try again!");
+                    }
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "The input data is invalid. Please try again!");
+                }
             }
         });
         cancelButton.addActionListener(new ActionListener() {
