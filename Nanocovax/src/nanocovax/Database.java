@@ -69,7 +69,7 @@ public class Database {
         try {
             Statement statement = conn.createStatement();
             password = Encryption.encryptMD5(password);
-            ResultSet rs = statement.executeQuery("select tinhtrang from TAIKHOAN where id = '" + id + "' and password = '" + password + "' and phanquyen = 'nql';");
+            ResultSet rs = statement.executeQuery("select tinhtrang from TAIKHOAN where id = '" + id + "' and password = '" + password + "' and (phanquyen = 'nql' or phanquyen = 'nguoidung');");
             if (rs.next() && rs.getString(1).equals("ckh")) {
                 result = 3;
             } else {
@@ -660,7 +660,7 @@ public class Database {
                 return false;
             }
 
-            String sql = "insert into taikhoan values('" + id + "', '" + password + "', 'nguoidung', 'bt');";
+            String sql = "insert into taikhoan values('" + id + "', '" + password + "', 'nguoidung', 'ckh');";
             int result = statement.executeUpdate(sql);
 
             if (result == 0) {
@@ -757,7 +757,7 @@ public class Database {
                 "join quanhuyen qh on ttnd.quanhuyen = qh.maqh\n" +
                 "join xaphuong xp on ttnd.xaphuong = xp.maxp\n" +
                 "join taikhoan tk on ttnd.id = tk.id\n" +
-                "where tk.tinhtrang = 'bt'\n" +
+                "where tk.tinhtrang != 'khoa'\n" +
                 "order by ttnd." + order + ";";
         Connection conn = DBConnection();
         try {
@@ -887,7 +887,7 @@ public class Database {
                 "join quanhuyen qh on ttnd.quanhuyen = qh.maqh\n" +
                 "join xaphuong xp on ttnd.xaphuong = xp.maxp\n" +
                 "join taikhoan tk on ttnd.id = tk.id\n" +
-                "where ttnd.id = '" + id + "' and tk.tinhtrang = 'bt';";
+                "where ttnd.id = '" + id + "' and tk.tinhtrang != 'khoa';";
         Connection conn = DBConnection();
         try {
             PreparedStatement ps = conn.prepareStatement(sql);

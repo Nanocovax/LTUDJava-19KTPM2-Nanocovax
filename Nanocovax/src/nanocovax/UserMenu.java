@@ -10,7 +10,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
-public class UserMenu extends JFrame{
+public class UserMenu extends JFrame implements Runnable {
     private JPanel menuPanel;
     private JLabel lbShop;
     private JLabel lbLogout;
@@ -33,6 +33,8 @@ public class UserMenu extends JFrame{
     private JTable hosTable;
     private JButton refreshButton1;
     User root;
+    String username = "245275679";
+    Thread thread;
 
     UserMenu(){
         add(this.rootPanel);
@@ -101,21 +103,7 @@ public class UserMenu extends JFrame{
         });
     }
 
-    UserMenu(String username){
-        add(this.rootPanel);
-        root = Database.searchAUser(username);
-        createTable(Database.getListNLQ(username));
-        setSize(1900,900);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setVisible(true);
-
-        displayID.setText(root.getId());
-        displayName.setText(root.getName());
-        displayAddress.setText(root.getAddress().getWard().getName() + ", " + root.getAddress().getDistrict().getName() + ", " + root.getAddress().getCityProvince().getName());
-        displaySTT.setText(root.getStatus());
-        displayDOB.setText(root.getDoB());
-        displaHosName.setText(root.getHospital().getName());
-
+    public void run() {
         refreshButton1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -171,6 +159,81 @@ public class UserMenu extends JFrame{
                 createSttTable(Database.getStatusHistoryList(username));
             }
         });
+    }
+
+    UserMenu(String username){
+        add(this.rootPanel);
+        root = Database.searchAUser(username);
+        createTable(Database.getListNLQ(username));
+        setSize(1900,900);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+        this.username = username;
+        thread = new Thread(this);
+        thread.start();
+
+        displayID.setText(root.getId());
+        displayName.setText(root.getName());
+        displayAddress.setText(root.getAddress().getWard().getName() + ", " + root.getAddress().getDistrict().getName() + ", " + root.getAddress().getCityProvince().getName());
+        displaySTT.setText(root.getStatus());
+        displayDOB.setText(root.getDoB());
+        displaHosName.setText(root.getHospital().getName());
+
+        /*refreshButton1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                createTable(Database.getListNLQ(username));
+            }
+        });
+        refreshButton2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                createHosTable(Database.getLSNDT(username));
+                createSttTable(Database.getStatusHistoryList(username));
+            }
+        });
+
+        lbLogout.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+
+                int dialogResult = JOptionPane.showConfirmDialog(null, "Would you like to log out?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (dialogResult == JOptionPane.YES_OPTION) {
+                    setVisible(false);
+                    dispose();
+                    Login frame = new Login();
+                    frame.setVisible(true);
+                }
+            }
+        });
+        lbShop.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                setVisible(false);
+                dispose();
+                NecShop n = new NecShop(username);
+            }
+        });
+        lbPayment.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                setVisible(false);
+                dispose();
+                Payment payment = new Payment(username);
+            }
+        });
+        tabbedPane1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                //bấm đổi qua tab 2 thì mới đưa data vào bảng ở tab 2
+                createHosTable(Database.getLSNDT(username));
+                createSttTable(Database.getStatusHistoryList(username));
+            }
+        });*/
     }
 
     public void createTable(){

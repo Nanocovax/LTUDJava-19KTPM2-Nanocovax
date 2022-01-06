@@ -25,7 +25,7 @@ import java.util.Date;
 
 import java.sql.*;
 
-public class Statistic extends JFrame {
+public class Statistic extends JFrame implements Runnable {
     private JPanel menuPanel;
     private JLabel lbNYP;
     private JLabel lbLogout;
@@ -46,34 +46,10 @@ public class Statistic extends JFrame {
     private JPanel tab4;
     private JButton refreshButton4;
     private JPanel chartPanel4;
+    String username;
+    Thread thread;
 
-    Statistic(String username){
-        add(rootPanel);
-//        DefaultPieDataset dataset = new DefaultPieDataset();
-//        dataset.setValue("Gói 1",10);
-//        dataset.setValue("Gói 2",20);
-//        dataset.setValue("Gói 3",30);
-        DefaultCategoryDataset dataset = Database.getSumNec();
-
-        DefaultCategoryDataset dataset2 = Database.getSumStatus();
-
-        DefaultCategoryDataset dataset3 = Database.getStatusChange();
-
-        DefaultCategoryDataset dataset4 = Database.getSumDebt();
-//        dataset4.setValue(10000,"Debt","Ngày 1");
-//        dataset4.setValue(50000,"Debt","Ngày 2");
-//        dataset4.setValue(33000,"Debt","Ngày 3");
-
-        initBarChart(chartPanel1,dataset2,"Thống kê Số người từng trạng thái theo ngày","Ngày","Người");
-        //initLineChart(chartPanel2,dataset3,"Thống kê Số chuyển trạng thái","Ngày","Thông tin");
-        initBarChart(chartPanel2,dataset3,"Thống kê Số chuyển trạng thái","Ngày","Thông tin");
-        initBarChart(chartPanel3,dataset,"Thống kê tiêu thụ nhu yếu phẩm", "Tên gói","Số lượng");
-        initBarChart(chartPanel4,dataset4,"Thống kê dư nợ","Ngày","VNĐ");
-
-        setSize(1900,900);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setVisible(true);
-        //refresh để lấy data mới vẽ chart mới
+    public void run() {
         refreshButton1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -133,6 +109,97 @@ public class Statistic extends JFrame {
                 }
             }
         });
+    }
+
+    Statistic(String username){
+        add(rootPanel);
+        this.username = username;
+        thread = new Thread(this);
+        thread.start();
+//        DefaultPieDataset dataset = new DefaultPieDataset();
+//        dataset.setValue("Gói 1",10);
+//        dataset.setValue("Gói 2",20);
+//        dataset.setValue("Gói 3",30);
+        DefaultCategoryDataset dataset = Database.getSumNec();
+
+        DefaultCategoryDataset dataset2 = Database.getSumStatus();
+
+        DefaultCategoryDataset dataset3 = Database.getStatusChange();
+
+        DefaultCategoryDataset dataset4 = Database.getSumDebt();
+//        dataset4.setValue(10000,"Debt","Ngày 1");
+//        dataset4.setValue(50000,"Debt","Ngày 2");
+//        dataset4.setValue(33000,"Debt","Ngày 3");
+
+        initBarChart(chartPanel1,dataset2,"Thống kê Số người từng trạng thái theo ngày","Ngày","Người");
+        //initLineChart(chartPanel2,dataset3,"Thống kê Số chuyển trạng thái","Ngày","Thông tin");
+        initBarChart(chartPanel2,dataset3,"Thống kê Số chuyển trạng thái","Ngày","Thông tin");
+        initBarChart(chartPanel3,dataset,"Thống kê tiêu thụ nhu yếu phẩm", "Tên gói","Số lượng");
+        initBarChart(chartPanel4,dataset4,"Thống kê dư nợ","Ngày","VNĐ");
+
+        setSize(1900,900);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+        //refresh để lấy data mới vẽ chart mới
+        /*refreshButton1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DefaultCategoryDataset dataset2 = Database.getSumStatus();
+                initBarChart(chartPanel1,dataset2,"Thống kê Số người từng trạng thái theo ngày","Ngày","Người");
+            }
+        });
+        refreshButton2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DefaultCategoryDataset dataset3 = Database.getStatusChange();
+                initBarChart(chartPanel2,dataset3,"Thống kê Số chuyển trạng thái","Ngày","Thông tin");
+            }
+        });
+        refreshButton3.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        refreshButton4.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        lbUser.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                NQLMenu d = new NQLMenu(username);
+                setVisible(false);
+                dispose();
+            }
+        });
+        lbNYP.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                NecManagement n = new NecManagement(username);
+                setVisible(false);
+                dispose();
+            }
+        });
+        lbLogout.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+
+                int dialogResult = JOptionPane.showConfirmDialog(null, "Would you like to log out?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (dialogResult == JOptionPane.YES_OPTION) {
+                    setVisible(false);
+                    dispose();
+
+                    Login frame = new Login();
+                    frame.setVisible(true);
+                }
+            }
+        });*/
     }
     void initPieChart(JPanel tab, DefaultPieDataset dataset,String name){
 
