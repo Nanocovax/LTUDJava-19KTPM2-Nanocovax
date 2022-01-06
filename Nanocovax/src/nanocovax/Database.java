@@ -1334,7 +1334,7 @@ public class Database {
                 ")\n" +
                 "SELECT count(id) as soca, trangthai, ngay\n" +
                 "FROM added_row_number\n" +
-                "WHERE stt = 1 and trangthai LIKE '%F%'\n" +
+                "WHERE stt = 1\n" +
                 "GROUP BY trangthai, ngay\n" +
                 "ORDER BY ngay asc, trangthai asc;\n";
         DefaultCategoryDataset dataset2 = new DefaultCategoryDataset();
@@ -1342,7 +1342,12 @@ public class Database {
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                dataset2.setValue(rs.getInt("soca"), rs.getString("trangthai"), rs.getString("ngay"));
+                String status = rs.getString("trangthai");
+                if (status.equals("D"))
+                    status = "Dead";
+                else if (status.equals("R"))
+                    status = "Recovered";
+                dataset2.setValue(rs.getInt("soca"), status, rs.getString("ngay"));
             }
             conn.close();
         } catch (Exception e) {
