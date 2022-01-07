@@ -16,7 +16,7 @@ import java.util.Date;
 public class Database {
     private static String url = "jdbc:mysql://localhost/Nanocovax";
     private static String username = "root";
-    private static String password = "Baokhuyen2001@";
+    private static String password = "";
 
     public static Connection DBConnection() {
         Connection conn = null;
@@ -69,7 +69,7 @@ public class Database {
         try {
             Statement statement = conn.createStatement();
             password = Encryption.encryptMD5(password);
-            ResultSet rs = statement.executeQuery("select tinhtrang from TAIKHOAN where id = '" + id + "' and password = '" + password + "' and phanquyen = 'nql';");
+            ResultSet rs = statement.executeQuery("select tinhtrang from TAIKHOAN where id = '" + id + "' and password = '" + password + "' and (phanquyen = 'nql' or phanquyen = 'nguoidung');");
             if (rs.next() && rs.getString(1).equals("ckh")) {
                 result = 3;
             } else {
@@ -622,6 +622,26 @@ public class Database {
         }
     }
 
+    public static boolean checkIfExistentUser(String id) {
+        Connection conn = DBConnection();
+        boolean res = false;
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "select * from taikhoan where id = '" + id + "';";
+
+            ResultSet rs = statement.executeQuery(sql);
+            if (rs.next()) {
+                res = true;
+            }
+            conn.close();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+        }
+        return res;
+    }
+
     public static boolean createUser(String id, String name, String doB, String matp, String maqh, String maxp, String status, String hospital, String idNLQ) {
         Connection conn = DBConnection();
         try {
@@ -634,9 +654,15 @@ public class Database {
                 return false;
             }
 
-            String sql = "insert into taikhoan values('" + id + "', '" + password + "', 'nguoidung', 'bt');";
+            if (checkIfExistentUser(id)) {
+                JOptionPane.showMessageDialog(null, "User account has already existed!");
+                conn.close();
+                return false;
+            }
 
+            String sql = "insert into taikhoan values('" + id + "', '" + password + "', 'nguoidung', 'ckh');";
             int result = statement.executeUpdate(sql);
+
             if (result == 0) {
                 JOptionPane.showMessageDialog(null, "Already existed");
                 conn.close();
@@ -650,7 +676,6 @@ public class Database {
                     sql = "insert into lienquan values('" + id + "', '" + idNLQ + "');";
                     result = statement.executeUpdate(sql);
                 }
-
                 conn.close();
                 return true;
             }
@@ -732,7 +757,7 @@ public class Database {
                 "join quanhuyen qh on ttnd.quanhuyen = qh.maqh\n" +
                 "join xaphuong xp on ttnd.xaphuong = xp.maxp\n" +
                 "join taikhoan tk on ttnd.id = tk.id\n" +
-                "where tk.tinhtrang = 'bt'\n" +
+                "where tk.tinhtrang != 'khoa'\n" +
                 "order by ttnd." + order + ";";
         Connection conn = DBConnection();
         try {
@@ -862,7 +887,7 @@ public class Database {
                 "join quanhuyen qh on ttnd.quanhuyen = qh.maqh\n" +
                 "join xaphuong xp on ttnd.xaphuong = xp.maxp\n" +
                 "join taikhoan tk on ttnd.id = tk.id\n" +
-                "where ttnd.id = '" + id + "' and tk.tinhtrang = 'bt';";
+                "where ttnd.id = '" + id + "' and tk.tinhtrang != 'khoa';";
         Connection conn = DBConnection();
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -1055,10 +1080,12 @@ public class Database {
 
         String status = getUserStatus(id);
         if (flag) {
-            int num = (asc) ? (Integer.parseInt(String.valueOf(status.charAt(1))) + n) : (Integer.parseInt(String.valueOf(status.charAt(1))) - n);
-            status = "F" + num;
+            if (status.contains("F")) {
+                int num = (asc) ? (Integer.parseInt(String.valueOf(status.charAt(1))) + n) : (Integer.parseInt(String.valueOf(status.charAt(1))) - n);
+                status = "F" + num;
 
-            updateUserStatus(id, status);
+                updateUserStatus(id, status);
+            }
         }
 
         String sql = "";
@@ -1307,7 +1334,7 @@ public class Database {
                 ")\n" +
                 "SELECT count(id) as soca, trangthai, ngay\n" +
                 "FROM added_row_number\n" +
-                "WHERE stt = 1 and trangthai LIKE '%F%'\n" +
+                "WHERE stt = 1\n" +
                 "GROUP BY trangthai, ngay\n" +
                 "ORDER BY ngay asc, trangthai asc;\n";
         DefaultCategoryDataset dataset2 = new DefaultCategoryDataset();
@@ -1315,7 +1342,12 @@ public class Database {
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                dataset2.setValue(rs.getInt("soca"), rs.getString("trangthai"), rs.getString("ngay"));
+                String status = rs.getString("trangthai");
+                if (status.equals("D"))
+                    status = "Dead";
+                else if (status.equals("R"))
+                    status = "Recovered";
+                dataset2.setValue(rs.getInt("soca"), status, rs.getString("ngay"));
             }
             conn.close();
         } catch (Exception e) {

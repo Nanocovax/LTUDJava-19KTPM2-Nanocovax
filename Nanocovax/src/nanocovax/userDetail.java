@@ -34,7 +34,7 @@ public class userDetail extends JFrame {
         createHospitalTable();
         createRelateTable();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(900,600);
+        setSize(1900,1000);
         setVisible(true);
     }
 

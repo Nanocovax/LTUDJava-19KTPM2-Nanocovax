@@ -14,7 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.time.LocalTime;
 
-public class NQLMenu extends JFrame{
+public class NQLMenu extends JFrame implements Runnable {
     private JPanel menuPanel;
     private JLabel lbNYP;
     private JLabel lbLogout;
@@ -36,16 +36,10 @@ public class NQLMenu extends JFrame{
     int indexRow;
     Object id = null;
     String order;
+    String username;
+    Thread thread;
 
-    NQLMenu(String username){
-        add(this.rootPanel);
-        order = "id asc";
-        createTable(Database.getListUser(order));
-        setSize(1200,600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setVisible(true);
-        sortOption.setSelectedIndex(0);
-
+    public void run() {
         sortOption.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -197,6 +191,171 @@ public class NQLMenu extends JFrame{
                 }
             }
         });
+    }
+
+    NQLMenu(String username){
+        add(this.rootPanel);
+        order = "id asc";
+        createTable(Database.getListUser(order));
+        setSize(1900,900);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+        sortOption.setSelectedIndex(0);
+        this.username = username;
+        thread = new Thread(this);
+        thread.start();
+
+        /*sortOption.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int indexCityPro = sortOption.getSelectedIndex();
+
+                switch (indexCityPro) {
+                    case 0:
+                        order = "id asc";
+                        break;
+                    case 1:
+                        order = "id desc";
+                        break;
+                    case 2:
+                        order = "hoten asc";
+                        break;
+                    case 3:
+                        order = "hoten desc";
+                        break;
+                    case 4:
+                        order = "ngaysinh asc";
+                        break;
+                    case 5:
+                        order = "ngaysinh desc";
+                        break;
+                    case 6:
+                        order = "trangthai asc";
+                        break;
+                    case 7:
+                        order = "trangthai desc";
+                        break;
+                    default:
+                        order = "id asc";
+                        break;
+                }
+                createTable(Database.getListUser(order));
+            }
+        });
+
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addUser a = new addUser(username);
+            }
+        });
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                createTable(Database.searchUser(searchInput.getText()));
+            }
+        });
+        refreshButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                createTable(Database.getListUser(order));
+            }
+        });
+        detailButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //userDetail u = new userDetail();
+                if (indexRow != -1) {
+                    retriveUser();
+                    //userDetail u = new userDetail(Database.getListUser(order).get(indexRow), username);
+                    userDetail u = new userDetail(Database.searchAUser(id.toString()), username);
+                } else {
+                    userDetail u = new userDetail();
+                }
+            }
+        });
+        editButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    //editUser editUser = new editUser();
+                    if (indexRow != -1) {
+                        retriveUser();
+                        //editUser editUser = new editUser(Database.getListUser(order).get(indexRow), username);
+                        editUser editUser = new editUser(Database.searchAUser(id.toString()), username);
+                    } else {
+                        editUser editNQL = new editUser(username);
+                    }
+                } catch (ParseException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        removeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                retriveUser();
+                int dialogResult = JOptionPane.showConfirmDialog(null, "Delete " + id.toString() + "?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+                if (dialogResult == JOptionPane.YES_OPTION) {
+                    ArrayList<User> t = Database.searchUser(id.toString());
+
+                    Database.updateOccupancyNDT(t.get(0).getHospital().getId(), 1);
+
+                    Database.deleteUser(id.toString(), username);
+
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
+                    LocalDateTime now = LocalDateTime.now();
+                    Database.updateLSNQL(0, username, dtf.format(now), "removed", id.toString());
+
+                    String hospital = Database.searchAUser(id.toString()).getHospital().getId();
+                    Database.updateLSNQL(2, username, dtf.format(now), "removed " + id.toString(), hospital);
+
+                    Database.updateLSNDT(id.toString(), dtf.format(now), hospital);
+
+                    Database.updateOccupancyNDT(hospital, 1);
+                }
+            }
+        });
+        sortOption.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //sắp xếp bảng theo option được select
+            }
+        });
+        lbNYP.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                NecManagement n = new NecManagement(username);
+                setVisible(false);
+                dispose();
+            }
+        });
+
+        lbStatistic.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                Statistic statistic = new Statistic(username);
+                setVisible(false);
+                dispose();
+            }
+        });
+        lbLogout.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+
+                int dialogResult = JOptionPane.showConfirmDialog(null, "Would you like to log out?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (dialogResult == JOptionPane.YES_OPTION) {
+                    setVisible(false);
+                    dispose();
+
+                    Login frame = new Login();
+                    frame.setVisible(true);
+                }
+            }
+        });*/
     }
     public void createTable(ArrayList<User> dataList){
         ArrayList<User> list = dataList;

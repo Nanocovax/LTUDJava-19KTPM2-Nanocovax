@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 public class addUser extends JFrame {
     private JPanel rootPanel;
@@ -112,110 +113,118 @@ public class addUser extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String id = tfID.getText().toString();
                 String name = tfName.getText().toString();
-
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                String date = format.format(jDateChooser.getDate());
-
                 String status = tfStatus.getText().toString();
-                String hospital = hospitalList.get(cbbHospital.getSelectedIndex()).getId();
                 String idNLQ = tfRelate.getText().toString();
 
-                if (status.equals("Dead")) {
-                    status = "D";
-                } else if (status.equals("Recovered")) {
-                    status = "R";
+                if (!id.isEmpty() && !name.isEmpty() && !status.isEmpty() && (cbbHospital.getSelectedItem() != null) && name.length() <= 50 && Utilities.validateIfOnlyNumber(id) && (jDateChooser.getDate() != null) && (cbbCityPro.getSelectedItem() != null) && (cbbDistrict.getSelectedItem() != null) && (cbbWard.getSelectedItem() != null) && !status.equals("Dead") && Utilities.validateRelatedPerson(status, idNLQ)) {
+                    String hospital = hospitalList.get(cbbHospital.getSelectedIndex()).getId();
+
+                    if (status.equals("Recovered")) {
+                        status = "R";
+                    }
+
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                    String date = format.format(jDateChooser.getDate());
+
+                    LocalDate currentDate = LocalDate.now();
+                    LocalDate jdcDate = LocalDate.parse(date);
+
+                    if (jdcDate.compareTo(currentDate) > 0) {
+                        JOptionPane.showMessageDialog(null, "The input data is invalid. Please try again!");
+                    }
+                    else {
+                        boolean res = Database.createUser(id, name, date, cPList.get(cbbCityPro.getSelectedIndex()).getId(), dList.get(cbbDistrict.getSelectedIndex()).getId(), wList.get(cbbWard.getSelectedIndex()).getId(), status, hospital, idNLQ);
+                        //---------Socket----------------
+
+                        if (res) {
+                            Socket socket = null;
+                            try {
+                                socket = new Socket(InetAddress.getLocalHost(), PORT);
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
+                            try {
+                                br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
+                            try {
+                                pw = new PrintWriter(socket.getOutputStream(), true);
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
+
+                            // /name
+                            String message = id;
+                            try {
+                                message = br.readLine();
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
+                            if (message.startsWith("/name")) {
+                                pw.println(id); // get real username
+                            }
+
+                            // /accepted
+                            try {
+                                message = br.readLine();
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
+                            if (message.startsWith("/accepted")) {
+
+                            }
+
+                            // create account
+                            pw.println("/add");
+                            pw.println(id);
+
+                            try {
+                                message = br.readLine();
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
+                            if (message.startsWith("/done")) {
+                                System.out.println("Created account " + id);
+                            } else if (message.startsWith("/failed")) {
+                                System.out.println("Cannot create account " + id);
+                            }
+
+                            // /cancel
+                            pw.println("/cancel");
+
+                            //--------------------------
+                            tfID.setText("");
+                            tfName.setText("");
+                            tfStatus.setText("");
+                            tfRelate.setText("");
+                            cbbCityPro.setSelectedIndex(0);
+                            cbbDistrict.removeAllItems();
+                            cbbWard.removeAllItems();
+                            jDateChooser.setCalendar(null);
+                            cbbCityPro.setSelectedItem(null);
+                            cbbDistrict.setSelectedItem(null);
+                            cbbWard.setSelectedItem(null);
+                            cbbHospital.setSelectedItem(null);
+
+                            //--------------------------
+                            Database.updateOccupancyNDT(hospital, 0);
+                            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
+                            LocalDateTime now = LocalDateTime.now();
+                            Database.updateLSNQL(0, username, dtf.format(now), "added", id);
+                            Database.updateLSNQL(2, username, dtf.format(now), "added " + id, hospital);
+                            Database.updateLSNDT(id, dtf.format(now), hospital);
+
+                            dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd");
+                            String localDate = dtf.format(LocalDate.now());
+                            dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+                            String localTime = dtf.format(LocalTime.now());
+                            Database.updateLSTT(id, localDate, localTime, status);
+                        }
+                    }
                 }
-
-                boolean res = Database.createUser(id, name, date, cPList.get(cbbCityPro.getSelectedIndex()).getId(), dList.get(cbbDistrict.getSelectedIndex()).getId(), wList.get(cbbWard.getSelectedIndex()).getId(), status, hospital, idNLQ);
-//                Database2.createCustomer(id);
-                //---------Socket----------------
-
-                Socket socket = null;
-                try {
-                    socket = new Socket(InetAddress.getLocalHost(), PORT);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-                try {
-                    br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-                try {
-                    pw = new PrintWriter(socket.getOutputStream(), true);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-
-                // /name
-                String message = id;
-                try {
-                    message = br.readLine();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-                if (message.startsWith("/name")) {
-                    pw.println(id); // get real username
-                }
-
-                // /accepted
-                try {
-                    message = br.readLine();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-                if (message.startsWith("/accepted")) {
-
-                }
-
-                // create account
-                pw.println("/add");
-                pw.println(id);
-
-                try {
-                    message = br.readLine();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-                if (message.startsWith("/done")) {
-                    System.out.println("Created account " + id);
-                } else if (message.startsWith("/failed")) {
-                    System.out.println("Cannot create account " + id);
-                }
-
-                // /cancel
-                pw.println("/cancel");
-
-                //--------------------------
-
-                tfID.setText("");
-                tfName.setText("");
-                tfStatus.setText("");
-                tfRelate.setText("");
-                cbbCityPro.setSelectedIndex(0);
-                cbbDistrict.removeAllItems();
-                cbbWard.removeAllItems();
-                jDateChooser.setCalendar(null);
-
-                cbbCityPro.setSelectedItem(null);
-                cbbDistrict.setSelectedItem(null);
-                cbbWard.setSelectedItem(null);
-
-                cbbHospital.setSelectedItem(null);
-
-                if (res) {
-                    Database.updateOccupancyNDT(hospital, 0);
-                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
-                    LocalDateTime now = LocalDateTime.now();
-                    Database.updateLSNQL(0, username, dtf.format(now), "added", id);
-                    Database.updateLSNQL(2, username, dtf.format(now), "added " + id, hospital);
-                    Database.updateLSNDT(id, dtf.format(now), hospital);
-
-                    dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd");
-                    String localDate = dtf.format(LocalDate.now());
-                    dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
-                    String localTime = dtf.format(LocalTime.now());
-                    Database.updateLSTT(id, localDate, localTime, status);
+                else {
+                    JOptionPane.showMessageDialog(null, "The input data is invalid. Please try again!");
                 }
             }
         });
