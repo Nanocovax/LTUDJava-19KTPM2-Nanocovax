@@ -10,8 +10,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -32,12 +30,12 @@ public class PaymentSystem extends JFrame implements Runnable {
     Thread thread;
     BackEnd backEnd;
 
-    PaymentSystem(){
+    PaymentSystem() {
         add(root);
         //createTable();
         display.setEditable(false);
         //sử dụng append đối với display
-        setSize(600,600);
+        setSize(600, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Payment System");
         setVisible(true);
@@ -51,6 +49,8 @@ public class PaymentSystem extends JFrame implements Runnable {
         cbbUser.setSelectedItem(null);
 
         backEnd = new BackEnd(display);
+
+        Database2.createAdmin("admin");
     }
 
     public void run() {
@@ -77,10 +77,10 @@ public class PaymentSystem extends JFrame implements Runnable {
         });
     }
 
-    public void createTable(){
+    public void createTable() {
         ArrayList<TransactionHistory> dataList = Database2.getTransactionList(cbbUser.getSelectedItem().toString());
-        String[] col={"ID","Time","Expense"};
-        Object[] [] data = new String[dataList.size()][3];
+        String[] col = {"ID", "Time", "Expense"};
+        Object[][] data = new String[dataList.size()][3];
 
         for (int i = 0; i < dataList.size(); i++) {
             data[i][0] = dataList.get(i).getId();
@@ -89,7 +89,7 @@ public class PaymentSystem extends JFrame implements Runnable {
             data[i][2] = Integer.toString(dataList.get(i).getExpense());
         }
 
-        table.setModel(new DefaultTableModel(data,col));
+        table.setModel(new DefaultTableModel(data, col));
         if (table.getRowCount() > 0)
             table.setRowSelectionInterval(0, 0);
     }
@@ -158,34 +158,30 @@ class BackEnd implements Runnable {
                         if (res) {
                             pw.println("/done");
                             display.append(name + " has registered the service.\n");
-                        }
-                        else {
+                        } else {
                             pw.println("/failed");
                             display.append(name + " has failed to register the service.\n");
                         }
-                    }
-                    else if (input.contains("/pay")) {
+                    } else if (input.contains("/pay")) {
                         input = br.readLine();
                         int expense = Integer.parseInt(input);
                         int res = Database2.doATransaction(name, expense);
-                        if (res == 0) {
+                        boolean res2 = Database2.receiveATransaction(expense);
+                        if (res == 0 || !res2) {
                             pw.println("/broke");
                             display.append(name + " has failed to do a transaction due to inadequate account balance.\n");
-                        }
-                        else if (res == 1) {
+                        } else if (res == 1) {
                             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
                             LocalDateTime now = LocalDateTime.now();
                             Database2.updateTransactionHistory(name, dtf.format(now), expense);
 
                             display.append(name + " has done a transaction.\n");
                             pw.println("/done");
-                        }
-                        else {
+                        } else {
                             display.append(name + " has failed to do a transaction due to system error.\n");
                             pw.println("/failed");
                         }
-                    }
-                    else if (input.contains("/cancel")) {
+                    } else if (input.contains("/cancel")) {
                         display.append(name + " has closed connection to the service.\n");
                         pw.println("/canceled");
                         break;

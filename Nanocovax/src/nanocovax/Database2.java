@@ -23,6 +23,27 @@ public class Database2 {
         return conn;
     }
 
+    public static boolean createAdmin(String id) {
+        Connection conn = DBConnection();
+        boolean res = false;
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "insert into TAIKHOAN values('" + id + "', 0);";
+            int x = statement.executeUpdate(sql);
+            if (x != 0) {
+                res = true;
+                //JOptionPane.showMessageDialog(null, "The customer account has been created!");
+                System.out.println("The admin account has been created!");
+            }
+            conn.close();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+        }
+        return res;
+    }
+
     public static boolean createCustomer(String id) {
         Connection conn = DBConnection();
         boolean res = false;
@@ -71,8 +92,7 @@ public class Database2 {
                 rs = 0;
                 //JOptionPane.showMessageDialog(null, "The account balance is not adequate!");
                 System.out.println("The account balance is not adequate!");
-            }
-            else {
+            } else {
                 accountBalance = accountBalance - money;
                 String sql = "update TAIKHOAN set sodu = " + accountBalance + " where id = '" + id + "';";
 
@@ -81,8 +101,7 @@ public class Database2 {
                     rs = 1;
                     //JOptionPane.showMessageDialog(null, "The transaction has been done successfully!");
                     System.out.println("The transaction has been done successfully!");
-                }
-                else {
+                } else {
                     //JOptionPane.showMessageDialog(null, "The transaction has been canceled!");
                     System.out.println("The transaction has been canceled!");
                 }
@@ -95,6 +114,32 @@ public class Database2 {
             e.printStackTrace();
         }
         return rs;
+    }
+
+    public static boolean receiveATransaction(int money) {
+        Connection conn = DBConnection();
+        try {
+            Statement statement = conn.createStatement();
+            int accountBalance = getAccountBalance("admin");
+
+            accountBalance = accountBalance + money;
+            String sql = "update TAIKHOAN set sodu = " + accountBalance + " where id = 'admin';";
+
+            int x = statement.executeUpdate(sql);
+            conn.close();
+            if (x == 0) {
+                JOptionPane.showMessageDialog(null, "Update purchase fail!");
+                return false;
+            } else {
+                //JOptionPane.showMessageDialog(null, "Update successfully!");
+                return true;
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public static ArrayList<Customer> getCustomerList() {
