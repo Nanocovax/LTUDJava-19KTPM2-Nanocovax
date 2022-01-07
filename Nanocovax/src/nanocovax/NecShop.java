@@ -365,6 +365,13 @@ public class NecShop extends JFrame {
                             JOptionPane.WARNING_MESSAGE);
                     return;
                 }
+                else if (Long.parseLong(prePur.getText()) > totalMoney){
+                    JOptionPane.showMessageDialog(null,
+                            "Your pre-purchase is larger than total price!!!",
+                            "Warning!",
+                            JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
                 JPanel panel = new JPanel();
                 JLabel label = new JLabel("Enter a password:");
                 JPasswordField pass = new JPasswordField(15);
