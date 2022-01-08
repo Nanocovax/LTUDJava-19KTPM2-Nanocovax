@@ -1,6 +1,8 @@
 package nanocovax;
 
 import com.toedter.calendar.JDateChooser;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -49,7 +51,7 @@ public class Payment extends JFrame implements Runnable {
 
     String username = "245275679";
     Thread thread;
-
+    static Logger logger = LogManager.getLogger(Payment.class);
     Payment() {
         add(this.rootPanel);
         refreshTable("username");
@@ -63,6 +65,7 @@ public class Payment extends JFrame implements Runnable {
                 super.mouseClicked(e);
                 setVisible(false);
                 dispose();
+                logger.info("User - Payment -> user's detail");
                 UserMenu u = new UserMenu();
             }
         });
@@ -79,6 +82,7 @@ public class Payment extends JFrame implements Runnable {
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     setVisible(false);
                     dispose();
+                    logger.info("User - Log out");
                     Login frame = new Login();
                     frame.setVisible(true);
                 }
@@ -90,6 +94,7 @@ public class Payment extends JFrame implements Runnable {
                 super.mouseClicked(e);
                 setVisible(false);
                 dispose();
+                logger.info("User - Payment -> Shop");
                 NecShop n = new NecShop();
             }
         });
@@ -148,6 +153,7 @@ public class Payment extends JFrame implements Runnable {
                 super.mouseClicked(e);
                 setVisible(false);
                 dispose();
+                logger.info("User -user's detail");
                 UserMenu u = new UserMenu(username);
             }
         });
@@ -164,6 +170,7 @@ public class Payment extends JFrame implements Runnable {
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     setVisible(false);
                     dispose();
+                    logger.info("User - Log out");
                     Login frame = new Login();
                     frame.setVisible(true);
                 }
@@ -175,6 +182,7 @@ public class Payment extends JFrame implements Runnable {
                 super.mouseClicked(e);
                 setVisible(false);
                 dispose();
+                logger.info("User - Payment -> Shop");
                 NecShop n = new NecShop(username);
             }
         });
@@ -188,6 +196,7 @@ public class Payment extends JFrame implements Runnable {
                 paymentList = Database.searchPayment(username, date);
                 createTable(paymentList);
                 totalDebt.setText(String.valueOf(totalPayment(paymentList)));
+                logger.info("User - Search for payment on" + date);
             }
         });
         refreshButton.addActionListener(new ActionListener() {
@@ -210,6 +219,7 @@ public class Payment extends JFrame implements Runnable {
                 if (idxRow != -1) {
                     retrivePayment();
                     PaymentDetail invoice = new PaymentDetail(id.toString(), String.valueOf(cost), String.valueOf(debt));
+                    logger.info("User - Take a look at invoice of payment "+ id.toString());
                 }
 
             }

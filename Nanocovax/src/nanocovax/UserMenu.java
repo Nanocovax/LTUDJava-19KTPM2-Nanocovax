@@ -1,5 +1,8 @@
 package nanocovax;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
@@ -35,7 +38,7 @@ public class UserMenu extends JFrame implements Runnable {
     User root;
     String username = "245275679";
     Thread thread;
-
+    static Logger logger = LogManager.getLogger(UserMenu.class);
     UserMenu(){
         add(this.rootPanel);
         createTable();
@@ -69,6 +72,7 @@ public class UserMenu extends JFrame implements Runnable {
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     setVisible(false);
                     dispose();
+                    logger.info("User - Log out");
                     Login frame = new Login();
                     frame.setVisible(true);
                 }
@@ -80,6 +84,7 @@ public class UserMenu extends JFrame implements Runnable {
                 super.mouseClicked(e);
                 setVisible(false);
                 dispose();
+                logger.info("User - user's detail -> Shop");
                 NecShop n = new NecShop();
             }
         });
@@ -89,6 +94,7 @@ public class UserMenu extends JFrame implements Runnable {
                 super.mouseClicked(e);
                 setVisible(false);
                 dispose();
+                logger.info("User - user's detail -> Payment");
                 Payment payment = new Payment();
             }
         });
