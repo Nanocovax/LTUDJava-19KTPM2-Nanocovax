@@ -1,5 +1,7 @@
 package nanocovax;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -48,7 +50,7 @@ public class Statistic extends JFrame implements Runnable {
     private JPanel chartPanel4;
     String username;
     Thread thread;
-
+    static Logger logger = LogManager.getLogger(Statistic.class);
     public void run() {
         refreshButton1.addActionListener(new ActionListener() {
             @Override
@@ -83,6 +85,7 @@ public class Statistic extends JFrame implements Runnable {
                 NQLMenu d = new NQLMenu(username);
                 setVisible(false);
                 dispose();
+                logger.info("Mod - Statistic -> User Management");
             }
         });
         lbNYP.addMouseListener(new MouseAdapter() {
@@ -92,6 +95,7 @@ public class Statistic extends JFrame implements Runnable {
                 NecManagement n = new NecManagement(username);
                 setVisible(false);
                 dispose();
+                logger.info("Mod - Statistic -> NecManagement");
             }
         });
         lbLogout.addMouseListener(new MouseAdapter() {
@@ -103,7 +107,7 @@ public class Statistic extends JFrame implements Runnable {
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     setVisible(false);
                     dispose();
-
+                    logger.info("Mod - Log out");
                     Login frame = new Login();
                     frame.setVisible(true);
                 }
