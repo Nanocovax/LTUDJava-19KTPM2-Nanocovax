@@ -288,6 +288,13 @@ public class Database {
         Connection conn = DBConnection();
         try {
             Statement statement = conn.createStatement();
+
+            if (checkIfExistentUser(id)) {
+                JOptionPane.showMessageDialog(null, "Moderator account has already existed!");
+                conn.close();
+                return false;
+            }
+
             password = Encryption.encryptMD5(password);
             String sql = "insert into taikhoan values('" + id + "', '" + password + "', 'nql', 'ckh');";
 
@@ -345,7 +352,7 @@ public class Database {
 
     public static ArrayList<NguoiQuanLy> getListNQL() {
         ArrayList<NguoiQuanLy> list = new ArrayList<>();
-        String sql = "select * from taikhoan where phanquyen ='nql'";
+        String sql = "select * from taikhoan where phanquyen ='nql' and tinhtrang != 'xoa';";
         Connection conn = DBConnection();
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -389,7 +396,7 @@ public class Database {
 
     public static ArrayList<NguoiQuanLy> searchNQL(String id) {
         ArrayList<NguoiQuanLy> list = new ArrayList<>();
-        String sql = "select * from taikhoan where id = '" + id + "' and phanquyen = 'nql'";
+        String sql = "select * from taikhoan where id = '" + id + "' and phanquyen = 'nql' and tinhtrang != 'xoa';";
         Connection conn = DBConnection();
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -435,7 +442,7 @@ public class Database {
         Connection conn = DBConnection();
         try {
             Statement statement = conn.createStatement();
-            String sql = "UPDATE taikhoan SET tinhtrang = 'khoa' WHERE id = '" + id + "' and phanquyen = 'nql';";
+            String sql = "UPDATE taikhoan SET tinhtrang = 'xoa' WHERE id = '" + id + "' and phanquyen = 'nql';";
 
             int x = statement.executeUpdate(sql);
             conn.close();
@@ -1079,6 +1086,9 @@ public class Database {
             return;
 
         String status = getUserStatus(id);
+        if (status.equals("F0") && option == 1)
+            return;
+
         if (flag) {
             if (status.contains("F")) {
                 int num = (asc) ? (Integer.parseInt(String.valueOf(status.charAt(1))) + n) : (Integer.parseInt(String.valueOf(status.charAt(1))) - n);
@@ -1458,7 +1468,7 @@ public class Database {
                 ")\n" +
                 "SELECT *\n" +
                 "FROM group_2\n" +
-                "WHERE group_4.ngay = group_2.ngay\n" +
+                "WHERE group_4.ngay = group_2.ngay and group_4.id = group_2.id\n" +
                 ")\n" +
                 ")\n" +
                 "SELECT count(id) as soluongchuyen, ngay\n" +
@@ -1576,7 +1586,7 @@ public class Database {
                 ")\n" +
                 "SELECT *\n" +
                 "FROM group_2\n" +
-                "WHERE group_4.ngay = group_2.ngay\n" +
+                "WHERE group_4.ngay = group_2.ngay and group_4.id = group_2.id\n" +
                 ")\n" +
                 ")\n" +
                 "SELECT count(id) as soluongchuyen, ngay\n" +
@@ -1694,7 +1704,7 @@ public class Database {
                 ")\n" +
                 "SELECT *\n" +
                 "FROM group_2\n" +
-                "WHERE group_4.ngay = group_2.ngay\n" +
+                "WHERE group_4.ngay = group_2.ngay and group_4.id = group_2.id\n" +
                 ")\n" +
                 ")\n" +
                 "SELECT count(id) as soluongchuyen, ngay\n" +
