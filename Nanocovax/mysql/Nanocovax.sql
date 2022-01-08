@@ -132,7 +132,7 @@ COLLATE = utf8mb4_0900_ai_ci;
 DROP TABLE IF EXISTS `nanocovax`.`hoadon` ;
 
 CREATE TABLE IF NOT EXISTS `nanocovax`.`hoadon` (
-  `sohd` CHAR(11) NOT NULL,
+  `sohd` int NOT NULL auto_increment,
   `nguoimua` VARCHAR(12) NOT NULL,
   `thoigian` DATETIME NOT NULL,
   `tongtien` INT NULL DEFAULT NULL,
@@ -171,10 +171,10 @@ COLLATE = utf8mb4_0900_ai_ci;
 DROP TABLE IF EXISTS `nanocovax`.`cthd` ;
 
 CREATE TABLE IF NOT EXISTS `nanocovax`.`cthd` (
-  `sohd` CHAR(11) NOT NULL,
+  `sohd` int NOT NULL,
   `soluong` INT NOT NULL,
   `id_nyp` int NOT NULL,
-  PRIMARY KEY (`sohd`),
+  PRIMARY KEY (`sohd`,`id_nyp`),
   INDEX `cthd_nyp_idx` (`id_nyp` ASC) VISIBLE,
   CONSTRAINT `cthd_hd`
     FOREIGN KEY (`sohd`)
@@ -265,7 +265,7 @@ COLLATE = utf8mb4_0900_ai_ci;
 DROP TABLE IF EXISTS `nanocovax`.`lichsuthanhtoan` ;
 
 CREATE TABLE IF NOT EXISTS `nanocovax`.`lichsuthanhtoan` (
-  `sohd` CHAR(11) NOT NULL,
+  `sohd` int NOT NULL,
   `thoigian` DATETIME NOT NULL,
   `sotien` INT NULL DEFAULT NULL,
   PRIMARY KEY (`sohd`, `thoigian`),

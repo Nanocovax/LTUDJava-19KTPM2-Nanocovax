@@ -105,6 +105,13 @@ public class Login extends JFrame {
 						setVisible(false);
 						dispose();
 					}
+					else if (Database.varifyLogin(username,password) == 2) {
+						error.setText("");
+						UserMenu userMenu = new UserMenu(username);
+						userMenu.setVisible(true);
+						setVisible(false);
+						dispose();
+					}
 					else if (Database.varifyLogin(username,password) == 3) {
 						error.setText("");
 						ChangePassword p = new ChangePassword(username);

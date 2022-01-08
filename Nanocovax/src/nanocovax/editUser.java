@@ -25,20 +25,20 @@ public class editUser extends JFrame {
     private JComboBox cbbWard;
     private JLabel header;
     private JTextField tfStatus;
-    private JTextField tfHos;
+    //private JTextField tfHos;
     private JTextField tfRelate;
     private JButton cancelButton;
     private JButton saveButton;
+    private JComboBox cbbHospital;
     private JDateChooser dateChooser;
-    static Object rootId = null;
-    static String backupHospital;
-    static String backupStatus;
+    String backupHospital, backupStatus, backupRelated;
 
     ArrayList<CityProvince> cPList = Database.getCityProvinceList();
     ArrayList<District> dList;
     ArrayList<Ward> wList;
+    ArrayList<NoiDieuTri> hospitalList = Database.getListNDT();
 
-    editUser(String srcId) throws ParseException {
+    editUser(String username) throws ParseException {
         add(rootPanel);
         comboboxInit();
         setDateChooser();
@@ -46,7 +46,11 @@ public class editUser extends JFrame {
         setSize(910,372);
         setResizable(false);
         setVisible(true);
-        rootId = srcId;
+        for (NoiDieuTri x: hospitalList) {
+            cbbHospital.addItem(x.getTen());
+        }
+        cbbHospital.setSelectedItem(null);
+
         cbbCityPro.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -75,19 +79,17 @@ public class editUser extends JFrame {
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //Lấy ngày từ datechooser
-                // SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-                //String dt = format.format(jDateChooser.getDate());
-
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                 String date = format.format(dateChooser.getDate());
 
-                boolean res = Database.updateUser(tfID.getText().toString(), tfName.getText().toString(), date, cPList.get(cbbCityPro.getSelectedIndex()).getId(), dList.get(cbbDistrict.getSelectedIndex()).getId(), wList.get(cbbWard.getSelectedIndex()).getId(), tfStatus.getText().toString(), tfHos.getText().toString(), tfRelate.getText().toString());
+                String hospital = hospitalList.get(cbbHospital.getSelectedIndex()).getId();
+
+                boolean res = Database.updateUser(tfID.getText().toString(), tfName.getText().toString(), date, cPList.get(cbbCityPro.getSelectedIndex()).getId(), dList.get(cbbDistrict.getSelectedIndex()).getId(), wList.get(cbbWard.getSelectedIndex()).getId(), hospital, tfRelate.getText().toString());
 
                 if (res) {
                     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
                     LocalDateTime now = LocalDateTime.now();
-                    Database.updateLSNQL(0, rootId.toString(), dtf.format(now), "upd", tfID.getText().toString());
+                    Database.updateLSNQL(0, username, dtf.format(now), "upd", tfID.getText().toString());
                 }
             }
         });
@@ -100,7 +102,7 @@ public class editUser extends JFrame {
 
     }
 
-    editUser(User root, String srcId) throws ParseException {
+    editUser(User root, String username) throws ParseException {
         add(rootPanel);
         comboboxInit();
         dList = Database.getDistrictList(root.getAddress().getCityProvince().getId());
@@ -111,8 +113,9 @@ public class editUser extends JFrame {
         for (Ward x: wList) {
             cbbWard.addItem(x.getName());
         }
-        rootId = srcId;
-        //setDateChooser();
+        for (NoiDieuTri x: hospitalList) {
+            cbbHospital.addItem(x.getTen());
+        }
 
         tfID.setText(root.getId());
         tfID.setEditable(false);
@@ -134,7 +137,12 @@ public class editUser extends JFrame {
         tfStatus.setText(root.getStatus());
 
         backupHospital = root.getHospital().getId();
-        tfHos.setText(root.getHospital().getId());
+        //tfHos.setText(root.getHospital().getId());
+        int indexH = indexOfHospital(hospitalList, root.getHospital().getId());
+        cbbHospital.setSelectedIndex(indexH);
+
+        backupRelated = Database.getNLQId(root.getId());
+        tfRelate.setText(backupRelated);
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(700,400);
@@ -145,10 +153,13 @@ public class editUser extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 cbbDistrict.removeAllItems();
                 cbbWard.removeAllItems();
-                int indexCityPro = cbbCityPro.getSelectedIndex();
-                dList = Database.getDistrictList(cPList.get(indexCityPro).getId());
-                for (District x: dList) {
-                    cbbDistrict.addItem(x.getName());
+                if (cbbCityPro.getSelectedItem() != null) {
+                    int indexCityPro = cbbCityPro.getSelectedIndex();
+                    dList = Database.getDistrictList(cPList.get(indexCityPro).getId());
+                    for (District x : dList) {
+                        cbbDistrict.addItem(x.getName());
+                    }
+                    cbbDistrict.setSelectedItem(null);
                 }
             }
         });
@@ -156,52 +167,89 @@ public class editUser extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 cbbWard.removeAllItems();
-                if (cbbDistrict.getItemCount() != 0) {
+                if (cbbDistrict.getSelectedItem() != null) {
                     int indexDistrict = cbbDistrict.getSelectedIndex();
                     wList = Database.getWardList(dList.get(indexDistrict).getId());
                     for (Ward x: wList) {
                         cbbWard.addItem(x.getName());
                     }
+                    cbbWard.setSelectedItem(null);
                 }
             }
         });
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //Lấy ngày từ datechooser
-                // SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-                //String dt = format.format(jDateChooser.getDate());
+                if (!tfName.getText().isEmpty() && tfName.getText().length() <= 50 && !tfStatus.getText().isEmpty() && (cbbHospital.getSelectedItem() != null)  && (dateChooser.getDate() != null) && (cbbCityPro.getSelectedItem() != null) && (cbbDistrict.getSelectedItem() != null) && (cbbWard.getSelectedItem() != null) && Utilities.validateRelatedPerson(tfStatus.getText(), tfRelate.getText())) {
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                    String date = format.format(dateChooser.getDate());
 
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                String date = format.format(dateChooser.getDate());
+                    LocalDate currentDate = LocalDate.now();
+                    LocalDate jdcDate = LocalDate.parse(date);
 
-                Database.updateUser(tfID.getText().toString(), tfName.getText().toString(), date, cPList.get(cbbCityPro.getSelectedIndex()).getId(), dList.get(cbbDistrict.getSelectedIndex()).getId(), wList.get(cbbWard.getSelectedIndex()).getId(), tfStatus.getText().toString(), tfHos.getText().toString(), tfRelate.getText().toString());
+                    if (jdcDate.compareTo(currentDate) > 0) {
+                        JOptionPane.showMessageDialog(null, "The input data is invalid. Please try again!");
+                    } else {
+                        String hospital = hospitalList.get(cbbHospital.getSelectedIndex()).getId();
 
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
-                LocalDateTime now = LocalDateTime.now();
-                Database.updateLSNQL(0, rootId.toString(), dtf.format(now), "updated", root.getId());
+                        boolean res = Database.updateUser(tfID.getText().toString(), tfName.getText().toString(), date, cPList.get(cbbCityPro.getSelectedIndex()).getId(), dList.get(cbbDistrict.getSelectedIndex()).getId(), wList.get(cbbWard.getSelectedIndex()).getId(), hospital, tfRelate.getText().toString());
 
-                if (!backupHospital.equals(tfHos.getText().toString())) {
-                    Database.updateLSNQL(2, rootId.toString(), dtf.format(now), "added " + root.getId(), tfHos.getText().toString());
-                    Database.updateLSNQL(2, rootId.toString(), dtf.format(now), "removed " + root.getId(), backupHospital);
+                        if (res) {
+                            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
+                            LocalDateTime now = LocalDateTime.now();
+                            Database.updateLSNQL(0, username, dtf.format(now), "updated", root.getId());
 
-                    Database.updateLSNDT(root.getId(), dtf.format(now), tfHos.getText().toString());
+                            if (!backupHospital.equals(hospital)) {
+                                Database.updateLSNQL(2, username, dtf.format(now), "added " + root.getId(), hospital);
+                                Database.updateLSNQL(2, username, dtf.format(now), "removed " + root.getId(), backupHospital);
 
-                    Database.updateOccupancyNDT(backupHospital, 1);
-                    Database.updateOccupancyNDT(tfHos.getText().toString(), 0);
+                                Database.updateLSNDT(root.getId(), dtf.format(now), hospital);
 
-                    backupHospital = tfHos.getText().toString();
+                                Database.updateOccupancyNDT(backupHospital, 1);
+                                Database.updateOccupancyNDT(hospital, 0);
+
+                                backupHospital = hospital;
+                            }
+
+                            String status = tfStatus.getText().toString();
+
+                            if (!backupStatus.equals(status)) {
+                                if (status.equals("Dead")) {
+                                    status = "D";
+                                } else if (status.equals("Recovered")) {
+                                    status = "R";
+                                }
+                                Database.updateUserStatus(root.getId(), status);
+                                if (status.contains("F")) {
+                                    if (status.compareTo(backupStatus) > 0) {
+                                        int n = Integer.parseInt(String.valueOf(status.charAt(1))) - Integer.parseInt(String.valueOf(backupStatus.charAt(1)));
+                                        Database.updateAllStatuses(root.getId(), 0, n, true, false);
+                                        Database.updateAllStatuses(root.getId(), 1, n, true, false);
+                                    } else {
+                                        int n = Integer.parseInt(String.valueOf(backupStatus.charAt(1))) - Integer.parseInt(String.valueOf(status.charAt(1)));
+                                        Database.updateAllStatuses(root.getId(), 0, n, false, false);
+                                        Database.updateAllStatuses(root.getId(), 1, n, false, false);
+                                    }
+                                }
+
+                                dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd");
+                                String localDate = dtf.format(LocalDate.now());
+                                dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+                                String localTime = dtf.format(LocalTime.now());
+                                Database.updateLSTT(root.getId(), localDate, localTime, status);
+
+                                if (status.equals("D")) {
+                                    status = "Dead";
+                                } else if (status.equals("R")) {
+                                    status = "Recovered";
+                                }
+                                backupStatus = status;
+                            }
+                        }
+                    }
                 }
-
-                if (!backupStatus.equals(tfStatus.getText().toString())) {
-                    dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd");
-                    String localDate = dtf.format(LocalDate.now());
-                    dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
-                    String localTime = dtf.format(LocalTime.now());
-                    Database.updateLSTT(root.getId(), localDate, localTime, tfStatus.getText().toString());
-                    //Database.updateLSTT(root.getId(), dtf.format(now), tfStatus.getText().toString());
-
-                    backupStatus = tfStatus.getText().toString();
+                else {
+                    JOptionPane.showMessageDialog(null, "The input data is invalid. Please try again!");
                 }
             }
         });
@@ -215,12 +263,6 @@ public class editUser extends JFrame {
     }
 
     void comboboxInit(){
-        //cbbCityPro.addItem("Tỉnh/Thành phố");
-        //cbbDistrict.addItem("Quận/huyện");
-        //cbbWard.addItem("Phường/xã");
-        //lấy danh sách tỉnh thành phố add vào cbb tỉnh thành phố
-        // set selected là item  cho các cbb giống với db
-
         for (CityProvince x: cPList) {
             cbbCityPro.addItem(x.getName());
         }
@@ -232,7 +274,7 @@ public class editUser extends JFrame {
         calPanel.add(dateChooser);
     }
     public static void main(String[] args) throws ParseException {
-        editUser editUser = new editUser(rootId.toString());
+        editUser editUser = new editUser("lqtlong");
     }
 
     int indexOfCP(ArrayList<CityProvince> list, String idCP) {
@@ -254,6 +296,14 @@ public class editUser extends JFrame {
     int indexOfWard(ArrayList<Ward> list, String idW) {
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getId().equals(idW)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    int indexOfHospital(ArrayList<NoiDieuTri> list, String id) {
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getId().equals(id)) {
                 return i;
             }
         }

@@ -7,6 +7,7 @@ public class NhuYeuPham {
     String tengoi;
     int thoihan;
     int dongia, gioihan;
+    int soluong = 1;
 
     public NhuYeuPham() {
     }
@@ -57,6 +58,14 @@ public class NhuYeuPham {
 
     public void setGioihan(int gioihan) {
         this.gioihan = gioihan;
+    }
+
+    public int getSoluong() {
+        return soluong;
+    }
+
+    public void setSoluong(int soluong) {
+        this.soluong = soluong;
     }
 
     public static Comparator<NhuYeuPham> IDComparatorDesc = new Comparator<NhuYeuPham>() {

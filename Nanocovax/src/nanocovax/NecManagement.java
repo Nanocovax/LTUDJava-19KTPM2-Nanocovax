@@ -11,7 +11,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
-public class NecManagement extends JFrame {
+public class NecManagement extends JFrame implements Runnable {
     private JPanel menuPanel;
     private JLabel lbNYP;
     private JLabel lbLogout;
@@ -37,15 +37,129 @@ public class NecManagement extends JFrame {
     String filterBy = "thoihan";
     String valueFilter = "";
     ArrayList<NhuYeuPham> nesList;
+    String username;
+    Thread thread;
+
+    public void run() {
+        filterButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //lọc ra giá trị trong tfValue trong cột chọn bởi cbb filterOpt
+                valueFilter = tfValue.getText();
+                nesList = Database.getListNYP(sortValue, order, filterBy, valueFilter);
+                createtable(nesList);
+            }
+        });
+
+        sortOpt.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Database.sortListNYP(nesList, sortOpt.getSelectedItem().toString());
+                createtable(nesList);
+            }
+        });
+        filterOpt.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                filterBy = filterOpt.getSelectedItem().toString();
+                if (filterBy.equals("Duration")) {
+                    filterBy = "thoihan";
+                } else if (filterBy.equals("Limit")) {
+                    filterBy = "gioihan";
+                } else if (filterBy.equals("Price")) {
+                    filterBy = "dongia";
+                }
+            }
+        });
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addNec a = new addNec(username);
+            }
+        });
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                nesList = Database.searchNYP(textField1.getText());
+                createtable(nesList);
+            }
+        });
+        refreshButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //làm mới lại table
+                nesList = Database.getListNYP(sortValue, order, filterBy, "");
+                createtable(nesList);
+            }
+        });
+        editButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (idxRow != -1) {
+                    retriveNYP();
+                    editNec editNYP = new editNec(username, id.toString(), tengoi.toString(), thoihan.toString(), dongia.toString(), gioihan.toString());
+                } else {
+                    editNec editNYP = new editNec();
+                }
+            }
+        });
+        removeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //check xem user chọn 1 row trên table chưa rồi thực hiện xóa
+                retriveNYP();
+                int dialogResult = JOptionPane.showConfirmDialog(null, "Delete " + tengoi.toString() + "?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+                if (dialogResult == JOptionPane.YES_OPTION) {
+                    Database.deleteNYP(username, id.toString());
+                }
+            }
+        });
+        lbUser.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                NQLMenu d = new NQLMenu(username);
+                setVisible(false);
+                dispose();
+            }
+        });
+        lbStatistic.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                Statistic statistic = new Statistic(username);
+                setVisible(false);
+                dispose();
+            }
+        });
+        lbLogout.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                int dialogResult = JOptionPane.showConfirmDialog(null, "Would you like to log out?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (dialogResult == JOptionPane.YES_OPTION) {
+                    setVisible(false);
+                    dispose();
+
+                    Login frame = new Login();
+                    frame.setVisible(true);
+                }
+            }
+        });
+    }
 
     NecManagement(String username) {
         add(rootPanel);
         nesList = Database.getListNYP(sortValue, order, filterBy, valueFilter);
         createtable(nesList);
-        setSize(1200, 600);
+        setSize(1900,900);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
-        filterButton.addActionListener(new ActionListener() {
+        this.username = username;
+        thread = new Thread(this);
+        thread.start();
+
+        /*filterButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //lọc ra giá trị trong tfValue trong cột chọn bởi cbb filterOpt
@@ -165,7 +279,7 @@ public class NecManagement extends JFrame {
                                                       frame.setVisible(true);
                                                   }
                                               }
-                                          });
+                                          });*/
     }
 
     public void createtable(ArrayList<NhuYeuPham> dataList) {

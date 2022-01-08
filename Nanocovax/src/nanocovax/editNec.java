@@ -36,7 +36,7 @@ public class editNec extends JFrame {
 
     editNec(String id_nql, String id, String tengoi, String thoihan, String dongia, String gioihan) {
         tfID.setText(String.valueOf(id));
-//        tfID.setEditable(false);
+//      tfID.setEditable(false);
         tfName.setText(tengoi);
         tfDuration.setText(String.valueOf(thoihan));
         tfPrice.setText(String.valueOf(dongia));
@@ -52,9 +52,9 @@ public class editNec extends JFrame {
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Database.updateNYP(id_nql, Integer.valueOf(tfID.getText()), tfName.getText(), Integer.valueOf(tfDuration.getText()), Integer.valueOf(tfPrice.getText()), Integer.valueOf(tfLimit.getText()));
-
-
+                if (!tfName.getText().isEmpty() && tfName.getText().length() <= 45 && !tfDuration.getText().isEmpty() && !tfPrice.getText().isEmpty() && !tfLimit.getText().isEmpty() && Utilities.validateIfOnlyNumber(tfDuration.getText().toString()) && Utilities.validateIfOnlyNumber(tfPrice.getText().toString()) && Utilities.validateIfOnlyNumber(tfLimit.getText().toString())) {
+                    Database.updateNYP(id_nql, Integer.valueOf(tfID.getText()), tfName.getText(), Integer.valueOf(tfDuration.getText()), Integer.valueOf(tfPrice.getText()), Integer.valueOf(tfLimit.getText()));
+                }
             }
         });
         cancelButton.addActionListener(new ActionListener() {

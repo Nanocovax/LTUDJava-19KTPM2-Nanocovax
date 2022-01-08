@@ -28,20 +28,18 @@ public class userDetail extends JFrame {
     private JLabel addrInfo;
     private JLabel hosInfo;
     private JLabel sttInfo;
-    static Object rootId = null;
 
     userDetail(){
         add(this.rootPanel);
         createHospitalTable();
         createRelateTable();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(900,600);
+        setSize(1900,1000);
         setVisible(true);
     }
 
-    userDetail(User root, String srcId) {
+    userDetail(User root, String username) {
         add(this.rootPanel);
-        rootId = srcId;
 
         idInfo.setText(root.getId());
         nameInfo.setText(root.getName());
@@ -67,7 +65,6 @@ public class userDetail extends JFrame {
         ArrayList<HospitalHistory> list = dataList;
         String[] tbColName = {"ID", "Name", "Date"};
         Object[] [] data = new String[list.size()][3];
-        hTable.setModel(new DefaultTableModel(data,tbColName));
 
         for (int i = 0; i < list.size(); i++) {
             NumberFormat nf = new DecimalFormat("000");
@@ -91,7 +88,6 @@ public class userDetail extends JFrame {
         ArrayList<User> list = dataList;
         String[] tbColName = {"ID", "Name","Date of Birth", "Address", " Status", "Hospital"};
         Object[] [] data = new String[list.size()][6];
-        rTable.setModel(new DefaultTableModel(data,tbColName));
 
         for (int i = 0; i < list.size(); i++) {
             data[i][0] = list.get(i).getId();

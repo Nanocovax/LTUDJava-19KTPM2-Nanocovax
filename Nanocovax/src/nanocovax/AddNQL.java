@@ -27,10 +27,18 @@ public class AddNQL extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String id = idInput.getText().toString();
                 String password = passwordInput.getText().toString();
-                Database.createNQL(id, password);
 
-                idInput.setText("");
-                passwordInput.setText("");
+                if (!id.isEmpty() && !password.isEmpty() && Utilities.validateIfOnlyNumber(id)) {
+                    boolean res = Database.createNQL(id, password);
+
+                    if (res) {
+                        idInput.setText("");
+                        passwordInput.setText("");
+                    }
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "The input data is invalid. Please try again!");
+                }
             }
         });
 
