@@ -62,8 +62,9 @@ public class AdminMenu extends JFrame implements Runnable {
                 int dialogResult = JOptionPane.showConfirmDialog(null, "Delete " + id.toString() + "?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     Database.deleteNQL(id.toString());
+                    logger.info("Admin - Remove Mod");
                 }
-                logger.info("Admin - Remove Mod");
+
             }
         });
         editButton.addActionListener(new ActionListener() {
@@ -122,8 +123,9 @@ public class AdminMenu extends JFrame implements Runnable {
 
                     Login frame = new Login();
                     frame.setVisible(true);
+                    logger.info("Admin - Log out");
                 }
-                logger.info("Admin - Log out");
+
             }
         });
     }

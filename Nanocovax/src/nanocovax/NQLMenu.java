@@ -1,5 +1,8 @@
 package nanocovax;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
@@ -38,7 +41,7 @@ public class NQLMenu extends JFrame implements Runnable {
     String order;
     String username;
     Thread thread;
-
+    static Logger logger = LogManager.getLogger(NQLMenu.class);
     public void run() {
         sortOption.addActionListener(new ActionListener() {
             @Override
@@ -82,12 +85,14 @@ public class NQLMenu extends JFrame implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 addUser a = new addUser(username);
+                logger.info("Mod - Add user");
             }
         });
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 createTable(Database.searchUser(searchInput.getText()));
+                logger.info("Mod - Search for"+ searchInput.getText());
             }
         });
         refreshButton.addActionListener(new ActionListener() {
@@ -107,6 +112,7 @@ public class NQLMenu extends JFrame implements Runnable {
                 } else {
                     userDetail u = new userDetail();
                 }
+                logger.info("Mod - Take a look at a user detail");
             }
         });
         editButton.addActionListener(new ActionListener() {
@@ -124,6 +130,7 @@ public class NQLMenu extends JFrame implements Runnable {
                 } catch (ParseException ex) {
                     ex.printStackTrace();
                 }
+                logger.info("Mod - edit user's info");
             }
         });
         removeButton.addActionListener(new ActionListener() {
@@ -148,7 +155,9 @@ public class NQLMenu extends JFrame implements Runnable {
                     Database.updateLSNDT(id.toString(), dtf.format(now), hospital);
 
                     Database.updateOccupancyNDT(hospital, 1);
+                    logger.info("Mod - remove user");
                 }
+
             }
         });
         sortOption.addActionListener(new ActionListener() {
@@ -164,6 +173,7 @@ public class NQLMenu extends JFrame implements Runnable {
                 NecManagement n = new NecManagement(username);
                 setVisible(false);
                 dispose();
+                logger.info("Mod - User management -> NecManagement");
             }
         });
 
@@ -174,6 +184,7 @@ public class NQLMenu extends JFrame implements Runnable {
                 Statistic statistic = new Statistic(username);
                 setVisible(false);
                 dispose();
+                logger.info("Mod - User management -> Statistic");
             }
         });
         lbLogout.addMouseListener(new MouseAdapter() {
@@ -188,6 +199,7 @@ public class NQLMenu extends JFrame implements Runnable {
 
                     Login frame = new Login();
                     frame.setVisible(true);
+                    logger.info("Mod - Log out");
                 }
             }
         });

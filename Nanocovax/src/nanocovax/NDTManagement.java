@@ -89,8 +89,9 @@ public class NDTManagement extends JFrame implements Runnable {
 
                     Login frame = new Login();
                     frame.setVisible(true);
+                    logger.info("Admin - Log out");
                 }
-                logger.info("Admin - Log out");
+
             }
         });
         lbNQL.addMouseListener(new MouseAdapter() {
