@@ -23,11 +23,38 @@ public class Database2 {
         return conn;
     }
 
+    public static boolean checkIfExistentAdmin(String id) {
+        Connection conn = DBConnection();
+        boolean res = false;
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "select * from taikhoan where id = '" + id + "';";
+
+            ResultSet rs = statement.executeQuery(sql);
+            if (rs.next()) {
+                res = true;
+            }
+            conn.close();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+        }
+        return res;
+    }
+
     public static boolean createAdmin(String id) {
         Connection conn = DBConnection();
         boolean res = false;
         try {
             Statement statement = conn.createStatement();
+
+            if (checkIfExistentAdmin(id)) {
+                //JOptionPane.showMessageDialog(null, "The admin account has already existed!");
+                conn.close();
+                return false;
+            }
+
             String sql = "insert into TAIKHOAN values('" + id + "', 0);";
             int x = statement.executeUpdate(sql);
             if (x != 0) {

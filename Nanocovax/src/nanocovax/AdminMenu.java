@@ -1,5 +1,8 @@
 package nanocovax;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
@@ -26,18 +29,20 @@ public class AdminMenu extends JFrame implements Runnable {
     int indexRow;
     Object id = null, status = null;
     Thread thread;
-
+    static Logger logger = LogManager.getLogger(AdminMenu.class);
     public void run() {
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 AddNQL addNQL= new AddNQL();
+                logger.info("Admin - add Moderater");
             }
         });
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 createTable(Database.searchNQL(searchBar.getText()));
+                logger.info("Admin - search "+ searchBar.getText());
             }
         });
 
@@ -46,6 +51,7 @@ public class AdminMenu extends JFrame implements Runnable {
             public void actionPerformed(ActionEvent e) {
                 retriveNQL();
                 activeHistory activeHistory= new activeHistory(id.toString());
+                logger.info("Admin - View Mod history");
             }
         });
         removeButton.addActionListener(new ActionListener() {
@@ -56,7 +62,9 @@ public class AdminMenu extends JFrame implements Runnable {
                 int dialogResult = JOptionPane.showConfirmDialog(null, "Delete " + id.toString() + "?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     Database.deleteNQL(id.toString());
+                    logger.info("Admin - Remove Mod");
                 }
+
             }
         });
         editButton.addActionListener(new ActionListener() {
@@ -70,6 +78,7 @@ public class AdminMenu extends JFrame implements Runnable {
                 } else {
                     editNQL editNQL = new editNQL();
                 }
+                logger.info("Admin - Edit Mod's info");
             }
         });
 
@@ -77,6 +86,7 @@ public class AdminMenu extends JFrame implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 createTable(Database.getListNQL());
+
             }
         });
         lbNQL.addMouseListener(new MouseAdapter() {
@@ -94,7 +104,7 @@ public class AdminMenu extends JFrame implements Runnable {
                 NDTManagement ndtManagement= new NDTManagement();
                 setVisible(false);
                 dispose();
-
+                logger.info("Admin - Moderator Management -> Hospital Management");
             }
         });
         lbLogout.addMouseListener(new MouseAdapter() {
@@ -113,7 +123,9 @@ public class AdminMenu extends JFrame implements Runnable {
 
                     Login frame = new Login();
                     frame.setVisible(true);
+                    logger.info("Admin - Log out");
                 }
+
             }
         });
     }

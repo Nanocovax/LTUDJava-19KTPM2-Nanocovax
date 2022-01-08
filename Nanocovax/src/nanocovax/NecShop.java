@@ -1,5 +1,8 @@
 package nanocovax;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
@@ -54,7 +57,7 @@ public class NecShop extends JFrame implements Runnable {
 
     String username = "245275679";
     Thread thread;
-
+    static Logger logger = LogManager.getLogger(NecShop.class);
     NecShop() {
         add(this.rootPanel);
         sortOpt.setSelectedIndex(0);
@@ -80,6 +83,7 @@ public class NecShop extends JFrame implements Runnable {
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     setVisible(false);
                     dispose();
+                    logger.info("User - Log out");
                     Login frame = new Login();
                     frame.setVisible(true);
                 }
@@ -91,6 +95,7 @@ public class NecShop extends JFrame implements Runnable {
                 super.mouseClicked(e);
                 setVisible(false);
                 dispose();
+                logger.info("User - Shop -> user's detail");
                 UserMenu u = new UserMenu();
             }
         });
@@ -100,6 +105,7 @@ public class NecShop extends JFrame implements Runnable {
                 super.mouseClicked(e);
                 setVisible(false);
                 dispose();
+                logger.info("User - Shop -> Payment");
                 Payment payment = new Payment();
             }
         });
@@ -116,6 +122,7 @@ public class NecShop extends JFrame implements Runnable {
             public void actionPerformed(ActionEvent e) {
                 nesList = Database.searchNYP(input.getText());
                 createTable(nesList);
+                logger.info("User - Search for"+ input.getText());
             }
         });
         addButton.addActionListener(new ActionListener() {
@@ -141,6 +148,7 @@ public class NecShop extends JFrame implements Runnable {
                     newNYP.setThoihan(Integer.parseInt(thoihan.toString()));
                     cartList.add(newNYP);
                     createCart(cartList);
+                    logger.info("User - add an item to cart");
                 }
             }
         });
@@ -246,6 +254,7 @@ public class NecShop extends JFrame implements Runnable {
                         return;
                     }
                 }
+                logger.info("User - Remove an item from cart");
             }
         });
         removeAllButton.addActionListener(new ActionListener() {
@@ -254,6 +263,7 @@ public class NecShop extends JFrame implements Runnable {
                 //xóa tất cả item khỏi cart
                 cartList.clear();
                 createCart(cartList);
+                logger.info("User - Remove all items from cart");
             }
         });
     }
@@ -272,6 +282,7 @@ public class NecShop extends JFrame implements Runnable {
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     setVisible(false);
                     dispose();
+                    logger.info("User - Log out");
                     Login frame = new Login();
                     frame.setVisible(true);
                 }
@@ -283,6 +294,7 @@ public class NecShop extends JFrame implements Runnable {
                 super.mouseClicked(e);
                 setVisible(false);
                 dispose();
+                logger.info("User - Shop -> user's detail");
                 UserMenu u = new UserMenu(username);
             }
         });
@@ -292,6 +304,7 @@ public class NecShop extends JFrame implements Runnable {
                 super.mouseClicked(e);
                 setVisible(false);
                 dispose();
+                logger.info("User - Shop -> Payment");
                 Payment payment = new Payment(username);
             }
         });
@@ -333,6 +346,7 @@ public class NecShop extends JFrame implements Runnable {
                     newNYP.setThoihan(Integer.parseInt(thoihan.toString()));
                     cartList.add(newNYP);
                     createCart(cartList);
+                    logger.info("User - add an item to cart");
                 }
             }
         });
@@ -465,6 +479,7 @@ public class NecShop extends JFrame implements Runnable {
                     if (cartList.get(i).getId_nyp() == Integer.parseInt(idItemInCart.toString())) {
                         cartList.remove(i);
                         createCart(cartList);
+                        logger.info("User - Remove an item from cart");
                         return;
                     }
                 }
@@ -476,6 +491,7 @@ public class NecShop extends JFrame implements Runnable {
                 //xóa tất cả item khỏi cart
                 cartList.clear();
                 createCart(cartList);
+                logger.info("User - Remove all items from cart");
             }
         });
     }

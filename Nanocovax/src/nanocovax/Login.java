@@ -1,5 +1,8 @@
 package nanocovax;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
@@ -16,7 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.Color;
 
 public class Login extends JFrame {
-
+	static Logger logger = LogManager.getLogger(Login.class);
 	private JPanel contentPane;
 	private JTextField usernameField;
 	private JPasswordField passwordField;
@@ -42,6 +45,7 @@ public class Login extends JFrame {
 
 	public Login() {
 		GUI();
+		logger.info("Login class created");
 	}
 
 	void GUI()
@@ -83,6 +87,7 @@ public class Login extends JFrame {
 	
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				logger.info("Login-Login Button clicked");
 				password=passwordField.getText().toString().toLowerCase();
 				username=usernameField.getText().toString().toLowerCase();
 				passwordField.setText("");
@@ -97,6 +102,7 @@ public class Login extends JFrame {
 						p.setVisible(true);
 						setVisible(false);
 						dispose();
+						logger.info("Admin login");
 					}
 					else if (Database.varifyLogin(username,password) == 1) {
 						error.setText("");
@@ -104,6 +110,7 @@ public class Login extends JFrame {
 						p.setVisible(true);
 						setVisible(false);
 						dispose();
+						logger.info("Moderator login");
 					}
 					else if (Database.varifyLogin(username,password) == 2) {
 						error.setText("");
@@ -111,6 +118,7 @@ public class Login extends JFrame {
 						userMenu.setVisible(true);
 						setVisible(false);
 						dispose();
+						logger.info("User login");
 					}
 					else if (Database.varifyLogin(username,password) == 3) {
 						error.setText("");
@@ -118,9 +126,11 @@ public class Login extends JFrame {
 						p.setVisible(true);
 						setVisible(false);
 						dispose();
+						logger.info("Login - Change password");
 					}
 					else {
 						error.setText(errorText);
+						logger.error("Login - "+ errorText);
 					}
 				}
 			}

@@ -1,5 +1,8 @@
 package nanocovax;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
@@ -39,7 +42,7 @@ public class NecManagement extends JFrame implements Runnable {
     ArrayList<NhuYeuPham> nesList;
     String username;
     Thread thread;
-
+    static Logger logger = LogManager.getLogger(NecManagement.class);
     public void run() {
         filterButton.addActionListener(new ActionListener() {
             @Override
@@ -75,6 +78,7 @@ public class NecManagement extends JFrame implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 addNec a = new addNec(username);
+                logger.info("Mod - add Necessary");
             }
         });
         searchButton.addActionListener(new ActionListener() {
@@ -82,6 +86,7 @@ public class NecManagement extends JFrame implements Runnable {
             public void actionPerformed(ActionEvent e) {
                 nesList = Database.searchNYP(textField1.getText());
                 createtable(nesList);
+                logger.info("Mod - search Nec");
             }
         });
         refreshButton.addActionListener(new ActionListener() {
@@ -100,6 +105,7 @@ public class NecManagement extends JFrame implements Runnable {
                     editNec editNYP = new editNec(username, id.toString(), tengoi.toString(), thoihan.toString(), dongia.toString(), gioihan.toString());
                 } else {
                     editNec editNYP = new editNec();
+                    logger.info("Mod - edit nec");
                 }
             }
         });
@@ -111,6 +117,7 @@ public class NecManagement extends JFrame implements Runnable {
                 int dialogResult = JOptionPane.showConfirmDialog(null, "Delete " + tengoi.toString() + "?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     Database.deleteNYP(username, id.toString());
+                    logger.info("Mod - remove nec");
                 }
             }
         });
@@ -121,6 +128,7 @@ public class NecManagement extends JFrame implements Runnable {
                 NQLMenu d = new NQLMenu(username);
                 setVisible(false);
                 dispose();
+                logger.info("Mod - NecManagement -> User Management");
             }
         });
         lbStatistic.addMouseListener(new MouseAdapter() {
@@ -130,6 +138,7 @@ public class NecManagement extends JFrame implements Runnable {
                 Statistic statistic = new Statistic(username);
                 setVisible(false);
                 dispose();
+                logger.info("Mod - NecManagement -> Statistic");
             }
         });
         lbLogout.addMouseListener(new MouseAdapter() {
@@ -140,7 +149,7 @@ public class NecManagement extends JFrame implements Runnable {
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     setVisible(false);
                     dispose();
-
+                    logger.info("Mod - Log out");
                     Login frame = new Login();
                     frame.setVisible(true);
                 }

@@ -1,5 +1,8 @@
 package nanocovax;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.xml.crypto.Data;
@@ -29,7 +32,7 @@ public class NDTManagement extends JFrame implements Runnable {
     private JButton refreshButton;
     int idxRow;
     Thread thread;
-
+    static Logger logger = LogManager.getLogger(NDTManagement.class);
     Object id = null, ten = null, sucChua = null, dangChua = null;
 
     public void run() {
@@ -42,6 +45,7 @@ public class NDTManagement extends JFrame implements Runnable {
                 } else {
                     editNDT editNDT = new editNDT();
                 }
+                logger.info("Admin - edit Hospital's info");
             }
         });
         removeButton.addActionListener(new ActionListener() {
@@ -52,6 +56,7 @@ public class NDTManagement extends JFrame implements Runnable {
                 int dialogResult = JOptionPane.showConfirmDialog(null, "Delete " + ten.toString() + "?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     Database.deleteNDT( id.toString());
+                    logger.info("Admin - delete Hospital");
                 }
             }
         });
@@ -59,12 +64,14 @@ public class NDTManagement extends JFrame implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 addNDT addND = new addNDT();
+                logger.info("Admin - Add Hospital");
             }
         });
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 createTable(Database.searchNDT(searchBar.getText()));
+                logger.info("Admin - Search for"+ searchBar.getText());
             }
         });
 
@@ -82,7 +89,9 @@ public class NDTManagement extends JFrame implements Runnable {
 
                     Login frame = new Login();
                     frame.setVisible(true);
+                    logger.info("Admin - Log out");
                 }
+
             }
         });
         lbNQL.addMouseListener(new MouseAdapter() {
@@ -92,6 +101,7 @@ public class NDTManagement extends JFrame implements Runnable {
                 AdminMenu adminMenu = new AdminMenu();
                 setVisible(false);
                 dispose();
+                logger.info("Admin - Hospital Management -> Moderator Management");
             }
         });
         refreshButton.addActionListener(new ActionListener() {
